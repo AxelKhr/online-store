@@ -101,7 +101,8 @@ ul {
 }
 
 .error-page,
-.cart-page {
+.cart-page,
+.product-page {
   min-height: calc(100vh - 200px);
   text-align: center;
 }
