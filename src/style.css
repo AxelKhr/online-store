@@ -100,6 +100,27 @@ ul {
   border: 1px solid black;
 }
 
+.error-page,
+.cart-page {
+  min-height: calc(100vh - 200px);
+  text-align: center;
+}
+.error-message {
+  padding-top: 200px;
+}
+.error-title {
+  font-size: 4rem;
+  font-weight: 900;
+}
+.error-text {
+  display: block;
+  width: 40%;
+  padding: 5px;
+}
+.error-link {
+  font-size: 1rem;
+  font-style: italic;
+}
 
 .footer__content {
   height: 100px;
