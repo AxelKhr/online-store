@@ -1,4 +1,4 @@
-import { AbstractView } from "./abstractView";
+import { AbstractView } from "../abstractView";
 
 export class ProductView extends AbstractView {
 

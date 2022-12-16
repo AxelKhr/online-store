@@ -1,8 +1,8 @@
 import { Route } from "../interface/route";
-import { CartView } from "../view/cartView";
-import { ErrorView } from "../view/error";
-import { MainView } from "../view/mainView";
-import { ProductView } from "../view/productView";
+import { CartView } from "../view/cartView/cartView";
+import { ErrorView } from "../view/error/error";
+import { MainView } from "../view/mainView/mainView";
+import { ProductView } from "../view/productView/productView";
 
 class Router {
 
@@ -15,11 +15,11 @@ class Router {
         this.homeComponent = new MainView();
         this.productComponent = new ProductView();
         this.cartComponent = new CartView();
-        
+
         this.routes = [
-            { path: '/', title: 'Online store', component: this.homeComponent},
-            { path: 'product', title: 'Product', component: this.productComponent},
-            { path: 'cart', title: 'Cart', component: this.cartComponent}
+            { path: '/', title: 'Online store', component: this.homeComponent },
+            { path: 'product', title: 'Product', component: this.productComponent },
+            { path: 'cart', title: 'Cart', component: this.cartComponent }
         ]
     }
 
