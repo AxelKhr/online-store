@@ -1,46 +1,42 @@
 import { Route } from "../interface/route";
+import { CartView } from "../view/cartView";
+import { ErrorView } from "../view/error";
+import { MainView } from "../view/mainView";
+import { ProductView } from "../view/productView";
 
 class Router {
 
-    private readonly routes: Route;
+    private readonly routes: Array<Route>;
+    private homeComponent: MainView;
+    private productComponent: ProductView;
+    private cartComponent: CartView;
 
     constructor() {
-        this.routes = {
-            404: {
-                template: "./templates/404.html",
-                title: "404",
-                description: "Page not found",
-            },
-            "/": {
-                template: "./templates/index.html",
-                title: "Online store",
-                description: "Home page",
-            },
-            product: {
-                template: "./templates/product.html",
-                title: "Product",
-                description: "Product page",
-            },
-            cart: {
-                template: "./templates/cart.html",
-                title: "Cart",
-                description: "Cart page",
-            }
-        }
+        this.homeComponent = new MainView();
+        this.productComponent = new ProductView();
+        this.cartComponent = new CartView();
+        
+        this.routes = [
+            { path: '/', title: 'Online store', component: this.homeComponent},
+            { path: 'product', title: 'Product', component: this.productComponent},
+            { path: 'cart', title: 'Cart', component: this.cartComponent}
+        ]
     }
 
     locationHandler = async () => {
-        let location: string = window.location.hash.replace("#", "");
-        if (location.length == 0) {
-            location = "/";
+        let path: string = window.location.hash.replace("#", "");
+        if (path.length == 0) {
+            path = "/";
         }
-        const route = this.routes[location] || this.routes["404"];
-        const html = await fetch(route.template).then((response) => response.text());
-    
-        document.getElementById("content")!.innerHTML = html;
-        document.title = route.title;
-        document.querySelector('meta[name="description"]')?.setAttribute("content", route.description);
+        const route = this.findRoute(path);
+        const view = (route != null) ? await route?.component.getView() : await new ErrorView().getView();
+        const content = document.getElementById("content") as HTMLElement;
+        content!.innerHTML = '';
+        content.appendChild(view);
+        document.title = route?.title ?? '404 Not found';
     };
+
+    findRoute = (url: string) => this.routes.find((route) => route.path == url);
 
 }
 
