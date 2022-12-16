@@ -1,5 +1,7 @@
-import { RouteData } from "./routeData";
+import { AbstractView } from "../view/abstractView";
 
 export interface Route {
-    [key: string]: RouteData;
+    path: string;
+    title: string;
+    component: AbstractView;
 }
