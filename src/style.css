@@ -90,6 +90,7 @@ ul {
 .category,
 .brand {
   height: 250px;
+  overflow: auto;
 }
 .price,
 .stock {

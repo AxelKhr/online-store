@@ -1,3 +1,5 @@
+import { Product } from "../interface/product";
+
 export abstract class AbstractView {
     constructor() {
         document.title = 'Online store';
@@ -8,4 +10,6 @@ export abstract class AbstractView {
     }
 
     abstract getView(): Promise<HTMLElement>;
+
+    draw(data: Product[]) { console.log(data) }
 }
