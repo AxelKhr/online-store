@@ -2,45 +2,7 @@ import "./style.scss";
 import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/Product";
 import * as ProductCard from "./productCard";
-
-const prod1: Product = {
-    id: 1,
-    title: "iPhone 9",
-    description: "An apple mobile which is nothing like apple",
-    price: 549,
-    discountPercentage: 12.96,
-    rating: 4.69,
-    stock: 94,
-    brand: "Apple",
-    category: "smartphones",
-    thumbnail: "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
-    images: [
-        "https://i.dummyjson.com/data/products/1/1.jpg",
-        "https://i.dummyjson.com/data/products/1/2.jpg",
-        "https://i.dummyjson.com/data/products/1/3.jpg",
-        "https://i.dummyjson.com/data/products/1/4.jpg",
-        "https://i.dummyjson.com/data/products/1/thumbnail.jpg"
-    ]
-};
-const prod2: Product = {
-    id: 2,
-    title: "iPhone X",
-    description: "SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ...",
-    price: 899,
-    discountPercentage: 17.94,
-    rating: 4.44,
-    stock: 34,
-    brand: "Apple",
-    category: "smartphones",
-    thumbnail: "https://i.dummyjson.com/data/products/2/thumbnail.jpg",
-    images: [
-        "https://i.dummyjson.com/data/products/2/1.jpg",
-        "https://i.dummyjson.com/data/products/2/2.jpg",
-        "https://i.dummyjson.com/data/products/2/3.jpg",
-        "https://i.dummyjson.com/data/products/2/thumbnail.jpg"
-    ]
-};
-
+import * as FilterList from "./filterList";
 
 export class MainView extends AbstractView {
     constructor() {
@@ -48,16 +10,24 @@ export class MainView extends AbstractView {
     }
 
     async getView(): Promise<HTMLElement> {
-
-
         let content = document.createElement('div') as HTMLElement;
         content.classList.add('content__table', 'table');
         content.innerHTML = `
             <aside class="table__filters">
-                <div class="table__filter category">Category</div>
-                <div class="table__filter brand">Brand</div>
-                <div class="table__filter price">Price</div>
-                <div class="table__filter stock">Stock</div>
+                <div class="table__filter">
+                    <p class="filter__title">Category</p>
+                    <div class="filter__list-box category"></div>
+                </div>
+                <div class="table__filter">
+                    <p class="filter__title">Brand</p>
+                    <div class="filter__list-box brand"></div>
+                </div>
+                <div class="table__filter price">
+                    <p class="filter__title">Price</p>
+                </div>
+                <div class="table__filter stock">
+                    <p class="filter__title">Stock</p>
+                </div>
             </aside>
             <section class="table__products">
                 <div class="table__view">
@@ -69,25 +39,44 @@ export class MainView extends AbstractView {
         return content;
     }
 
-    renderView(): void {
-
+    draw(data: Product[]): void {
+        const categories = new Set<string>();
+        const brands = new Set<string>();
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
 
-        for (let i = 0; i < 8; i += 1) {
+        data.forEach(item => {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
-            if (i % 2) {
-                ProductCard.setData(card, prod1);
-            } else {
-                ProductCard.setData(card, prod2);
-            }
+            ProductCard.setData(card, item);
             fragment.append(card);
+            categories.add(item.category);
+            brands.add(item.brand);
+        });
+        for (let i = 0; i < data.length; i += 1) {
         }
 
         const parent = document.querySelector('.table__list') as HTMLElement;
         parent.innerHTML = '';
         parent.appendChild(fragment);
 
+        this.drawCategories(categories);
+        this.drawBrands(brands);
+    }
+
+    drawCategories(categories: Set<string>) {
+        const box = document.querySelector('.category') as HTMLElement;
+        console.dir(box);
+        box.innerHTML = '';
+        const list = FilterList.createFilterList(categories);
+        box.append(list);
+    }
+
+    drawBrands(brands: Set<string>) {
+        const box = document.querySelector('.brand') as HTMLElement;
+        console.dir(box);
+        box.innerHTML = '';
+        const list = FilterList.createFilterList(brands);
+        box.append(list);
     }
 }

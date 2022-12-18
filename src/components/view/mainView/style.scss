@@ -5,34 +5,37 @@
 
   &__filters {
     width: 100%;
-    border: 1px solid red;
   }
 
   &__filter {
-    margin: 10px;
-    border: 1px solid black;
+    margin-bottom: 10px;
+    background: #eee;
 
-    &.category,
-    &.brand {
+    & .filter__title {
+      height: 40px;
+      border-bottom: 2px solid #ccc;
+    }
+
+    & .filter__list-box {
       height: 250px;
+      overflow: auto;
+      padding: 10px;
     }
 
     &.price,
     &.stock {
       height: 125px;
     }
-    
   }
 
   &__products {
     width: 100%;
-    border: 1px solid red;
-    padding: 10px;
   }
 
   &__view {
     height: 50px;
-    border: 1px solid black;
+    background: #eee;
+    margin-bottom: 10px;
   }
     
   &__list {
@@ -41,10 +44,10 @@
     grid-auto-rows: auto;
     gap: 10px;
     width: 100%;
-    border: 1px solid black;
   
     .products__card {
       width: 100%;
     }
   }
 }
+
