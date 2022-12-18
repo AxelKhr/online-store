@@ -34,6 +34,8 @@ class Router {
         content!.innerHTML = '';
         content.appendChild(view);
         document.title = route?.title ?? '404 Not found';
+
+        //(route?.component as MainView).renderView();
     };
 
     findRoute = (url: string) => this.routes.find((route) => route.path == url);
