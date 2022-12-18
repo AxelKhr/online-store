@@ -34,8 +34,6 @@ class Router {
         content!.innerHTML = '';
         content.appendChild(view);
         document.title = route?.title ?? '404 Not found';
-
-        (route?.component as MainView).draw(productData.products);
     };
 
     findRoute = (url: string) => this.routes.find((route) => route.path == url);
@@ -43,6 +41,3 @@ class Router {
 }
 
 export default Router;
-
-import { Product } from "../interface/Product";
-import { productData } from "./data";
