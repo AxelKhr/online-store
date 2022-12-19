@@ -11,14 +11,23 @@ class Store {
         this.controller = new AppController();
     }
 
-    init(): void {
+    init() {
         this.drawView();
         window.addEventListener("hashchange", this.drawView);
     }
 
     drawView = () => {
-        this.controller.getProduct((data) => this.router.locationHandler().then((view) => view?.draw(data.products)));
+        this.controller.getProducts((data) => this.router.locationHandler()
+            .then((view) => view?.draw(data.products))
+            .then(() => {
+                document.querySelector('.table__list')?.addEventListener('click', (event) => this.drawProduct(event));
+        }));
     }
+
+    drawProduct = (e: Event) => {
+        this.controller.drawProduct(e, (data) => this.router.locationHandler().then((view) => view?.draw(data.products)));
+    }
+
 }
 
 export default Store;

@@ -54,8 +54,6 @@ export class MainView extends AbstractView {
             categories.add(item.category);
             brands.add(item.brand);
         });
-        for (let i = 0; i < data.length; i += 1) {
-        }
 
         const parent = document.querySelector('.table__list') as HTMLElement;
         parent.innerHTML = '';
@@ -67,7 +65,6 @@ export class MainView extends AbstractView {
 
     drawCategories(categories: Set<string>) {
         const box = document.querySelector('.category') as HTMLElement;
-        console.dir(box);
         box.innerHTML = '';
         const list = FilterList.createFilterList(categories);
         box.append(list);
@@ -75,7 +72,6 @@ export class MainView extends AbstractView {
 
     drawBrands(brands: Set<string>) {
         const box = document.querySelector('.brand') as HTMLElement;
-        console.dir(box);
         box.innerHTML = '';
         const list = FilterList.createFilterList(brands);
         box.append(list);

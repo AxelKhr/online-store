@@ -4,7 +4,7 @@ import { ProductResponse } from "../interface/product";
 import AppLoader from "./appLoader";
 
 export class AppController extends AppLoader {
-    getProduct(callback: Callback<ProductResponse>): void {
+    getProducts(callback: Callback<ProductResponse>): void {
         super.getResp<ProductResponse>(
             {
                 endpoint: Endpoint.Products,
@@ -14,10 +14,15 @@ export class AppController extends AppLoader {
         return;
     }
 
-    getCategories(callback: Callback<ProductResponse>): void {
+    drawProduct(e: Event, callback: Callback<ProductResponse>): void {
+        let target = <HTMLElement>e.target;
+        console.log(target.closest('a')?.getAttribute('href'));
         super.getResp<ProductResponse>(
             {
                 endpoint: Endpoint.Products,
+                options: {
+                    sources: '',
+                }
             },
             callback
         );
