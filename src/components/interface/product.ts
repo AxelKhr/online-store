@@ -11,3 +11,10 @@ export interface Product {
   thumbnail: string;
   images: string[];
 }
+
+export interface ProductResponse {
+  products: Product[];
+  total: number;
+  skip: number;
+  limit: number;
+}
