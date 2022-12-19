@@ -1,5 +1,5 @@
 import "./style.scss";
-import { Product } from "../../../interface/Product";
+import { Product } from "../../../interface/product";
 
 function createTemplate(): HTMLElement {
   const card = document.createElement('a');
