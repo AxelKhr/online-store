@@ -1,13 +1,23 @@
-import AppLoader from "../controller/appLoader";
+import { AppController } from "../controller/controller";
 import Router from "../utils/router";
 
 class Store {
+
+    private router: Router;
+    private controller: AppController;
+
+    constructor() {
+        this.router = new Router();
+        this.controller = new AppController();
+    }
+
     init(): void {
-        const router = new Router();
-        window.addEventListener("hashchange", router.locationHandler);
-        router.locationHandler();
-        new AppLoader().load();
-        
+        this.drawView();
+        window.addEventListener("hashchange", this.drawView);
+    }
+
+    drawView = () => {
+        this.controller.getProduct((data) => this.router.locationHandler().then((view) => view?.draw(data.products)));
     }
 }
 

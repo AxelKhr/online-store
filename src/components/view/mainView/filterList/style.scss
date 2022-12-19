@@ -1,0 +1,11 @@
+.filter__list {
+  & a {
+    display: block;
+  }
+
+  .list__item {
+    input {
+      margin-right: 10px;
+    }
+  } 
+}
