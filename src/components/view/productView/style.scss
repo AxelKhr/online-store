@@ -1,0 +1,29 @@
+.product-page {
+  min-height: calc(100vh - 200px);
+  text-align: center;
+
+  &__path {
+    min-height: 30px;
+    background: #ddd;
+    margin-bottom: 10px;
+  }
+
+  &__box {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__view {
+    flex: 1 1 auto;
+    margin-right: 10px;
+    min-height: 200px;
+    background: lightcoral;
+  }
+
+  &__control{
+    min-width: 200px;
+    min-height: 200px;
+    background: lightblue;
+  }
+}
