@@ -1,6 +1,7 @@
 import "./style.scss";
 import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
+import createButtonGeneral from "../elements/buttons/general";
 
 export class ProductView extends AbstractView {
 
@@ -24,12 +25,12 @@ export class ProductView extends AbstractView {
 
     drawView(data: Product) {
 
-        const createElemP = (classNames: string[], textContent?: string): HTMLParagraphElement => {
+        const createElemP = (textContent: string, classNames?: string[]): HTMLParagraphElement => {
             const par = document.createElement('p');
-            par.classList.add(...classNames);
-            if (textContent) {
-                par.textContent = textContent;
+            if (classNames) {
+                par.classList.add(...classNames);
             }
+            par.textContent = textContent;
             return par;
         }
 
@@ -45,28 +46,26 @@ export class ProductView extends AbstractView {
 
         const control = document.querySelector('.product-page__control') as HTMLElement;
 
-        const buttonAdd = document.createElement('button');
-        buttonAdd.classList.add('control__button-add');
+        const buttonAdd = createButtonGeneral('control__button-add');
         buttonAdd.textContent = 'ADD';
-        const buttonBuy = document.createElement('button');
-        buttonBuy.classList.add('control__button-buy');
+        const buttonBuy = createButtonGeneral('control__button-buy');
         buttonBuy.textContent = 'BUY';
 
         control.append(
-            createElemP(['control__title'], data.title),
-            createElemP(['control__brand'], data.brand),
-            createElemP(['control__rating'], `Rating: ${data.rating}`),
-            createElemP(['control__discount'], `Discount: ${data.discountPercentage}%`),
-            createElemP(['control__stock'], `Stock: ${data.stock}`),
-            createElemP(['control__price'], `Price: ${data.price}`),
+            createElemP(data.title, ['control__title']),
+            createElemP(data.brand, ['control__brand']),
+            createElemP(`Rating: ${data.rating}`, ['control__rating']),
+            createElemP(`Discount: ${data.discountPercentage}%`, ['control__discount']),
+            createElemP(`Stock: ${data.stock}`, ['control__stock']),
+            createElemP(`Price: ${data.price}`, ['control__price']),
             buttonAdd, buttonBuy);
 
         const detailing = document.querySelector('.product-page__detailing') as HTMLElement;
         detailing.append(
-            createElemP(['detailing__title'], 'Detailing'),
-            createElemP(['detailing__item'], `Category: ${data.category}`),
-            createElemP(['detailing__item'], `Brand: ${data.brand}`),
-            createElemP(['detailing__item'], `Description: ${data.description}`)
+            createElemP('Detailing', ['detailing__title']),
+            createElemP(`Category: ${data.category}`, ['detailing__item']),
+            createElemP(`Brand: ${data.brand}`, ['detailing__item']),
+            createElemP(`Description: ${data.description}`, ['detailing__item'])
         );
     }
 }

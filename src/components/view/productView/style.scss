@@ -52,6 +52,15 @@
     .control__stock {
       font-size: 18px;
     }
+
+    .control {
+      &__button-add,
+      &__button-buy {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+      }
+    }
   }
 
   &__detailing {
