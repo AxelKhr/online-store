@@ -1,6 +1,5 @@
 .product-page {
   min-height: calc(100vh - 200px);
-  text-align: center;
 
   &__path {
     min-height: 30px;
@@ -16,14 +15,51 @@
 
   &__view {
     flex: 1 1 auto;
-    margin-right: 10px;
     min-height: 200px;
+    padding: 10px;
     background: lightcoral;
+
+    .view__image {
+      width: 100%;
+      background-size: cover;
+      background-position: center;
+      padding-top: 100%;
+    }
   }
 
   &__control{
-    min-width: 200px;
-    min-height: 200px;
+    min-width: 300px;
+    padding: 10px;
     background: lightblue;
+
+    .control__title {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .control__brand {
+      font-size: 16px;
+    }
+
+    .control__rating {
+      font-size: 18px;
+    }
+
+    .control__discount {
+      font-size: 18px;
+    }
+
+    .control__stock {
+      font-size: 18px;
+    }
+  }
+
+  &__detailing {
+    padding: 10px;
+    background: lightgreen;
+
+    .detailing__item {
+      margin: 10px 0;
+    }
   }
 }
