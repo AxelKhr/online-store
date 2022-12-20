@@ -1,4 +1,4 @@
-import { Product } from "../interface/product";
+import { Product, ProductResponse } from "../interface/product";
 
 export abstract class AbstractView {
     constructor() {
@@ -11,5 +11,5 @@ export abstract class AbstractView {
 
     abstract getView(): Promise<HTMLElement>;
 
-    draw(data: Product[]) { console.log(data) }
+    draw(data: Product[] | ProductResponse) { console.log(data) }
 }

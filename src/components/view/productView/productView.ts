@@ -1,3 +1,4 @@
+import { Product, ProductResponse } from "../../interface/product";
 import { AbstractView } from "../abstractView";
 
 export class ProductView extends AbstractView {
@@ -8,4 +9,9 @@ export class ProductView extends AbstractView {
         content.innerHTML = `<span>Product page</span>`;
         return content;
     }
+
+    draw(data: Product[]): void {
+        console.log(data);
+    }
+ 
 }

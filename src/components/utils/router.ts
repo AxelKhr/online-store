@@ -11,13 +11,11 @@ class Router {
     private homeComponent: AbstractView;
     private productComponent: AbstractView;
     private cartComponent: AbstractView;
-    curView;
 
     constructor() {
         this.homeComponent = new MainView();
         this.productComponent = new ProductView();
         this.cartComponent = new CartView();
-        this.curView = this.locationHandler;
 
         this.routes = [
             { path: /product\/\d+/g, title: 'Product', component: this.productComponent },
@@ -32,7 +30,6 @@ class Router {
             path = "/";
         }
         const route = this.findRoute(path);
-        console.log(route);
         const view = (route != null) ? await route?.component.getView() : await new ErrorView().getView();
         const content = document.getElementById("content") as HTMLElement;
         content!.innerHTML = '';

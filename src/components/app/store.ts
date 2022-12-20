@@ -17,15 +17,13 @@ class Store {
     }
 
     drawView = () => {
-        this.controller.getProducts((data) => this.router.locationHandler()
-            .then((view) => view?.draw(data.products))
-            .then(() => {
-                document.querySelector('.table__list')?.addEventListener('click', (event) => this.drawProduct(event));
+        this.controller.getProducts((data) => this.router.locationHandler().then((view) => {
+            if(data.products !== undefined) {
+                view?.draw(data.products);
+            } else {
+                view?.draw(data);
+            }
         }));
-    }
-
-    drawProduct = (e: Event) => {
-        this.controller.drawProduct(e, (data) => this.router.locationHandler().then((view) => view?.draw(data.products)));
     }
 
 }
