@@ -14,20 +14,42 @@
   }
 
   &__view {
+    position: relative;
     flex: 1 1 auto;
     min-height: 200px;
-    padding: 10px;
-    background: lightcoral;
+    margin: 10px;
 
-    .view__image {
+    .view {
+      &__image {
+        width: 100%;
+        background-size: cover;
+        background-position: center;
+        padding-top: 100%;
+      }
+    }
+
+    & .slider__buttons {
+      position: absolute;
+      left: 0;
+      top: 0;
       width: 100%;
-      background-size: cover;
-      background-position: center;
-      padding-top: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 5px;
+
+      & > button {
+        opacity: 0.2;
+      }
+
+      &:hover > button {
+        opacity: 1;
+      }
     }
   }
 
-  &__control{
+  &__control {
     min-width: 300px;
     padding: 10px;
     background: lightblue;

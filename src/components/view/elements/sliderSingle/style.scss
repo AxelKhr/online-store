@@ -1,0 +1,60 @@
+.slider {
+  position: relative;
+  overflow: hidden;
+
+  &__item {
+    display: none;
+    width: 100%;
+    height: 100%;
+    animation: 0.5s ease-in-out;
+
+    &.active {
+      display: block;
+      position: relative;
+    }
+    
+    &.next {
+      display: block;
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+  }
+
+  .to-left {
+    animation-name: single-slider-left-move;
+  }
+  
+  .to-right {
+    animation-name: single-slider-right-move;
+    animation-direction: reverse;
+  }
+
+  .from-left {
+    animation-name: single-slider-left-move;
+    animation-direction: reverse;
+  }
+  
+  .from-right {
+    animation-name: single-slider-right-move;
+  }
+}
+
+@keyframes single-slider-left-move {
+  from {
+    left: 0;
+  }
+  to {
+    left: calc(-100%);
+  }
+}
+
+@keyframes single-slider-right-move {
+  from {
+    left: calc(100%);
+  }
+  to {
+    left: 0;
+  }
+}
+

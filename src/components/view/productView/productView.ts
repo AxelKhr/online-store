@@ -2,6 +2,7 @@ import "./style.scss";
 import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import createButtonGeneral from "../elements/buttons/general";
+import SliderSingle from "../elements/sliderSingle";
 
 export class ProductView extends AbstractView {
 
@@ -39,10 +40,26 @@ export class ProductView extends AbstractView {
 
         const view = document.querySelector('.product-page__view') as HTMLElement;
 
-        const image = document.createElement('div');
-        image.classList.add('view__image');
-        image.style.backgroundImage = `url(${data.images[0]})`;
-        view.append(image);
+        const slider = new SliderSingle();
+
+        data.images.forEach((item) => {
+            const box = document.createElement('div');
+            box.classList.add('view__image');
+            box.style.backgroundImage = `url(${item})`;
+            slider.addItem(box);
+        });
+
+        const buttonsBlock = document.createElement('div');
+        buttonsBlock.classList.add('slider__buttons');
+        const buttonLeft = document.createElement('button');
+        buttonLeft.textContent = '<';
+        buttonLeft.addEventListener('click', () => slider.moveToPrev());
+        const buttonRight = document.createElement('button');
+        buttonRight.textContent = '>';
+        buttonRight.addEventListener('click', () => slider.moveToNext());
+        buttonsBlock.append(buttonLeft, buttonRight);
+
+        view.append(slider.content, buttonsBlock);
 
         const control = document.querySelector('.product-page__control') as HTMLElement;
 
