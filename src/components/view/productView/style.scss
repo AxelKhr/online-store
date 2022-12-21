@@ -16,10 +16,14 @@
   &__view {
     position: relative;
     flex: 1 1 auto;
-    min-height: 200px;
     margin: 10px;
 
     .view {
+      &__slider {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
       &__image {
         width: 100%;
         background-size: cover;
@@ -28,7 +32,7 @@
       }
     }
 
-    & .slider__buttons {
+    .slider__buttons {
       position: absolute;
       left: 0;
       top: 0;
@@ -39,7 +43,7 @@
       align-items: center;
       padding: 0 5px;
 
-      & > button {
+      > button {
         opacity: 0.2;
       }
 
