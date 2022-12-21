@@ -1,0 +1,20 @@
+.table-2cols {
+  border-collapse: collapse;
+  color: $colorTableText;
+
+  tbody {
+    tr td {
+      font-size: 1rem;
+      padding: 10px;
+    }
+    tr td:first-child {
+      font-weight: 700;
+    }
+    & > tr:nth-child(odd) {
+      background: $colorTableRowOdd;
+    }
+    & > tr:nth-child(even) {
+      background: $colorTableRowEven;
+    }
+  }
+}

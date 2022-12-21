@@ -3,6 +3,7 @@ import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import createButtonGeneral from "../elements/buttons/general";
 import SliderSingle from "../elements/sliderSingle";
+import * as tableTwoCols from "../elements/tableTwoCols";
 
 export class ProductView extends AbstractView {
 
@@ -39,9 +40,8 @@ export class ProductView extends AbstractView {
         path.textContent = 'Path';
 
         const view = document.querySelector('.product-page__view') as HTMLElement;
-
         const slider = new SliderSingle();
-
+        slider.content.classList.add('view__slider');
         data.images.forEach((item) => {
             const box = document.createElement('div');
             box.classList.add('view__image');
@@ -58,16 +58,13 @@ export class ProductView extends AbstractView {
         buttonRight.textContent = '>';
         buttonRight.addEventListener('click', () => slider.moveToNext());
         buttonsBlock.append(buttonLeft, buttonRight);
-
         view.append(slider.content, buttonsBlock);
 
         const control = document.querySelector('.product-page__control') as HTMLElement;
-
         const buttonAdd = createButtonGeneral('control__button-add');
         buttonAdd.textContent = 'ADD';
         const buttonBuy = createButtonGeneral('control__button-buy');
         buttonBuy.textContent = 'BUY';
-
         control.append(
             createElemP(data.title, ['control__title']),
             createElemP(data.brand, ['control__brand']),
@@ -78,11 +75,14 @@ export class ProductView extends AbstractView {
             buttonAdd, buttonBuy);
 
         const detailing = document.querySelector('.product-page__detailing') as HTMLElement;
+        const table = tableTwoCols.createTable();
+        table.classList.add('detailing__table');
+        tableTwoCols.addRow(table, 'Category', `${data.category}`)
+        tableTwoCols.addRow(table, 'Brand', `${data.brand}`)
+        tableTwoCols.addRow(table, 'Description', `${data.description}`)
         detailing.append(
             createElemP('Detailing', ['detailing__title']),
-            createElemP(`Category: ${data.category}`, ['detailing__item']),
-            createElemP(`Brand: ${data.brand}`, ['detailing__item']),
-            createElemP(`Description: ${data.description}`, ['detailing__item'])
+            table
         );
     }
 }
