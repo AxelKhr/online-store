@@ -1,4 +1,5 @@
 import { AppController } from "../controller/controller";
+import { Product } from "../interface/product";
 import Router from "../utils/router";
 
 class Store {
@@ -11,14 +12,21 @@ class Store {
         this.controller = new AppController();
     }
 
-    init(): void {
+    init() {
         this.drawView();
         window.addEventListener("hashchange", this.drawView);
     }
 
     drawView = () => {
-        this.controller.getProduct((data) => this.router.locationHandler().then((view) => view?.draw(data.products)));
+        this.controller.getProducts((data) => this.router.locationHandler().then((view) => {
+            if(data.products !== undefined) {
+                view?.draw(data.products);
+            } else {
+                view?.draw(data);
+            }
+        }));
     }
+
 }
 
 export default Store;

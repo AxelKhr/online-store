@@ -1,5 +1,5 @@
 import Store from "./components/app/store";
-import './style.css';
+import './style.scss';
 
 const store = new Store();
 store.init();

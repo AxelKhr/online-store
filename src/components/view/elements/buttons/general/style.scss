@@ -1,0 +1,26 @@
+.button-general {
+  display: inline-block;
+  border: 0;
+  padding: 5px 10px;
+  color: #fff;
+  background-color: $colorButtonEnable;
+  transition: all 0.2s ease-out;
+  text-decoration: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  &:hover,
+  &:focus {
+    background: $colorButtonHover;
+  }
+
+  &:focus {
+    outline: 1px dashed #fff;
+    outline-offset: -1px;
+  }
+
+  &:active {
+    background: $colorButtonActive;
+  }
+
+}
