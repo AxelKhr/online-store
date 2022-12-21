@@ -24,7 +24,7 @@ export class ProductView extends AbstractView {
         return content;
     }
 
-    draw(data: Product[]) {
+    draw(data: Product) {
 
         const createElemP = (textContent: string, classNames?: string[]): HTMLParagraphElement => {
             const par = document.createElement('p');
@@ -42,8 +42,7 @@ export class ProductView extends AbstractView {
 
         const slider = new SliderSingle();
 
-        const product = data[0];
-        product.images.forEach((item) => {
+        data.images.forEach((item) => {
             const box = document.createElement('div');
             box.classList.add('view__image');
             box.style.backgroundImage = `url(${item})`;
@@ -70,20 +69,20 @@ export class ProductView extends AbstractView {
         buttonBuy.textContent = 'BUY';
 
         control.append(
-            createElemP(product.title, ['control__title']),
-            createElemP(product.brand, ['control__brand']),
-            createElemP(`Rating: ${product.rating}`, ['control__rating']),
-            createElemP(`Discount: ${product.discountPercentage}%`, ['control__discount']),
-            createElemP(`Stock: ${product.stock}`, ['control__stock']),
-            createElemP(`Price: ${product.price}`, ['control__price']),
+            createElemP(data.title, ['control__title']),
+            createElemP(data.brand, ['control__brand']),
+            createElemP(`Rating: ${data.rating}`, ['control__rating']),
+            createElemP(`Discount: ${data.discountPercentage}%`, ['control__discount']),
+            createElemP(`Stock: ${data.stock}`, ['control__stock']),
+            createElemP(`Price: ${data.price}`, ['control__price']),
             buttonAdd, buttonBuy);
 
         const detailing = document.querySelector('.product-page__detailing') as HTMLElement;
         detailing.append(
             createElemP('Detailing', ['detailing__title']),
-            createElemP(`Category: ${product.category}`, ['detailing__item']),
-            createElemP(`Brand: ${product.brand}`, ['detailing__item']),
-            createElemP(`Description: ${product.description}`, ['detailing__item'])
+            createElemP(`Category: ${data.category}`, ['detailing__item']),
+            createElemP(`Brand: ${data.brand}`, ['detailing__item']),
+            createElemP(`Description: ${data.description}`, ['detailing__item'])
         );
     }
 }

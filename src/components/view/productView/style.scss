@@ -15,7 +15,7 @@
 
   &__view {
     position: relative;
-    flex: 1 1 auto;
+    flex: 1 1 50%;
     min-height: 200px;
     margin: 10px;
 
@@ -40,6 +40,7 @@
       padding: 0 5px;
 
       & > button {
+        margin: 0;
         opacity: 0.2;
       }
 
@@ -50,8 +51,9 @@
   }
 
   &__control {
-    min-width: 300px;
+    min-width: 500px;
     padding: 10px;
+    margin-left: 300px;
     background: lightblue;
 
     .control__title {

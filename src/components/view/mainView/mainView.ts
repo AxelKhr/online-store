@@ -41,7 +41,6 @@ export class MainView extends AbstractView {
     }
 
     draw(data: Product[]): void {
-        console.log(data);
         const categories = new Set<string>();
         const brands = new Set<string>();
         const fragment = document.createDocumentFragment();
