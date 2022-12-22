@@ -25,7 +25,7 @@ export class ProductView extends AbstractView {
         return content;
     }
 
-    drawView(data: Product) {
+    draw(data: Product) {
 
         const createElemP = (textContent: string, classNames?: string[]): HTMLParagraphElement => {
             const par = document.createElement('p');

@@ -12,7 +12,7 @@ export interface Product {
   images: string[];
 }
 
-export interface ProductResponse {
+export type ProductResponse = {
   products: Product[];
   total: number;
   skip: number;

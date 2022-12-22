@@ -11,18 +11,16 @@ class Router {
     private homeComponent: AbstractView;
     private productComponent: AbstractView;
     private cartComponent: AbstractView;
-    curView;
 
     constructor() {
         this.homeComponent = new MainView();
         this.productComponent = new ProductView();
         this.cartComponent = new CartView();
-        this.curView = this.locationHandler;
 
         this.routes = [
-            { path: '/', title: 'Online store', component: this.homeComponent },
-            { path: 'product', title: 'Product', component: this.productComponent },
-            { path: 'cart', title: 'Cart', component: this.cartComponent }
+            { path: /product\/\d+/g, title: 'Product', component: this.productComponent },
+            { path: /cart/g, title: 'Cart', component: this.cartComponent },
+            { path: /\//g, title: 'Online store', component: this.homeComponent }
         ]
     }
 
@@ -40,7 +38,7 @@ class Router {
         return route?.component;
     };
 
-    findRoute = (url: string) => this.routes.find((route) => route.path == url);
+    findRoute = (url: string) => this.routes.find((route) => url.match(route.path));
 
 }
 
