@@ -65,6 +65,7 @@ export class ProductView extends AbstractView {
 
         const buttonAdd = createButtonGeneral('control__button-add');
         buttonAdd.textContent = 'ADD';
+        buttonAdd.addEventListener('click', () => this.addToCart(data));
         const buttonBuy = createButtonGeneral('control__button-buy');
         buttonBuy.textContent = 'BUY';
 
@@ -84,5 +85,22 @@ export class ProductView extends AbstractView {
             createElemP(`Brand: ${data.brand}`, ['detailing__item']),
             createElemP(`Description: ${data.description}`, ['detailing__item'])
         );
+    }
+
+    addToCart(data: Product): void {
+        const cartData = JSON.parse(localStorage.getItem('cart-items')!);
+            const cartItems = new Set<string>(Array.from(cartData));
+            const cartSize = cartItems.size;
+            const cart = document.querySelector('.indicator__span') as HTMLElement;
+            const totalSum = document.querySelector('#total') as HTMLElement;
+            const itemStr = JSON.stringify(data);
+            cartItems.add(itemStr);
+            if(cartSize !== cartItems.size) {
+                localStorage.setItem('cart-items', JSON.stringify(Array.from(cartItems)));
+                cart.innerText! = `${cartItems.size}`;
+                let sum = Number(totalSum.innerText);
+                sum += data.price;
+                totalSum.innerText! = `${sum}`;
+            }
     }
 }

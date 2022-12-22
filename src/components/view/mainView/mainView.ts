@@ -104,12 +104,15 @@ export class MainView extends AbstractView {
 
     addToCart(item: Product): void {
         const itemStr = JSON.stringify(item);
+        const cartSize = this.cartItems.size;
         this.cartItems.add(itemStr);
-        localStorage.setItem('cart-items', JSON.stringify(Array.from(this.cartItems)));
-        this.cart.innerText! = `${this.cartItems.size}`;
-        let sum = Number(this.totalSum.innerText);
-        sum += item.price;
-        this.totalSum.innerText! = `${sum}`;
+        if(cartSize !== this.cartItems.size) {
+            localStorage.setItem('cart-items', JSON.stringify(Array.from(this.cartItems)));
+            this.cart.innerText! = `${this.cartItems.size}`;
+            let sum = Number(this.totalSum.innerText);
+            sum += item.price;
+            this.totalSum.innerText! = `${sum}`;
+        }
     }
 
 }
