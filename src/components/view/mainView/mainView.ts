@@ -3,16 +3,15 @@ import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
 import * as FilterList from "./filterList";
+import { Cart } from "../cartView/cart/cart";
 
 export class MainView extends AbstractView {
-    
-    private cartItems!: Set<string>;
-    private cart!: HTMLElement;
-    private totalSum!: HTMLElement; 
 
-    constructor() {
+    private cart: Cart;
+
+    constructor(cart: Cart) {
         super();
-        this.initView();
+        this.cart = cart;
     }
 
     async getView(): Promise<HTMLElement> {
@@ -62,7 +61,7 @@ export class MainView extends AbstractView {
                 const target = e.target! as HTMLElement;
                 if(target.closest('button')) {
                     e.preventDefault();
-                    this.addToCart(item);
+                    this.cart.addToCart(item);
                 }
             });
         });
@@ -87,32 +86,6 @@ export class MainView extends AbstractView {
         box.innerHTML = '';
         const list = FilterList.createFilterList(brands);
         box.append(list);
-    }
-
-    initView() {
-        const data = JSON.parse(localStorage.getItem('cart-items')!);
-        (data !== null) ? this.cartItems = new Set<string>(Array.from(data)) : this.cartItems = new Set<string>();
-        this.cart = document.querySelector('.indicator__span') as HTMLElement;
-        this.totalSum = document.querySelector('#total') as HTMLElement;
-        this.cart.innerText = `${this.cartItems.size}`;
-        let sum = 0;
-        this.cartItems.forEach(el => {
-            sum += JSON.parse(el).price;
-        });
-        this.totalSum.innerText! = `${sum}`;
-    }
-
-    addToCart(item: Product): void {
-        const itemStr = JSON.stringify(item);
-        const cartSize = this.cartItems.size;
-        this.cartItems.add(itemStr);
-        if(cartSize !== this.cartItems.size) {
-            localStorage.setItem('cart-items', JSON.stringify(Array.from(this.cartItems)));
-            this.cart.innerText! = `${this.cartItems.size}`;
-            let sum = Number(this.totalSum.innerText);
-            sum += item.price;
-            this.totalSum.innerText! = `${sum}`;
-        }
     }
 
 }

@@ -3,8 +3,16 @@ import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import createButtonGeneral from "../elements/buttons/general";
 import SliderSingle from "../elements/sliderSingle";
+import { Cart } from "../cartView/cart/cart";
 
 export class ProductView extends AbstractView {
+
+    private cart: Cart;
+
+    constructor(cart: Cart) {
+        super();
+        this.cart = cart;
+    }
 
     async getView(): Promise<HTMLElement> {
         const content = document.createElement('section') as HTMLElement;
@@ -65,7 +73,7 @@ export class ProductView extends AbstractView {
 
         const buttonAdd = createButtonGeneral('control__button-add');
         buttonAdd.textContent = 'ADD';
-        buttonAdd.addEventListener('click', () => this.addToCart(data));
+        buttonAdd.addEventListener('click', () => this.cart.addToCart(data));
         const buttonBuy = createButtonGeneral('control__button-buy');
         buttonBuy.textContent = 'BUY';
 
@@ -85,22 +93,5 @@ export class ProductView extends AbstractView {
             createElemP(`Brand: ${data.brand}`, ['detailing__item']),
             createElemP(`Description: ${data.description}`, ['detailing__item'])
         );
-    }
-
-    addToCart(data: Product): void {
-        const cartData = JSON.parse(localStorage.getItem('cart-items')!);
-            const cartItems = new Set<string>(Array.from(cartData));
-            const cartSize = cartItems.size;
-            const cart = document.querySelector('.indicator__span') as HTMLElement;
-            const totalSum = document.querySelector('#total') as HTMLElement;
-            const itemStr = JSON.stringify(data);
-            cartItems.add(itemStr);
-            if(cartSize !== cartItems.size) {
-                localStorage.setItem('cart-items', JSON.stringify(Array.from(cartItems)));
-                cart.innerText! = `${cartItems.size}`;
-                let sum = Number(totalSum.innerText);
-                sum += data.price;
-                totalSum.innerText! = `${sum}`;
-            }
     }
 }
