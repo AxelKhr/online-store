@@ -2,23 +2,27 @@
   min-height: calc(100vh - 200px);
 
   &__path {
-    min-height: 30px;
-    background: #ddd;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 
   &__box {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    margin-bottom: 20px;
   }
 
   &__view {
-    position: relative;
     flex: 1 1 auto;
-    margin: 10px;
+    padding: 20px;
+    background: $colorBackgroundMainBlocks;
+    margin-right: 20px;
 
     .view {
+      &__container {
+        position: relative;
+      }
+
       &__slider {
         max-width: 500px;
         margin: 0 auto;
@@ -55,8 +59,8 @@
 
   &__control {
     min-width: 300px;
-    padding: 10px;
-    background: lightblue;
+    padding: 20px;
+    background: $colorBackgroundMainBlocks;
 
     .control__title {
       font-size: 24px;
@@ -90,11 +94,17 @@
   }
 
   &__detailing {
-    padding: 10px;
-    background: lightgreen;
+    padding: 20px;
+    background: $colorBackgroundMainBlocks;
 
-    .detailing__table {
-      width: 100%;
+    .detailing {
+      &__title {
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+      }
+      &__table {
+        width: 100%;
+      }
     }
   }
 }

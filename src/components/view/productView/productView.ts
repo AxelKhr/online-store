@@ -40,6 +40,9 @@ export class ProductView extends AbstractView {
         path.textContent = 'Path';
 
         const view = document.querySelector('.product-page__view') as HTMLElement;
+        const viewContainer = document.createElement('div');
+        viewContainer.classList.add('view__container');
+        view.append(viewContainer);
         const slider = new SliderSingle();
         slider.content.classList.add('view__slider');
         data.images.forEach((item) => {
@@ -48,7 +51,6 @@ export class ProductView extends AbstractView {
             box.style.backgroundImage = `url(${item})`;
             slider.addItem(box);
         });
-
         const buttonsBlock = document.createElement('div');
         buttonsBlock.classList.add('slider__buttons');
         const buttonLeft = document.createElement('button');
@@ -58,7 +60,7 @@ export class ProductView extends AbstractView {
         buttonRight.textContent = '>';
         buttonRight.addEventListener('click', () => slider.moveToNext());
         buttonsBlock.append(buttonLeft, buttonRight);
-        view.append(slider.content, buttonsBlock);
+        viewContainer.append(slider.content, buttonsBlock);
 
         const control = document.querySelector('.product-page__control') as HTMLElement;
         const buttonAdd = createButtonGeneral('control__button-add');
