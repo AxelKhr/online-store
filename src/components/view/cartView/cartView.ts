@@ -12,4 +12,13 @@ export class CartView extends AbstractView {
         </div>`;
         return content;
     }
+
+    draw(): void {
+        const data = JSON.parse(localStorage.getItem('cart-items')!);
+        if (data !== null) {
+            const content = document.querySelector('.cart-page') as HTMLElement;
+            content.innerHTML = data;
+        }
+    }
+
 }

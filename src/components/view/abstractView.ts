@@ -11,5 +11,5 @@ export abstract class AbstractView {
 
     abstract getView(): Promise<HTMLElement>;
 
-    draw(data: Product[] | Product | ProductResponse) { console.log(data) }
+    abstract draw(data?: Product[] | Product | ProductResponse): void;
 }

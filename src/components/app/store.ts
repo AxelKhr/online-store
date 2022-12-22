@@ -1,5 +1,4 @@
 import { AppController } from "../controller/controller";
-import { Product } from "../interface/product";
 import Router from "../utils/router";
 
 class Store {
