@@ -18,6 +18,13 @@ export default class SliderSingle {
     return this._items;
   }
 
+  getCurrentItem(): HTMLDivElement | null {
+    if (this._curItemIndex < this._items.length) {
+      return this._items[this._curItemIndex];
+    }
+    return null;
+  }
+
   addItem(item: HTMLDivElement) {
     item.classList.add('slider__item');
     if (this._items.length === 0) {
@@ -48,7 +55,7 @@ export default class SliderSingle {
     this._items[index].classList.add(direction);
     this._items[index].addEventListener('animationend', () => {
       this._items[index].classList.remove('active', direction);
-    })
+    }, { once: true })
   }
 
   private showItem(index: number, direction: string) {
@@ -57,6 +64,6 @@ export default class SliderSingle {
       this._items[index].classList.remove('next', direction);
       this._items[index].classList.add('active');
       this._isEnable = true;
-    })
+    }, { once: true })
   }
 }

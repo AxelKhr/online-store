@@ -4,6 +4,7 @@ import { Product } from "../../interface/product";
 import createButtonGeneral from "../elements/buttons/general";
 import SliderSingle from "../elements/sliderSingle";
 import * as tableTwoCols from "../elements/tableTwoCols";
+import * as ModalWindow from "../elements/modalWindow";
 
 export class ProductView extends AbstractView {
 
@@ -21,7 +22,9 @@ export class ProductView extends AbstractView {
         box.append(view, control);
         const detailing = document.createElement('div');
         detailing.classList.add('product-page__detailing');
+        const modalWindow = ModalWindow.create('product-page__modal-image');
         content.append(path, box, detailing);
+        document.body.append(modalWindow);
         return content;
     }
 
@@ -40,27 +43,46 @@ export class ProductView extends AbstractView {
         path.textContent = 'Path';
 
         const view = document.querySelector('.product-page__view') as HTMLElement;
-        const viewContainer = document.createElement('div');
-        viewContainer.classList.add('view__container');
-        view.append(viewContainer);
+        const sliderContainer = document.createElement('div');
+        sliderContainer.classList.add('view__slider-container');
+        view.append(sliderContainer);
+        const sliderWrapper = document.createElement('div');
+        sliderWrapper.classList.add('view__slider-wrapper');
         const slider = new SliderSingle();
         slider.content.classList.add('view__slider');
         data.images.forEach((item) => {
             const box = document.createElement('div');
             box.classList.add('view__image');
-            box.style.backgroundImage = `url(${item})`;
+            const imageWrapper = document.createElement('div');
+            const image = document.createElement('img');
+            image.src = item;
+            //image.src = 'https://redarc.systems/wp-content/uploads/2019/10/RED-200x400.png';
+            image.alt = data.title;
+            imageWrapper.append(image);
+            box.append(imageWrapper);
             slider.addItem(box);
         });
+        sliderContainer.addEventListener('click', (event) => {
+            console.dir(event);
+            ModalWindow.show('product-page__modal-image', slider.getCurrentItem() as HTMLDivElement);
+        });
+        sliderWrapper.append(slider.content);
         const buttonsBlock = document.createElement('div');
         buttonsBlock.classList.add('slider__buttons');
         const buttonLeft = document.createElement('button');
         buttonLeft.textContent = '<';
-        buttonLeft.addEventListener('click', () => slider.moveToPrev());
+        buttonLeft.addEventListener('click', (event) => {
+            event.stopPropagation();
+            slider.moveToPrev();
+        });
         const buttonRight = document.createElement('button');
         buttonRight.textContent = '>';
-        buttonRight.addEventListener('click', () => slider.moveToNext());
+        buttonRight.addEventListener('click', (event) => {
+            event.stopPropagation();
+            slider.moveToNext()
+        });
         buttonsBlock.append(buttonLeft, buttonRight);
-        viewContainer.append(slider.content, buttonsBlock);
+        sliderContainer.append(sliderWrapper, buttonsBlock);
 
         const control = document.querySelector('.product-page__control') as HTMLElement;
         const buttonAdd = createButtonGeneral('control__button-add');

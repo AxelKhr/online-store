@@ -1,6 +1,5 @@
 import "./style.scss";
 
-
 function createTable(): HTMLTableElement {
   const table = document.createElement('table');
   table.classList.add('table-2cols');
