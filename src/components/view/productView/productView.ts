@@ -56,7 +56,6 @@ export class ProductView extends AbstractView {
             const imageWrapper = document.createElement('div');
             const image = document.createElement('img');
             image.src = item;
-            //image.src = 'https://redarc.systems/wp-content/uploads/2019/10/RED-200x400.png';
             image.alt = data.title;
             imageWrapper.append(image);
             box.append(imageWrapper);
