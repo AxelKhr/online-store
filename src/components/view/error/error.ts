@@ -1,3 +1,4 @@
+import { Product, ProductResponse } from "../../interface/product";
 import { AbstractView } from "../abstractView";
 
 export class ErrorView extends AbstractView {
@@ -13,5 +14,9 @@ export class ErrorView extends AbstractView {
             </div>
             <a href="#" class="error-btn">Back to main page</a>`;
         return content;
+    }
+
+    draw(data: Product | Product[] | ProductResponse): void {
+        throw new Error("Method not implemented.");
     }
 }

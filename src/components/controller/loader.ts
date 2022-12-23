@@ -37,7 +37,6 @@ class Loader {
         Object.keys(urlOptions).forEach((key) => {
             url += `${key}=${urlOptions[key]}&`;
         });
-        console.log(url.slice(0, -1))
         return url.slice(0, -1);
     }
 

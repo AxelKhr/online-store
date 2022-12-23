@@ -3,8 +3,16 @@ import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import createButtonGeneral from "../elements/buttons/general";
 import SliderSingle from "../elements/sliderSingle";
+import { Cart } from "../cartView/cart/cart";
 
 export class ProductView extends AbstractView {
+
+    private cart: Cart;
+
+    constructor(cart: Cart) {
+        super();
+        this.cart = cart;
+    }
 
     async getView(): Promise<HTMLElement> {
         const content = document.createElement('section') as HTMLElement;
@@ -65,6 +73,7 @@ export class ProductView extends AbstractView {
 
         const buttonAdd = createButtonGeneral('control__button-add');
         buttonAdd.textContent = 'ADD';
+        buttonAdd.addEventListener('click', () => this.cart.addToCart(data));
         const buttonBuy = createButtonGeneral('control__button-buy');
         buttonBuy.textContent = 'BUY';
 
