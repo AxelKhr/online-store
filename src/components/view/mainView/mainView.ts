@@ -3,11 +3,15 @@ import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
 import * as FilterList from "./filterList";
+import { Cart } from "../cartView/cart/cart";
 
 export class MainView extends AbstractView {
-    
-    constructor() {
+
+    private cart: Cart;
+
+    constructor(cart: Cart) {
         super();
+        this.cart = cart;
     }
 
     async getView(): Promise<HTMLElement> {
@@ -53,6 +57,13 @@ export class MainView extends AbstractView {
             fragment.append(card);
             categories.add(item.category);
             brands.add(item.brand);
+            card.addEventListener('click', (e: Event) => {
+                const target = e.target! as HTMLElement;
+                if(target.closest('button')) {
+                    e.preventDefault();
+                    this.cart.addToCart(item);
+                }
+            });
         });
 
         const parent = document.querySelector('.table__list') as HTMLElement;
@@ -76,4 +87,5 @@ export class MainView extends AbstractView {
         const list = FilterList.createFilterList(brands);
         box.append(list);
     }
+
 }

@@ -1,5 +1,6 @@
 import { Route } from "../interface/route";
 import { AbstractView } from "../view/abstractView";
+import { Cart } from "../view/cartView/cart/cart";
 import { CartView } from "../view/cartView/cartView";
 import { ErrorView } from "../view/error/error";
 import { MainView } from "../view/mainView/mainView";
@@ -8,13 +9,14 @@ import { ProductView } from "../view/productView/productView";
 class Router {
 
     private readonly routes: Array<Route>;
+    private cart: Cart = new Cart();
     private homeComponent: AbstractView;
     private productComponent: AbstractView;
     private cartComponent: AbstractView;
 
     constructor() {
-        this.homeComponent = new MainView();
-        this.productComponent = new ProductView();
+        this.homeComponent = new MainView(this.cart);
+        this.productComponent = new ProductView(this.cart);
         this.cartComponent = new CartView();
 
         this.routes = [

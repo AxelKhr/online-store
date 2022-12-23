@@ -5,8 +5,16 @@ import createButtonGeneral from "../elements/buttons/general";
 import SliderSingle from "../elements/sliderSingle";
 import * as tableTwoCols from "../elements/tableTwoCols";
 import * as ModalWindow from "../elements/modalWindow";
+import { Cart } from "../cartView/cart/cart";
 
 export class ProductView extends AbstractView {
+
+    private cart: Cart;
+
+    constructor(cart: Cart) {
+        super();
+        this.cart = cart;
+    }
 
     async getView(): Promise<HTMLElement> {
         const content = document.createElement('section') as HTMLElement;
@@ -86,6 +94,7 @@ export class ProductView extends AbstractView {
         const control = document.querySelector('.product-page__control') as HTMLElement;
         const buttonAdd = createButtonGeneral('control__button-add');
         buttonAdd.textContent = 'ADD';
+        buttonAdd.addEventListener('click', () => this.cart.addToCart(data));
         const buttonBuy = createButtonGeneral('control__button-buy');
         buttonBuy.textContent = 'BUY';
         control.append(
