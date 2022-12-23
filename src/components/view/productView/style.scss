@@ -2,33 +2,50 @@
   min-height: calc(100vh - 200px);
 
   &__path {
-    min-height: 30px;
-    background: #ddd;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
 
   &__box {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    margin-bottom: 20px;
   }
 
   &__view {
-    position: relative;
-    flex: 1 1 50%;
-    min-height: 200px;
-    margin: 10px;
+    flex: 1 1 auto;
+    padding: 20px;
+    background: $colorBackgroundMainBlocks;
+    margin-right: 20px;
 
     .view {
-      &__image {
+      &__slider-container {
+        position: relative;
+      }
+
+      &__slider-wrapper {
+        position: relative;
+        max-width: 500px;
+        margin: 0 auto;
+
+        &::before {
+          display: block;
+          content: '';
+          width: 100%;
+          padding-top: 100%;
+        }
+      }
+
+      &__slider {
+        position: absolute;
+        left: 0;
+        top: 0;
         width: 100%;
-        background-size: cover;
-        background-position: center;
-        padding-top: 100%;
+        height: 100%;
       }
     }
 
-    & .slider__buttons {
+    .slider__buttons {
       position: absolute;
       left: 0;
       top: 0;
@@ -39,8 +56,7 @@
       align-items: center;
       padding: 0 5px;
 
-      & > button {
-        margin: 0;
+      > button {
         opacity: 0.2;
       }
 
@@ -51,10 +67,9 @@
   }
 
   &__control {
-    min-width: 500px;
-    padding: 10px;
-    margin-left: 300px;
-    background: lightblue;
+    min-width: 300px;
+    padding: 20px;
+    background: $colorBackgroundMainBlocks;
 
     .control__title {
       font-size: 24px;
@@ -88,11 +103,35 @@
   }
 
   &__detailing {
-    padding: 10px;
-    background: lightgreen;
+    padding: 20px;
+    background: $colorBackgroundMainBlocks;
 
-    .detailing__item {
-      margin: 10px 0;
+    .detailing {
+      &__title {
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+      }
+      &__table {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.view__image {
+
+  div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+      max-height: 100%;
     }
   }
 }
