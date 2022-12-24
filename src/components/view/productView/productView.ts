@@ -6,6 +6,7 @@ import SliderSingle from "../elements/sliderSingle";
 import * as tableTwoCols from "../elements/tableTwoCols";
 import * as ModalWindow from "../elements/modalWindow";
 import { Cart } from "../cartView/cart/cart";
+import { ProductModel } from "../../model/ProductModel";
 
 export class ProductView extends AbstractView {
 
@@ -36,8 +37,8 @@ export class ProductView extends AbstractView {
         return content;
     }
 
-    draw(data: Product) {
-
+    draw(model: ProductModel) {
+        const data = model.getProducts()[Number(this.getAttrubute()) - 1];
         const createElemP = (textContent: string, classNames?: string[]): HTMLParagraphElement => {
             const par = document.createElement('p');
             if (classNames) {

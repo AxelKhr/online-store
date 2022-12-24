@@ -1,4 +1,5 @@
 import { Product, ProductResponse } from "../../interface/product";
+import { ProductModel } from "../../model/ProductModel";
 import { AbstractView } from "../abstractView";
 
 export class ErrorView extends AbstractView {
@@ -16,7 +17,7 @@ export class ErrorView extends AbstractView {
         return content;
     }
 
-    draw(data: Product | Product[] | ProductResponse): void {
+    draw(model: ProductModel): void {
         throw new Error("Method not implemented.");
     }
 }

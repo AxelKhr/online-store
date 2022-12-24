@@ -4,6 +4,7 @@ import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
 import * as FilterList from "./filterList";
 import { Cart } from "../cartView/cart/cart";
+import { ProductModel } from "../../model/ProductModel";
 
 export class MainView extends AbstractView {
 
@@ -44,9 +45,11 @@ export class MainView extends AbstractView {
         return content;
     }
 
-    draw(data: Product[]): void {
-        const categories = new Set<string>();
-        const brands = new Set<string>();
+    draw(model: ProductModel): void {
+        const data = model.getProducts();
+        const categories = model.getCategories();
+        const brands = model.getBrands();
+        
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
 

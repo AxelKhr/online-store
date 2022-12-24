@@ -1,29 +1,24 @@
 import { AppController } from "../controller/controller";
-import Router from "../utils/router";
 
 class Store {
 
-    private router: Router;
     private controller: AppController;
 
     constructor() {
-        this.router = new Router();
         this.controller = new AppController();
     }
 
     init() {
-        this.drawView();
+        this.controller.loadData(async (data) => {
+            await this.controller.initProducts(data.products)
+                .then(this.drawView);
+        });
         window.addEventListener("hashchange", this.drawView);
     }
 
     drawView = () => {
-        this.controller.getProducts((data) => this.router.locationHandler().then((view) => {
-            if(data.products !== undefined) {
-                view?.draw(data.products);
-            } else {
-                view?.draw(data);
-            }
-        }));
+        this.controller.drawView();
+
     }
 
 }

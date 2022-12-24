@@ -1,18 +1,36 @@
 import { Endpoint } from "../enum/endpoint";
 import { Callback } from "../interface/callback";
 import { Product, ProductResponse } from "../interface/product";
+import { ProductModel } from "../model/ProductModel";
+import Router from "../utils/router";
 import AppLoader from "./appLoader";
 
 export class AppController extends AppLoader {
-    getProducts(callback: Callback<ProductResponse>): void {
-        const path = window.location.hash.split('/');
-        const id = (path.length > 1) ? path[1] : '';
+    
+    private router: Router;
+    private model: ProductModel;
+
+    constructor() {
+        super();
+        this.router = new Router();
+        this.model = new ProductModel();
+    }
+
+    loadData(callback: Callback<ProductResponse>) {
         super.getResp<ProductResponse>(
             {
-                endpoint: Endpoint.Products + `/${id}`,
+                endpoint: Endpoint.Products,
             },
             callback
         );
         return;
+    }
+
+    async initProducts(products: Product[]) {
+        this.model.setProducts(products);
+    }
+    
+    drawView() {
+        this.router.locationHandler().then((view) => view?.draw(this.model));
     }
 }
