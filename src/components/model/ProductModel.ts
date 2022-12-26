@@ -12,6 +12,10 @@ export class ProductModel {
         return this.products;
     }
 
+    getProductById(id: number) {
+        return this.products.filter((el) => el.id == id)[0];
+    }
+
     getCategories() {
         const categories = new Set<string>();
         this.products.forEach((el) => categories.add(el.category));

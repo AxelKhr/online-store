@@ -38,7 +38,7 @@ export class ProductView extends AbstractView {
     }
 
     draw(model: ProductModel) {
-        const data = model.getProducts()[Number(this.getAttrubute()) - 1];
+        const data = model.getProductById(Number(this.getAttrubute('id')));
         const createElemP = (textContent: string, classNames?: string[]): HTMLParagraphElement => {
             const par = document.createElement('p');
             if (classNames) {

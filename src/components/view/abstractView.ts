@@ -3,23 +3,22 @@ import { ProductModel } from "../model/ProductModel";
 
 export abstract class AbstractView {
 
-    private attribute: string;
+    private attribute!: URLSearchParams;
 
     constructor() {
         document.title = 'Online store';
-        this.attribute = '';
     }
 
     setTitle(title: string) {
         document.title = title;
     }
 
-    setAttribute(attribute: string) {
+    setAttribute(attribute: URLSearchParams) {
         this.attribute = attribute;
     }
 
-    getAttrubute() {
-        return this.attribute;
+    getAttrubute(key: string) {
+        return this.attribute.get(key);
     }
 
     abstract getView(): Promise<HTMLElement>;

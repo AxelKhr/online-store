@@ -20,21 +20,25 @@ class Router {
         this.cartComponent = new CartView();
 
         this.routes = [
-            { path: /product\/\d+/g, title: 'Product', component: this.productComponent },
+            { path: /product\/\?id=\d+/g, title: 'Product', component: this.productComponent },
             { path: /cart/g, title: 'Cart', component: this.cartComponent },
             { path: /\//g, title: 'Online store', component: this.homeComponent }
         ]
     }
 
     locationHandler = async () => {
-        let path: string = window.location.hash.replace("#", "");
+        let path: string = window.location.hash.replace('#', '');
         if (path.length == 0) {
             path = '/';
         }
+        const params = (new URL(path, window.location.origin)).searchParams; 
+        console.log(params.keys())
+        console.log(params.get("brand"));
+
         const route = this.findRoute(path);
         const view = (route != null) ? await route?.component.getView() : await new ErrorView().getView();
         const pathArr = path.split('/');
-        route?.component.setAttribute(pathArr[pathArr.length - 1]);
+        route?.component.setAttribute(params);
         const content = document.getElementById("content") as HTMLElement;
         content!.innerHTML = '';
         content.appendChild(view);
