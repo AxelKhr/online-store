@@ -6,14 +6,12 @@ function createFilterList(data: Set<string>): HTMLUListElement {
   data.forEach((item) => {
     const listItem = document.createElement('li');
     listItem.classList.add('list__item');
-    const link = document.createElement('a');
-    link.href = '#';
     const label = document.createElement('label');
     const checkBox = document.createElement('input');
+    checkBox.dataset.name = item;
     checkBox.type = 'checkbox';
     label.append(checkBox, item);
-    link.append(label);
-    listItem.append(link);
+    listItem.append(label);
     list.append(listItem);
   });
   return list;

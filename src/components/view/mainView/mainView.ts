@@ -8,10 +8,18 @@ import { Cart } from "../cartView/cart/cart";
 export class MainView extends AbstractView {
 
     private cart: Cart;
+    private eventChangeParams: CustomEvent;
+    private params: Set<string>;
 
     constructor(cart: Cart) {
         super();
         this.cart = cart;
+        this.params = new Set<string>();
+
+        this.eventChangeParams = new CustomEvent('changeparams', {
+            bubbles: true,
+            detail: { view: this }
+        });
     }
 
     async getView(): Promise<HTMLElement> {
@@ -59,7 +67,7 @@ export class MainView extends AbstractView {
             brands.add(item.brand);
             card.addEventListener('click', (e: Event) => {
                 const target = e.target! as HTMLElement;
-                if(target.closest('button')) {
+                if (target.closest('button')) {
                     e.preventDefault();
                     this.cart.addToCart(item);
                 }
@@ -86,6 +94,19 @@ export class MainView extends AbstractView {
         box.innerHTML = '';
         const list = FilterList.createFilterList(brands);
         box.append(list);
+        list.addEventListener('click', (event) => {
+            if (event.target instanceof HTMLInputElement) {
+                const elem = event.target as HTMLInputElement;
+                if (elem.dataset.name) {
+                    (elem.checked) ? this.params.add(elem.dataset.name) : this.params.delete(elem.dataset.name);
+                    document.dispatchEvent(this.eventChangeParams);
+                }
+            }
+        })
+    }
+
+    getParams() {
+        return [...this.params].join('|');
     }
 
 }
