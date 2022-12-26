@@ -1,34 +1,24 @@
 import { AppController } from "../controller/controller";
 import Router from "../utils/router";
 import DataModel from "../model/dataModel";
-import { Cart } from "../view/cartView/cart/cart";
-import { AbstractView } from "../view/abstractView";
-import { CartView } from "../view/cartView/cartView";
-import { MainView } from "../view/mainView/mainView";
-import { ProductView } from "../view/productView/productView";
+import AppView from "../view/appView";
 
 class Store {
 
     private router: Router;
     private controller: AppController;
     private dataModel: DataModel;
-    private cart: Cart;
-    private homeView: MainView;
-    private productView: ProductView;
-    private cartView: CartView;
+    private appView: AppView;
 
     constructor() {
         this.router = new Router();
         this.controller = new AppController();
         this.dataModel = new DataModel();
-        this.cart = new Cart();
-        this.homeView = new MainView(this.cart);
-        this.productView = new ProductView(this.cart);
-        this.cartView = new CartView();
+        this.appView = new AppView(this.controller);
 
-        this.router.addRoute(/product\/\d+/g, 'Product', this.productView);
-        this.router.addRoute(/cart/g, 'Cart', this.cartView)
-        this.router.addRoute(/\//g, 'Online store', this.homeView);
+        this.router.addRoute(/product\/\d+/g, 'Product', this.appView.productView);
+        this.router.addRoute(/cart/g, 'Cart', this.appView.cartView)
+        this.router.addRoute(/\//g, 'Online store', this.appView.homeView);
     }
 
     init() {
