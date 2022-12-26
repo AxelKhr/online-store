@@ -13,9 +13,9 @@ class Store {
     private controller: AppController;
     private dataModel: DataModel;
     private cart: Cart;
-    private homeView: AbstractView;
-    private productView: AbstractView;
-    private cartView: AbstractView;
+    private homeView: MainView;
+    private productView: ProductView;
+    private cartView: CartView;
 
     constructor() {
         this.router = new Router();
@@ -26,9 +26,9 @@ class Store {
         this.productView = new ProductView(this.cart);
         this.cartView = new CartView();
 
-        this.router.addRoute('\/', 'Online store', this.homeView);
-        this.router.addRoute('product\/\d+', 'Product', this.productView);
-        this.router.addRoute('cart', 'Cart', this.cartView)
+        this.router.addRoute(/product\/\d+/g, 'Product', this.productView);
+        this.router.addRoute(/cart/g, 'Cart', this.cartView)
+        this.router.addRoute(/\//g, 'Online store', this.homeView);
     }
 
     init() {
@@ -46,20 +46,6 @@ class Store {
                 }
             })
         })
-    }
-
-    drawView = () => {
-        this.controller.getProducts((data) => this.router.locationHandler().then((view) => {
-            //            if (view === undefined) console.log('View undefined');
-            console.log(data);
-
-            if (data.products !== undefined) {
-                view?.draw(data.products);
-            } else {
-                view?.draw(data);
-            }
-
-        }));
     }
 
 }

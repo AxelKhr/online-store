@@ -15,9 +15,7 @@ class Router {
         if (path.length == 0) {
             path = "/";
         }
-        console.log(`Path: ${path}`);
         const route = this.findRoute(path);
-        console.log(route);
         const view = (route != null) ? await route?.component.getView() : await new ErrorView().getView();
         const content = document.getElementById("content") as HTMLElement;
         content!.innerHTML = '';
@@ -26,11 +24,11 @@ class Router {
         return route?.component;
     };
 
-    addRoute(pathReg: string, title: string, component: AbstractView) {
-        this._routes.push({ pathReg, title, component });
+    addRoute(path: RegExp, title: string, component: AbstractView) {
+        this._routes.push({ path, title, component });
     }
 
-    findRoute = (url: string) => this._routes.find((route) => url.match(RegExp(route.pathReg, 'g')));
+    findRoute = (url: string) => this._routes.find((route) => url.match(route.path));
 
 }
 
