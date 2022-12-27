@@ -1,6 +1,11 @@
 import "./style.scss";
 
-function createFilterList(data: Set<string>): HTMLUListElement {
+export type FilterListItem = {
+  name: string;
+  checked: boolean;
+}
+
+export function createFilterList(data: FilterListItem[]): HTMLUListElement {
   const list = document.createElement('ul');
   list.classList.add('filter__list');
   data.forEach((item) => {
@@ -8,13 +13,12 @@ function createFilterList(data: Set<string>): HTMLUListElement {
     listItem.classList.add('list__item');
     const label = document.createElement('label');
     const checkBox = document.createElement('input');
-    checkBox.dataset.name = item;
+    checkBox.dataset.name = item.name;
     checkBox.type = 'checkbox';
-    label.append(checkBox, item);
+    checkBox.checked = item.checked;
+    label.append(checkBox, item.name);
     listItem.append(label);
     list.append(listItem);
   });
   return list;
 }
-
-export { createFilterList };

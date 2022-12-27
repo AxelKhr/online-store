@@ -1,14 +1,11 @@
 import { AppController } from "../controller/controller";
-import { DataModel } from "../model/dataModel";
 
 class Store {
 
     private controller: AppController;
-    private dataModel: DataModel;
 
     constructor() {
         this.controller = new AppController();
-        this.dataModel = new DataModel();
     }
 
     init() {

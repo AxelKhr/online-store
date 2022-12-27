@@ -6,6 +6,7 @@ import SliderSingle from "../elements/sliderSingle";
 import * as tableTwoCols from "../elements/tableTwoCols";
 import * as ModalWindow from "../elements/modalWindow";
 import { Cart } from "../cartView/cart/cart";
+import { ModelState } from "../../model/dataModel";
 
 export class ProductView extends AbstractView {
 
@@ -36,85 +37,86 @@ export class ProductView extends AbstractView {
         return content;
     }
 
-    draw(data: Product) {
-
-        const createElemP = (textContent: string, classNames?: string[]): HTMLParagraphElement => {
-            const par = document.createElement('p');
-            if (classNames) {
-                par.classList.add(...classNames);
-            }
-            par.textContent = textContent;
-            return par;
-        }
-
-        const path = document.querySelector('.product-page__path') as HTMLElement;
-        path.textContent = 'Path';
-
-        const view = document.querySelector('.product-page__view') as HTMLElement;
-        const sliderContainer = document.createElement('div');
-        sliderContainer.classList.add('view__slider-container');
-        view.append(sliderContainer);
-        const sliderWrapper = document.createElement('div');
-        sliderWrapper.classList.add('view__slider-wrapper');
-        const slider = new SliderSingle();
-        slider.content.classList.add('view__slider');
-        data.images.forEach((item) => {
-            const box = document.createElement('div');
-            box.classList.add('view__image');
-            const imageWrapper = document.createElement('div');
-            const image = document.createElement('img');
-            image.src = item;
-            image.alt = data.title;
-            imageWrapper.append(image);
-            box.append(imageWrapper);
-            slider.addItem(box);
-        });
-        sliderContainer.addEventListener('click', (event) => {
-            console.dir(event);
-            ModalWindow.show('product-page__modal-image', slider.getCurrentItem() as HTMLDivElement);
-        });
-        sliderWrapper.append(slider.content);
-        const buttonsBlock = document.createElement('div');
-        buttonsBlock.classList.add('slider__buttons');
-        const buttonLeft = document.createElement('button');
-        buttonLeft.textContent = '<';
-        buttonLeft.addEventListener('click', (event) => {
-            event.stopPropagation();
-            slider.moveToPrev();
-        });
-        const buttonRight = document.createElement('button');
-        buttonRight.textContent = '>';
-        buttonRight.addEventListener('click', (event) => {
-            event.stopPropagation();
-            slider.moveToNext()
-        });
-        buttonsBlock.append(buttonLeft, buttonRight);
-        sliderContainer.append(sliderWrapper, buttonsBlock);
-
-        const control = document.querySelector('.product-page__control') as HTMLElement;
-        const buttonAdd = createButtonGeneral('control__button-add');
-        buttonAdd.textContent = 'ADD';
-        buttonAdd.addEventListener('click', () => this.cart.addToCart(data));
-        const buttonBuy = createButtonGeneral('control__button-buy');
-        buttonBuy.textContent = 'BUY';
-        control.append(
-            createElemP(data.title, ['control__title']),
-            createElemP(data.brand, ['control__brand']),
-            createElemP(`Rating: ${data.rating}`, ['control__rating']),
-            createElemP(`Discount: ${data.discountPercentage}%`, ['control__discount']),
-            createElemP(`Stock: ${data.stock}`, ['control__stock']),
-            createElemP(`Price: ${data.price}`, ['control__price']),
-            buttonAdd, buttonBuy);
-
-        const detailing = document.querySelector('.product-page__detailing') as HTMLElement;
-        const table = tableTwoCols.createTable();
-        table.classList.add('detailing__table');
-        tableTwoCols.addRow(table, 'Category', `${data.category}`)
-        tableTwoCols.addRow(table, 'Brand', `${data.brand}`)
-        tableTwoCols.addRow(table, 'Description', `${data.description}`)
-        detailing.append(
-            createElemP('Detailing', ['detailing__title']),
-            table
-        );
+    draw(data: ModelState) {
+        /*
+                const createElemP = (textContent: string, classNames?: string[]): HTMLParagraphElement => {
+                    const par = document.createElement('p');
+                    if (classNames) {
+                        par.classList.add(...classNames);
+                    }
+                    par.textContent = textContent;
+                    return par;
+                }
+        
+                const path = document.querySelector('.product-page__path') as HTMLElement;
+                path.textContent = 'Path';
+        
+                const view = document.querySelector('.product-page__view') as HTMLElement;
+                const sliderContainer = document.createElement('div');
+                sliderContainer.classList.add('view__slider-container');
+                view.append(sliderContainer);
+                const sliderWrapper = document.createElement('div');
+                sliderWrapper.classList.add('view__slider-wrapper');
+                const slider = new SliderSingle();
+                slider.content.classList.add('view__slider');
+                data.images.forEach((item) => {
+                    const box = document.createElement('div');
+                    box.classList.add('view__image');
+                    const imageWrapper = document.createElement('div');
+                    const image = document.createElement('img');
+                    image.src = item;
+                    image.alt = data.title;
+                    imageWrapper.append(image);
+                    box.append(imageWrapper);
+                    slider.addItem(box);
+                });
+                sliderContainer.addEventListener('click', (event) => {
+                    console.dir(event);
+                    ModalWindow.show('product-page__modal-image', slider.getCurrentItem() as HTMLDivElement);
+                });
+                sliderWrapper.append(slider.content);
+                const buttonsBlock = document.createElement('div');
+                buttonsBlock.classList.add('slider__buttons');
+                const buttonLeft = document.createElement('button');
+                buttonLeft.textContent = '<';
+                buttonLeft.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    slider.moveToPrev();
+                });
+                const buttonRight = document.createElement('button');
+                buttonRight.textContent = '>';
+                buttonRight.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    slider.moveToNext()
+                });
+                buttonsBlock.append(buttonLeft, buttonRight);
+                sliderContainer.append(sliderWrapper, buttonsBlock);
+        
+                const control = document.querySelector('.product-page__control') as HTMLElement;
+                const buttonAdd = createButtonGeneral('control__button-add');
+                buttonAdd.textContent = 'ADD';
+                buttonAdd.addEventListener('click', () => this.cart.addToCart(data));
+                const buttonBuy = createButtonGeneral('control__button-buy');
+                buttonBuy.textContent = 'BUY';
+                control.append(
+                    createElemP(data.title, ['control__title']),
+                    createElemP(data.brand, ['control__brand']),
+                    createElemP(`Rating: ${data.rating}`, ['control__rating']),
+                    createElemP(`Discount: ${data.discountPercentage}%`, ['control__discount']),
+                    createElemP(`Stock: ${data.stock}`, ['control__stock']),
+                    createElemP(`Price: ${data.price}`, ['control__price']),
+                    buttonAdd, buttonBuy);
+        
+                const detailing = document.querySelector('.product-page__detailing') as HTMLElement;
+                const table = tableTwoCols.createTable();
+                table.classList.add('detailing__table');
+                tableTwoCols.addRow(table, 'Category', `${data.category}`)
+                tableTwoCols.addRow(table, 'Brand', `${data.brand}`)
+                tableTwoCols.addRow(table, 'Description', `${data.description}`)
+                detailing.append(
+                    createElemP('Detailing', ['detailing__title']),
+                    table
+                );
+        */
     }
 }

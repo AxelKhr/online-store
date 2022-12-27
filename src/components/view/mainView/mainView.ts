@@ -2,24 +2,20 @@ import "./style.scss";
 import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
-import * as FilterList from "./filterList";
+import { createFilterList, FilterListItem } from "./filterList";
 import { Cart } from "../cartView/cart/cart";
+import { ProductsParams, ModelState } from "../../model/dataModel";
 
 export class MainView extends AbstractView {
 
-    private cart: Cart;
-    private eventChangeParams: CustomEvent;
-    private params: Set<string>;
+    private _cart: Cart;
+    private _brand: Set<string>;
+    requestUpdateParams!: (params: ProductsParams) => void;
 
     constructor(cart: Cart) {
         super();
-        this.cart = cart;
-        this.params = new Set<string>();
-
-        this.eventChangeParams = new CustomEvent('changeparams', {
-            bubbles: true,
-            detail: { view: this }
-        });
+        this._cart = cart;
+        this._brand = new Set<string>();
     }
 
     async getView(): Promise<HTMLElement> {
@@ -52,24 +48,24 @@ export class MainView extends AbstractView {
         return content;
     }
 
-    draw(data: Product[]): void {
-        const categories = new Set<string>();
-        const brands = new Set<string>();
+    draw(data: ModelState): void {
+        //const categories = new Set<string>();
+        //const brands = new Set<string>();
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
 
-        data.forEach(item => {
+        data.products.forEach(item => {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
             ProductCard.setData(card, item);
             fragment.append(card);
-            categories.add(item.category);
-            brands.add(item.brand);
+            //categories.add(item.category);
+            //brands.add(item.brand);
             card.addEventListener('click', (e: Event) => {
                 const target = e.target! as HTMLElement;
                 if (target.closest('button')) {
                     e.preventDefault();
-                    this.cart.addToCart(item);
+                    this._cart.addToCart(item);
                 }
             });
         });
@@ -78,35 +74,48 @@ export class MainView extends AbstractView {
         parent.innerHTML = '';
         parent.appendChild(fragment);
 
-        this.drawCategories(categories);
-        this.drawBrands(brands);
+        const getFilterList = (dataAll: string[], dataFilter: string[]) => {
+            const filterList: FilterListItem[] = [];
+            dataAll.forEach((item) => {
+                filterList.push({ name: item, checked: dataFilter.includes(item) });
+            });
+            return filterList;
+        }
+
+        this.drawCategories(getFilterList(data.categories, []));
+        this.drawBrands(getFilterList(data.brands, data.filters.brand));
     }
 
-    drawCategories(categories: Set<string>) {
+    drawCategories(categories: FilterListItem[]) {
         const box = document.querySelector('.category') as HTMLElement;
         box.innerHTML = '';
-        const list = FilterList.createFilterList(categories);
+        const list = createFilterList(categories);
         box.append(list);
     }
 
-    drawBrands(brands: Set<string>) {
+    drawBrands(brands: FilterListItem[]) {
         const box = document.querySelector('.brand') as HTMLElement;
         box.innerHTML = '';
-        const list = FilterList.createFilterList(brands);
+        const list = createFilterList(brands);
         box.append(list);
         list.addEventListener('click', (event) => {
             if (event.target instanceof HTMLInputElement) {
                 const elem = event.target as HTMLInputElement;
                 if (elem.dataset.name) {
-                    (elem.checked) ? this.params.add(elem.dataset.name) : this.params.delete(elem.dataset.name);
-                    document.dispatchEvent(this.eventChangeParams);
+                    (elem.checked) ? this._brand.add(elem.dataset.name) : this._brand.delete(elem.dataset.name);
                 }
+                this.updateParams();
             }
         })
     }
 
-    getParams() {
-        return [...this.params].join('|');
+    private updateParams() {
+        this.requestUpdateParams(
+            {
+                filters: {
+                    brand: [...this._brand]
+                }
+            }
+        );
     }
-
 }
