@@ -1,5 +1,5 @@
 import { AppController } from "../controller/controller";
-import DataModel from "../model/dataModel";
+import { DataModel } from "../model/dataModel";
 
 class Store {
 
