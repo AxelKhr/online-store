@@ -116,8 +116,10 @@ export class MainView extends AbstractView {
             basePath = basePath.replace(regexp, '')
         }
         if(basePath.endsWith('=')) {
-            console.log()
             basePath = basePath.slice(0, -(basePath.length - basePath.indexOf('?')));
+        }
+        if(basePath.endsWith(',')) {
+            basePath = basePath.slice(0, -1);
         }
         window.location.href = basePath;
     }
