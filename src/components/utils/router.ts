@@ -10,7 +10,7 @@ class Router {
         this._routes = [];
     }
 
-    locationHandler = async () => {
+    async locationHandler() {
         let path: string = window.location.hash.replace("#", "");
         if (path.length == 0) {
             path = "/";
