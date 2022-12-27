@@ -4,7 +4,7 @@ import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
 import * as FilterList from "./filterList";
 import { Cart } from "../cartView/cart/cart";
-import { ProductModel } from "../../model/ProductModel";
+import { ProductModel } from "../../model/productModel";
 
 export class MainView extends AbstractView {
 
@@ -46,14 +46,22 @@ export class MainView extends AbstractView {
     }
 
     draw(model: ProductModel): void {
-        const data = model.getProducts();
+        const category = this.getAttrubute('category')?.split(',');
+        console.log(category);
+        let data: Product[];
+        if(category != null) {
+            data = model.getProducts(category);
+        } else {
+            data = model.getProducts();
+        }
+
         const categories = model.getCategories();
         const brands = model.getBrands();
         
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
 
-        data.forEach(item => {
+        data!.forEach(item => {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
             ProductCard.setData(card, item);
@@ -73,15 +81,16 @@ export class MainView extends AbstractView {
         parent.innerHTML = '';
         parent.appendChild(fragment);
 
-        this.drawCategories(categories);
+        this.drawCategories(categories, category!);
         this.drawBrands(brands);
     }
 
-    drawCategories(categories: Set<string>) {
+    drawCategories(categories: Set<string>, category: string[]) {
         const box = document.querySelector('.category') as HTMLElement;
         box.innerHTML = '';
-        const list = FilterList.createFilterList(categories);
+        const list = FilterList.createFilterList(categories, category);
         box.append(list);
+        box.addEventListener('change', (e) => this.findCategory(e));
     }
 
     drawBrands(brands: Set<string>) {
@@ -89,6 +98,28 @@ export class MainView extends AbstractView {
         box.innerHTML = '';
         const list = FilterList.createFilterList(brands);
         box.append(list);
+    }
+
+    findCategory(e: Event) {
+        const target = e.target as HTMLElement;
+        if(target.tagName.toLowerCase() !== 'input') return;
+        const elem = target.closest('input');
+        let basePath = window.location.href;
+        if(elem?.checked) {
+            if(basePath.includes('category')) {
+                basePath += `,${elem?.name}`;
+            } else {
+                basePath += `?category=${elem?.name}`;
+            }
+        } else {
+            const regexp = new RegExp(`${elem?.name}` + '\,?');
+            basePath = basePath.replace(regexp, '')
+        }
+        if(basePath.endsWith('=')) {
+            console.log()
+            basePath = basePath.slice(0, -(basePath.length - basePath.indexOf('?')));
+        }
+        window.location.href = basePath;
     }
 
 }

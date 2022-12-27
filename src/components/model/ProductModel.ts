@@ -8,8 +8,13 @@ export class ProductModel {
         this.products = products;
     }
 
-    getProducts() {
-        return this.products;
+    getProducts(param?: string[]) {
+        if(param == undefined) {
+            return this.products;
+        }
+        let result = this.products.filter(product => param.find((el) => product.category.match(new RegExp('^' + el + '$'))));
+        console.log(result);
+        return result;
     }
 
     getProductById(id: number) {

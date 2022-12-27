@@ -1,6 +1,6 @@
 import "./style.scss";
 
-function createFilterList(data: Set<string>): HTMLUListElement {
+function createFilterList(data: Set<string>, category?: string[]): HTMLUListElement {
   const list = document.createElement('ul');
   list.classList.add('filter__list');
   data.forEach((item) => {
@@ -10,7 +10,11 @@ function createFilterList(data: Set<string>): HTMLUListElement {
     link.href = '#';
     const label = document.createElement('label');
     const checkBox = document.createElement('input');
+    category?.forEach((el) => {
+      if(item === el) checkBox.checked = true; 
+    });
     checkBox.type = 'checkbox';
+    checkBox.name = item;
     label.append(checkBox, item);
     link.append(label);
     listItem.append(link);

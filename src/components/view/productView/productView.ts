@@ -6,7 +6,7 @@ import SliderSingle from "../elements/sliderSingle";
 import * as tableTwoCols from "../elements/tableTwoCols";
 import * as ModalWindow from "../elements/modalWindow";
 import { Cart } from "../cartView/cart/cart";
-import { ProductModel } from "../../model/ProductModel";
+import { ProductModel } from "../../model/productModel";
 
 export class ProductView extends AbstractView {
 

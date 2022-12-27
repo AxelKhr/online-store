@@ -29,16 +29,12 @@ class Router {
     locationHandler = async () => {
         let path: string = window.location.hash.replace('#', '');
         if (path.length == 0) {
-            path = '/';
+            path = '#/';
+            window.location.href = window.location.href + path;
         }
-        const params = (new URL(path, window.location.origin)).searchParams; 
-        console.log(params.keys())
-        console.log(params.get("brand"));
-
         const route = this.findRoute(path);
         const view = (route != null) ? await route?.component.getView() : await new ErrorView().getView();
-        const pathArr = path.split('/');
-        route?.component.setAttribute(params);
+        route?.component.setAttribute((new URL(path, window.location.origin)).searchParams);
         const content = document.getElementById("content") as HTMLElement;
         content!.innerHTML = '';
         content.appendChild(view);

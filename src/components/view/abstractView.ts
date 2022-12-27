@@ -1,5 +1,5 @@
 import { Product, ProductResponse } from "../interface/product";
-import { ProductModel } from "../model/ProductModel";
+import { ProductModel } from "../model/productModel";
 
 export abstract class AbstractView {
 

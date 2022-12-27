@@ -1,7 +1,7 @@
 import { Endpoint } from "../enum/endpoint";
 import { Callback } from "../interface/callback";
 import { Product, ProductResponse } from "../interface/product";
-import { ProductModel } from "../model/ProductModel";
+import { ProductModel } from "../model/productModel";
 import Router from "../utils/router";
 import AppLoader from "./appLoader";
 
