@@ -49,8 +49,8 @@ export class MainView extends AbstractView {
     }
 
     draw(data: ModelState): void {
-        //const categories = new Set<string>();
-        //const brands = new Set<string>();
+        this.setParams(data);
+
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
 
@@ -59,8 +59,6 @@ export class MainView extends AbstractView {
             card.classList.add('products__card');
             ProductCard.setData(card, item);
             fragment.append(card);
-            //categories.add(item.category);
-            //brands.add(item.brand);
             card.addEventListener('click', (e: Event) => {
                 const target = e.target! as HTMLElement;
                 if (target.closest('button')) {
@@ -117,5 +115,13 @@ export class MainView extends AbstractView {
                 }
             }
         );
+    }
+
+    private setParams(state: ModelState) {
+        this._brand.clear();
+        state.filters.brand.forEach((item) => {
+            this._brand.add(item);
+        })
+
     }
 }

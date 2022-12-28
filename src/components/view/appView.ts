@@ -20,7 +20,6 @@ export default class AppView {
 
         document.addEventListener('changemodel', (event) => {
             this.homeView.draw(model.state);
-            console.log(model.state);
         });
 
     }

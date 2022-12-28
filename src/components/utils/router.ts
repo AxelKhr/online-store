@@ -1,6 +1,4 @@
 import { Route } from "../interface/route";
-import { AbstractView } from "../view/abstractView";
-import { ErrorView } from "../view/error/error";
 
 class Router {
 
@@ -11,25 +9,31 @@ class Router {
     }
 
     async locationHandler() {
-        let path: string = window.location.hash.replace("#", "");
-        if (path.length == 0) {
-            path = "/";
+        console.log('locationHandler');
+        const search = (window.location.href.split('?')[1] || '');
+        let path: string = window.location.hash.replace('#', '').split('?')[0];
+        if ((path.length == 0) || (path[path.length - 1] !== '/')) {
+            path += '/';
+            window.history.replaceState({}, '', window.location.origin + '#' + path);
         }
         const route = this.findRoute(path);
-        const view = (route != null) ? await route?.component.getView() : await new ErrorView().getView();
-        const content = document.getElementById("content") as HTMLElement;
-        content!.innerHTML = '';
-        content.appendChild(view);
-        document.title = route?.title ?? '404 Not found';
-        return route?.component;
+        if (route) {
+            route.loader(search);
+        } else {
+            throw new Error('404');
+        }
     };
 
-    addRoute(path: RegExp, title: string, component: AbstractView) {
-        this._routes.push({ path, title, component });
+    addRoute(path: string, title: string, loader: (params: string) => void) {
+        this._routes.push({ path, title, loader });
     }
 
-    findRoute = (url: string) => this._routes.find((route) => url.match(route.path));
+    findRoute = (url: string) => this._routes.find((route) => (url === route.path));
 
+    setURLParams(paramsStr: string) {
+        let path = window.location.href.split('?')[0];
+        window.history.pushState({}, '', path + ((paramsStr.length > 0) ? '?' + paramsStr : ''));
+    }
 }
 
 export default Router;

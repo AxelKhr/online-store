@@ -1,7 +1,7 @@
 import { AbstractView } from "../view/abstractView";
 
 export interface Route {
-    path: RegExp;
+    path: string;
     title: string;
-    component: AbstractView;
+    loader: (param: string) => void;
 }

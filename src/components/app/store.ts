@@ -9,8 +9,11 @@ class Store {
     }
 
     init() {
-        this.controller.handleLocation();
-        window.addEventListener("hashchange", () => this.controller.handleLocation());
+        this.controller.loadData(async (data) => {
+            await this.controller.setProducts(data.products)
+                .then(this.controller.handleLocation);
+        });
+        window.addEventListener("hashchange", this.controller.handleLocation);
     }
 }
 
