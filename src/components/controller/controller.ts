@@ -2,9 +2,9 @@ import { Endpoint } from "../enum/endpoint";
 import { Callback } from "../interface/callback";
 import { Product, ProductResponse } from "../interface/product";
 import AppLoader from "./appLoader";
-import Router from "../utils/router";
+import { Router } from "../utils/router";
 import AppView from "../view/appView";
-import { DataModel, ProductsParams } from "../model/dataModel";
+import { DataModel, ProductsParams, ProductParams } from "../model/dataModel";
 import { ErrorView } from "../view/error/error";
 
 export class AppController extends AppLoader {
@@ -20,9 +20,9 @@ export class AppController extends AppLoader {
         this.dataModel = new DataModel();
         this.appView = new AppView(this, this.dataModel);
 
-        //this.router.addRoute(/product\/\d+/g, 'Product', this.appView.productView);
-        this.router.addRoute('/cart/', 'Cart', this.loadCartView);
-        this.router.addRoute('/', 'Online store', this.loadHomeView);
+        this.router.addRoute('product', this.loadProductView);
+        this.router.addRoute('cart', this.loadCartView);
+        this.router.addRoute('', this.loadHomeView);
     }
 
     loadData(callback: Callback<ProductResponse>) {
@@ -54,6 +54,12 @@ export class AppController extends AppLoader {
                 brand: urlparam
             }
         });
+    }
+
+    loadProductView = async (params: string) => {
+        await this.appView.productView.setView('Product');
+        const id = (new URLSearchParams(params)).get('id');
+        this.dataModel.setProductParam({ id: (id) ? parseInt(id) : 0 });
     }
 
     loadCartView = async (params: string) => {

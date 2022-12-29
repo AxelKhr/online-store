@@ -54,7 +54,7 @@ export class MainView extends AbstractView {
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
 
-        data.products.forEach(item => {
+        data.main.products.forEach(item => {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
             ProductCard.setData(card, item);
@@ -80,8 +80,8 @@ export class MainView extends AbstractView {
             return filterList;
         }
 
-        this.drawCategories(getFilterList(data.categories, []));
-        this.drawBrands(getFilterList(data.brands, data.filters.brand));
+        this.drawCategories(getFilterList(data.main.categories, []));
+        this.drawBrands(getFilterList(data.main.brands, data.main.filters.brand));
     }
 
     drawCategories(categories: FilterListItem[]) {
@@ -119,7 +119,7 @@ export class MainView extends AbstractView {
 
     private setParams(state: ModelState) {
         this._brand.clear();
-        state.filters.brand.forEach((item) => {
+        state.main.filters.brand.forEach((item) => {
             this._brand.add(item);
         })
 

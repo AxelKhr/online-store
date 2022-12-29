@@ -4,11 +4,20 @@ type Filters = {
     brand: string[];
 }
 
-export interface ModelState {
+export interface ModelMainState {
     products: Product[];
     brands: string[];
     categories: string[];
     filters: Filters;
+}
+
+export interface ModelProductState {
+    product: Product | undefined;
+}
+
+export interface ModelState {
+    main: ModelMainState;
+    prod: ModelProductState;
 }
 
 export interface ProductsParams {
@@ -17,11 +26,16 @@ export interface ProductsParams {
     }
 }
 
+export interface ProductParams {
+    id: number;
+}
+
 export class DataModel {
     private _products: Product[];
     private _brands: string[];
     private _categories: string[];
     private _updateEvent: Event;
+    private _updateProductEvent: Event;
     private _params: ProductsParams;
     state: ModelState;
 
@@ -30,6 +44,7 @@ export class DataModel {
         this._brands = [];
         this._categories = [];
         this._updateEvent = new Event('changemodel');
+        this._updateProductEvent = new Event('changemodelproduct');
         this._params = {
             filters: {
                 brand: []
@@ -37,11 +52,16 @@ export class DataModel {
         };
 
         this.state = {
-            products: [],
-            brands: [],
-            categories: [],
-            filters: {
-                brand: []
+            main: {
+                products: [],
+                brands: [],
+                categories: [],
+                filters: {
+                    brand: []
+                }
+            },
+            prod: {
+                product: undefined
             }
         };
     }
@@ -68,19 +88,24 @@ export class DataModel {
     }
 
     setProductsParam(params: ProductsParams) {
-        this.state.products = [];
-        this.state.categories = this._categories;
-        this.state.brands = this._brands;
+        this.state.main.products = [];
+        this.state.main.categories = this._categories;
+        this.state.main.brands = this._brands;
         this._products.forEach((item) => {
-            this.state.filters.brand = params.filters.brand;
+            this.state.main.filters.brand = params.filters.brand;
             if (params.filters.brand.length) {
                 if (params.filters.brand.includes(item.brand)) {
-                    this.state.products.push(item);
+                    this.state.main.products.push(item);
                 }
             } else {
-                this.state.products.push(item);
+                this.state.main.products.push(item);
             }
         });
         document.dispatchEvent(this._updateEvent);
+    }
+
+    setProductParam(params: ProductParams) {
+        this.state.prod.product = this._products.find((item) => item.id === params.id);
+        document.dispatchEvent(this._updateProductEvent);
     }
 }

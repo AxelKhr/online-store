@@ -22,5 +22,8 @@ export default class AppView {
             this.homeView.draw(model.state);
         });
 
+        document.addEventListener('changemodelproduct', (event) => {
+            this.productView.draw(model.state);
+        });
     }
 }
