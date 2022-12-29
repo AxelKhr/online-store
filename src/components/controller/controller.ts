@@ -11,35 +11,35 @@ import { ProductView } from "../view/productView/productView";
 import { CartView } from "../view/cartView/cartView";
 
 export class AppController extends AppLoader {
-    private router: Router;
-    private dataModel: DataModel;
+    private _router: Router;
+    private _dataModel: DataModel;
     private _cart: Cart;
-    private errorView: ErrorView;
-    private homeView: MainView;
-    private productView: ProductView;
-    private cartView: CartView;
+    private _errorView: ErrorView;
+    private _mainView: MainView;
+    private _productView: ProductView;
+    private _cartView: CartView;
 
     constructor() {
         super();
-        this.router = new Router();
-        this.dataModel = new DataModel();
+        this._router = new Router();
+        this._dataModel = new DataModel();
         this._cart = new Cart();
-        this.errorView = new ErrorView();
-        this.homeView = new MainView(this._cart);
-        this.homeView.requestUpdateParams = this.requestUpdateProductsParams;
-        this.productView = new ProductView(this._cart);
-        this.cartView = new CartView();
+        this._errorView = new ErrorView();
+        this._mainView = new MainView(this._cart);
+        this._mainView.requestUpdateParams = this.requestUpdateProductsParams;
+        this._productView = new ProductView(this._cart);
+        this._cartView = new CartView();
 
-        this.router.addRoute('product', this.loadProductView);
-        this.router.addRoute('cart', this.loadCartView);
-        this.router.addRoute('', this.loadHomeView);
+        this._router.addRoute('product', this.loadProductView);
+        this._router.addRoute('cart', this.loadCartView);
+        this._router.addRoute('', this.loadMainView);
 
         document.addEventListener('changemodel', (event) => {
-            this.homeView.draw(this.dataModel.state);
+            this._mainView.draw(this._dataModel.state);
         });
 
         document.addEventListener('changemodelproduct', (event) => {
-            this.productView.draw(this.dataModel.state);
+            this._productView.draw(this._dataModel.state);
         });
     }
 
@@ -54,22 +54,22 @@ export class AppController extends AppLoader {
     }
 
     handleLocation = () => {
-        this.router.locationHandler()
+        this._router.locationHandler()
             .catch(() => {
-                this.errorView.setView('404 Not found');
+                this._errorView.setView('404 Not found');
             });
     }
 
     async setProducts(products: Product[]) {
-        this.dataModel.setProductsData(products);
+        this._dataModel.setProductsData(products);
     }
 
-    // ways to load views 
+    // methods to load views 
 
-    private loadHomeView = async (params: string) => {
-        await this.homeView.setView('Online store');
+    private loadMainView = async (params: string) => {
+        await this._mainView.setView('Online store');
         const urlparam = (new URLSearchParams(params)).getAll('brand');
-        this.dataModel.setProductsParam({
+        this._dataModel.setProductsParam({
             filters: {
                 brand: urlparam
             }
@@ -77,24 +77,24 @@ export class AppController extends AppLoader {
     }
 
     private loadProductView = async (params: string) => {
-        await this.productView.setView('Product');
+        await this._productView.setView('Product');
         const id = (new URLSearchParams(params)).get('id');
-        this.dataModel.setProductParam({ id: (id) ? parseInt(id) : 0 });
+        this._dataModel.setProductParam({ id: (id) ? parseInt(id) : 0 });
     }
 
     private loadCartView = async (params: string) => {
-        await this.cartView.setView('Cart');
-        this.cartView.draw();
+        await this._cartView.setView('Cart');
+        this._cartView.draw();
     }
 
-    // ways to update model parameters
+    // methods to update model parameters
 
     private requestUpdateProductsParams = (params: ProductsParams) => {
-        this.dataModel.setProductsParam(params);
+        this._dataModel.setProductsParam(params);
         const par = new URLSearchParams();
         params.filters.brand.forEach((item) => {
             par.append('brand', item);
         })
-        this.router.setURLParams(par.toString());
+        this._router.setURLParams(par.toString());
     }
 }
