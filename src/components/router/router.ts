@@ -19,7 +19,7 @@ export class Router {
         if (route) {
             route.loader(search);
         } else {
-            throw new Error('404');
+            throw new Error();
         }
     };
 
