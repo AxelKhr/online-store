@@ -16,7 +16,7 @@ export default class AppView {
         this.homeView = new MainView(this._cart);
         this.homeView.requestUpdateParams = controller.requestUpdateProductsParams;
         this.productView = new ProductView(this._cart);
-        this.cartView = new CartView();
+        this.cartView = new CartView(this._cart);
 
         document.addEventListener('changemodel', (event) => {
             this.homeView.draw(model.state);

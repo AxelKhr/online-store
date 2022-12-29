@@ -4,17 +4,21 @@ import * as CartItem from "./cartItem";
 import { Product } from "../../interface/product";
 import { createOrderBlock } from "./orderBlock";
 import { getModal } from "./modal";
+import { Cart } from "./cart/cart";
 
 export class CartView extends AbstractView {
 
-    async getView(): Promise<HTMLElement> {
+    private _cart: Cart;
+
+    constructor(cart: Cart) {
+        super();
+        this._cart = cart;
+    }
+    
+    async getView(): Promise<HTMLElement>  {
         let content = document.createElement('section') as HTMLElement;
         content.classList.add('cart-page');
-        content.innerHTML = `
-        <div class="cart-message">
-            <span class="cart-text">Your cart is empty</span>
-            <a href="#" class="cart-btn">Go shopping</a>
-        </div>`;
+        content.innerHTML = this.getEmptyCart();
         return content;
     }
 
@@ -33,6 +37,7 @@ export class CartView extends AbstractView {
                 CartItem.setData(card, product);
                 fragment.append(card);
                 arr.push(product);
+                card.addEventListener('click', (e: Event) => this.removeItem(e, product, parent));
             });
             parent.innerHTML = 
             `<section class="cart__products">
@@ -49,6 +54,27 @@ export class CartView extends AbstractView {
             const modal = document.querySelector('.modal') as HTMLElement;
             modal.append(getModal());
         }
+    }
+
+    removeItem(e: Event, product: Product, parent: HTMLElement) {
+        const target = e.target! as HTMLElement;
+        if (target.closest('button')) {
+            e.preventDefault();
+            this._cart.removeFromCart(product);
+            if(this._cart.getSize() === 0) {
+                localStorage.removeItem('cart-items');
+                parent.innerHTML = this.getEmptyCart();
+            } else {
+                this.draw();
+            }
+        }
+    }
+
+    getEmptyCart() {
+        return `<div class="cart-message">
+                    <span class="cart__text">Your cart is empty</span>
+                    <a href="#" class="cart__btn">Go shopping</a>
+                </div>`;
     }
 
 }
