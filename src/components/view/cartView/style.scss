@@ -12,6 +12,7 @@
     
   &__list {
     display: grid;
+    height: min-content;
     grid-template-columns: 1fr;
     grid-auto-rows: auto;
     gap: 10px;
@@ -26,7 +27,7 @@
     border: 2px solid #ddd;
     border-radius: 10px;
     background: #fff;
-    height: 80%;
+    height: 80vh;
     width: 100%;
   }
 }
