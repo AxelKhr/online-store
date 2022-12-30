@@ -1,0 +1,37 @@
+type Route = {
+    path: string;
+    loader: (param: string) => void;
+}
+
+export class Router {
+
+    private _routes: Array<Route>;
+
+    constructor() {
+        this._routes = [];
+    }
+
+    async locationHandler() {
+        const search = (window.location.href.split('?')[1] || '');
+        let path = window.location.hash.replace('#', '').replace(/\?(.*)$/, '').replace(/\/$/, '').replace(/^\//, '');
+        window.location.href = `${window.location.href.replace(/#(.*)$/, '')}#/${path}${(search.length) ? '?' + search : ''}`;
+        const route = this.findRoute(path);
+        if (route) {
+            route.loader(search);
+        } else {
+            throw new Error();
+        }
+    };
+
+    addRoute(path: string, loader: (params: string) => void) {
+        this._routes.push({ path, loader });
+    }
+
+    findRoute = (url: string) => this._routes.find((route) => (url === route.path));
+
+    setURLParams(paramsStr: string) {
+        let path = window.location.href.split('?')[0];
+        window.history.pushState({}, '', path + ((paramsStr.length) ? '?' + paramsStr : ''));
+    }
+}
+

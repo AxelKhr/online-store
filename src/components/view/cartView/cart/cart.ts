@@ -15,6 +15,10 @@ export class Cart {
         this.totalSum.innerText! = this.getTotalSum();
     }
 
+    getSize(): number {
+        return this.cartItems.size;
+    }
+
     getTotalSum() {
         let sum = 0;
         this.cartItems.forEach(el => {
@@ -32,6 +36,20 @@ export class Cart {
             this.cart.innerText! = `${this.cartItems.size}`;
             let sum = Number(this.totalSum.innerText);
             sum += item.price;
+            this.totalSum.innerText! = `${sum}`;
+        }
+    }
+
+    removeFromCart(item: Product): void {
+        const itemStr = JSON.stringify(item);
+        const cartSize = this.cartItems.size;
+        this.cartItems.delete(itemStr);
+        if(cartSize !== this.cartItems.size) {
+            localStorage.removeItem('cart-items');
+            localStorage.setItem('cart-items', JSON.stringify(Array.from(this.cartItems)));
+            this.cart.innerText! = `${this.cartItems.size}`;
+            let sum = Number(this.totalSum.innerText);
+            sum -= item.price;
             this.totalSum.innerText! = `${sum}`;
         }
     }

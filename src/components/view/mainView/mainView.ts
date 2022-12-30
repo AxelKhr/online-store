@@ -2,16 +2,21 @@ import "./style.scss";
 import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
-import * as FilterList from "./filterList";
+import { createFilterList, FilterListItem } from "./filterList";
 import { Cart } from "../cartView/cart/cart";
+import { ModelState } from "../../model/dataModel";
+import Params from "../../utils/params";
 
 export class MainView extends AbstractView {
 
-    private cart: Cart;
+    private _cart: Cart;
+    private _params: Params;
+    requestUpdateParams!: (params: Params) => void;
 
     constructor(cart: Cart) {
         super();
-        this.cart = cart;
+        this._cart = cart;
+        this._params = new Params();
     }
 
     async getView(): Promise<HTMLElement> {
@@ -44,24 +49,22 @@ export class MainView extends AbstractView {
         return content;
     }
 
-    draw(data: Product[]): void {
-        const categories = new Set<string>();
-        const brands = new Set<string>();
+    draw(data: ModelState): void {
+        this.setParams(data);
+
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
 
-        data.forEach(item => {
+        data.main.products.forEach(item => {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
             ProductCard.setData(card, item);
             fragment.append(card);
-            categories.add(item.category);
-            brands.add(item.brand);
             card.addEventListener('click', (e: Event) => {
                 const target = e.target! as HTMLElement;
-                if(target.closest('button')) {
+                if (target.closest('button')) {
                     e.preventDefault();
-                    this.cart.addToCart(item);
+                    this._cart.addToCart(item);
                 }
             });
         });
@@ -70,22 +73,65 @@ export class MainView extends AbstractView {
         parent.innerHTML = '';
         parent.appendChild(fragment);
 
-        this.drawCategories(categories);
-        this.drawBrands(brands);
+        const getFilterList = (dataAll: string[], dataFilter: string[]) => {
+            const filterList: FilterListItem[] = [];
+            dataAll.forEach((item) => {
+                filterList.push({ name: item, checked: dataFilter.includes(item) });
+            });
+            return filterList;
+        }
+
+        this.drawCategories(getFilterList(data.main.categories, data.main.params.category));
+        this.drawBrands(getFilterList(data.main.brands, data.main.params.brand));
     }
 
-    drawCategories(categories: Set<string>) {
+    drawCategories(categories: FilterListItem[]) {
         const box = document.querySelector('.category') as HTMLElement;
         box.innerHTML = '';
-        const list = FilterList.createFilterList(categories);
+        const list = createFilterList(categories);
         box.append(list);
+        list.addEventListener('click', (event) => {
+            if (event.target instanceof HTMLInputElement) {
+                const elem = event.target as HTMLInputElement;
+                if (elem.dataset.name) {
+                    if (elem.checked) {
+                        this._params.add('category', elem.dataset.name);
+                    } else {
+                        this._params.remove('category', elem.dataset.name)
+                    };
+                }
+                this.requestUpdateParams(this._params);
+            }
+        })
     }
 
-    drawBrands(brands: Set<string>) {
+    drawBrands(brands: FilterListItem[]) {
         const box = document.querySelector('.brand') as HTMLElement;
         box.innerHTML = '';
-        const list = FilterList.createFilterList(brands);
+        const list = createFilterList(brands);
         box.append(list);
+        list.addEventListener('click', (event) => {
+            if (event.target instanceof HTMLInputElement) {
+                const elem = event.target as HTMLInputElement;
+                if (elem.dataset.name) {
+                    if (elem.checked) {
+                        this._params.add('brand', elem.dataset.name);
+                    } else {
+                        this._params.remove('brand', elem.dataset.name)
+                    };
+                }
+                this.requestUpdateParams(this._params);
+            }
+        })
     }
 
+    private setParams(state: ModelState) {
+        this._params.clear();
+        state.main.params.category.forEach((item) => {
+            this._params.add('category', item);
+        })
+        state.main.params.brand.forEach((item) => {
+            this._params.add('brand', item);
+        })
+    }
 }
