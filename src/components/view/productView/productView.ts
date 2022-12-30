@@ -49,7 +49,7 @@ export class ProductView extends AbstractView {
             }
 
             const path = document.querySelector('.product-page__path') as HTMLElement;
-            path.textContent = 'Path';
+            path.textContent = `Store >> ${data.prod.product.category} >> ${data.prod.product.brand} >> ${data.prod.product.title}`.toUpperCase();
 
             const view = document.querySelector('.product-page__view') as HTMLElement;
             const sliderContainer = document.createElement('div');
