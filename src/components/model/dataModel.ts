@@ -74,7 +74,7 @@ export class DataModel {
         this._brands = [...brands];
     }
 
-    setProductsParam(params: Params) {
+    setMainParam(params: Params) {
         this.state.main.products = [];
         this.state.main.categories = this._categories;
         this.state.main.brands = this._brands;

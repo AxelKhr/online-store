@@ -27,7 +27,7 @@ export class AppController extends AppLoader {
         this._cart = new Cart();
         this._errorView = new ErrorView();
         this._mainView = new MainView(this._cart);
-        this._mainView.requestUpdateParams = this.requestUpdateProductsParams;
+        this._mainView.requestUpdateParams = this.requestUpdateMainParams;
         this._productView = new ProductView(this._cart);
         this._cartView = new CartView();
 
@@ -69,7 +69,7 @@ export class AppController extends AppLoader {
 
     private loadMainView = async (params: string) => {
         await this._mainView.setView('Online store');
-        this._dataModel.setProductsParam(new Params([...(new URLSearchParams(params)).entries()]));
+        this._dataModel.setMainParam(new Params([...(new URLSearchParams(params)).entries()]));
     }
 
     private loadProductView = async (params: string) => {
@@ -89,8 +89,8 @@ export class AppController extends AppLoader {
 
     // methods to update model parameters
 
-    private requestUpdateProductsParams = (params: Params) => {
-        this._dataModel.setProductsParam(params);
+    private requestUpdateMainParams = (params: Params) => {
+        this._dataModel.setMainParam(params);
         this._router.setURLParams((new URLSearchParams(params.getPairs())).toString());
     }
 }
