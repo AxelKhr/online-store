@@ -3,6 +3,7 @@ import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
 import { createFilterList, FilterListItem } from "./filterList";
+import { FilterDualSlider, FilterSliderData } from "./filterSlider";
 import { Cart } from "../cartView/cart/cart";
 import { ModelState } from "../../model/dataModel";
 import Params from "../../utils/params";
@@ -23,20 +24,22 @@ export class MainView extends AbstractView {
         let content = document.createElement('div') as HTMLElement;
         content.classList.add('content__table', 'table');
         content.innerHTML = `
-            <aside class="table__filters">
-                <div class="table__filter">
+            <aside class="table__filter">
+                <div class="filter__box">
                     <p class="filter__title">Category</p>
                     <div class="filter__list-box category"></div>
                 </div>
-                <div class="table__filter">
+                <div class="filter__box">
                     <p class="filter__title">Brand</p>
                     <div class="filter__list-box brand"></div>
                 </div>
-                <div class="table__filter price">
+                <div class="filter__box">
                     <p class="filter__title">Price</p>
+                    <div class="filter__slider-box price"></div>
                 </div>
-                <div class="table__filter stock">
+                <div class="filter__box">
                     <p class="filter__title">Stock</p>
+                    <div class="filter__slider-box stock"></div>
                 </div>
             </aside>
             <section class="table__products">
@@ -83,6 +86,7 @@ export class MainView extends AbstractView {
 
         this.drawCategories(getFilterList(data.main.categories, data.main.params.category));
         this.drawBrands(getFilterList(data.main.brands, data.main.params.brand));
+        this.drawPrice();
     }
 
     drawCategories(categories: FilterListItem[]) {
@@ -123,6 +127,14 @@ export class MainView extends AbstractView {
                 this.requestUpdateParams(this._params);
             }
         })
+    }
+
+    drawPrice() {
+        const box = document.querySelector('.price') as HTMLElement;
+        box.innerHTML = '';
+        const priceSlider = new FilterDualSlider(10);
+        box.append(priceSlider.content);
+        priceSlider.setData({ rangeMin: 0, rangeMax: 1000, currMin: 100, currMax: 800 });
     }
 
     private setParams(state: ModelState) {
