@@ -135,6 +135,9 @@ export class MainView extends AbstractView {
         const priceSlider = new FilterDualSlider(10);
         box.append(priceSlider.content);
         priceSlider.setData({ rangeMin: 0, rangeMax: 1000, currMin: 100, currMax: 800 });
+        priceSlider.onChange = (min, max) => {
+            console.log(min, max);
+        }
     }
 
     private setParams(state: ModelState) {
