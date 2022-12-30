@@ -37,8 +37,9 @@ export class CartView extends AbstractView {
                 CartItem.setData(card, product);
                 fragment.append(card);
                 arr.push(product);
-                card.addEventListener('click', (e: Event) => this.removeItem(e, product, parent));
+                card.addEventListener('click', (e: Event) => this.clickItem(e, product, parent));
             });
+
             parent.innerHTML = 
             `<section class="cart__products">
                 <div class="cart__list"></div>
@@ -56,17 +57,39 @@ export class CartView extends AbstractView {
         }
     }
 
-    removeItem(e: Event, product: Product, parent: HTMLElement) {
+    clickItem(e: Event, product: Product, parent: HTMLElement) {
         const target = e.target! as HTMLElement;
-        if (target.closest('button')) {
+        if (target.closest('.product-cart__button')) {
+            this.removeFromCart(e, product, parent);
+        } else if(target.closest('.order-num__btn-right')) {
             e.preventDefault();
-            this._cart.removeFromCart(product);
-            if(this._cart.getSize() === 0) {
-                localStorage.removeItem('cart-items');
-                parent.innerHTML = this.getEmptyCart();
-            } else {
-                this.draw();
-            }
+            const titleNum = document.getElementById(`count-${product.id}`) as HTMLElement;
+            const orderProduct = document.querySelector('.order__count') as HTMLElement;
+            let title = Number(titleNum.innerHTML) + 1;
+            titleNum.innerText = `${title}`;
+            let orderTitle = Number(orderProduct.innerHTML) + 1;
+            orderProduct.innerText = `${orderTitle}`;
+            this._cart.plusNumber(product, titleNum);
+        } else if(target.closest('.order-num__btn-left')) {
+            e.preventDefault();
+            const titleNum = document.getElementById(`count-${product.id}`) as HTMLElement;
+            const orderProduct = document.querySelector('.order__count') as HTMLElement;
+            let title = Number(titleNum.innerHTML) - 1;
+            titleNum.innerText = `${title}`;
+            let orderTitle = Number(orderProduct.innerHTML) - 1;
+            orderProduct.innerText = `${orderTitle}`;
+            this._cart.minusNumber(product, titleNum);
+        }
+    }
+
+    removeFromCart(e: Event, product: Product, parent: HTMLElement) {
+        e.preventDefault();
+        this._cart.removeFromCart(product);
+        if(this._cart.getSize() === 0) {
+            localStorage.removeItem('cart-items');
+            parent.innerHTML = this.getEmptyCart();
+        } else {
+            this.draw();
         }
     }
 

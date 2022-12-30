@@ -18,9 +18,13 @@ export function createOrderBlock(data: Product[]): HTMLElement {
   const info = document.createElement('div');
   info.classList.add('order__info');
 
-  const products = document.createElement('p');
-  products.classList.add('order__product');
-  products.innerText = `Products: ${data.length}`;
+  const productsTitle = document.createElement('p');
+  productsTitle.classList.add('order__product');
+  productsTitle.innerText = `Products: `;
+  
+  const productsCount = document.createElement('span');
+  productsCount.classList.add('order__count');
+  productsCount.innerText = `${data.length}`;
 
   const cost = document.createElement('p');
   cost.classList.add('order__cost');
@@ -37,7 +41,8 @@ export function createOrderBlock(data: Product[]): HTMLElement {
   btn.innerText = 'PAY';
   btn.addEventListener('click', payOrder);
 
-  info.append(products, cost);
+  productsTitle.append(productsCount);
+  info.append(productsTitle, cost);
   box.append(info, input, btn);
   block.append(title, box);
   return block;

@@ -54,9 +54,15 @@
   }
 
   &__buy {
+    position: relative;
     flex: 1;
     padding: 20px;
     width: 100%;
+  }
+
+  &__count {
+    padding-bottom: 20px;
+    color: #aaa;
   }
 
   &__price {
@@ -64,8 +70,59 @@
     align-items: center;
     font-size: 28px;
   }
+
+  &__order-num {
+    display: flex;
+    margin: 10px 0;
+  }
+
+  &__button {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+}
+
+.order-num {
+
+  &__count {
+    display: inline-block;
+    width: 100px;
+    color: #aaa;
+    font-size: 1.5rem;
+  }
+
+  &__btn {
+    width: 35px;
+    height: 35px;
+    background-color: #aaa;
+    color: #fff;
+    margin: 0 5px;
+    font-size: 1.4rem;
+    border: none;
+    border-radius: 50%;
+  }
+
+  &__btn:hover {
+    background-color: #ddd;
+    color: black;
+    cursor: pointer;
+    box-shadow: 0px 0px 8px 0px rgba(34, 60, 80, 0.2);
+  }
+
+  &__btn-right {
+    margin: 0;
+  }
+
 }
 
 .block--hidden {
   display: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }

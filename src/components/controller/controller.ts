@@ -61,6 +61,11 @@ export class AppController extends AppLoader {
             });
     }
 
+    async init(products: Product[]) {
+        this._cart.initCartProduct(products);
+        this.setProducts(products);
+    }
+
     async setProducts(products: Product[]) {
         this._dataModel.setProductsData(products);
     }

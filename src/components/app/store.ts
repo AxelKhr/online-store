@@ -1,4 +1,5 @@
 import { AppController } from "../controller/controller";
+import { Product } from "../interface/product";
 
 class Store {
 
@@ -10,11 +11,12 @@ class Store {
 
     init() {
         this.controller.loadData(async (data) => {
-            await this.controller.setProducts(data.products)
+            await this.controller.init(data.products)
                 .then(this.controller.handleLocation);
         });
         window.addEventListener("hashchange", this.controller.handleLocation);
     }
+
 }
 
 export default Store;
