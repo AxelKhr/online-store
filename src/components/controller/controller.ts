@@ -29,7 +29,7 @@ export class AppController extends AppLoader {
         this._mainView = new MainView(this._cart);
         this._mainView.requestUpdateParams = this.requestUpdateMainParams;
         this._productView = new ProductView(this._cart);
-        this._cartView = new CartView();
+        this._cartView = new CartView(this._cart);
 
         this._router.addRoute('product', this.loadProductView);
         this._router.addRoute('cart', this.loadCartView);

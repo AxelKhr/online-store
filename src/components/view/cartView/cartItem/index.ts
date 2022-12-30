@@ -47,7 +47,7 @@ function createTemplate(): HTMLElement {
 }
 
 function setData(card: HTMLElement, data: Product): void {
-  card.setAttribute('href', `#product/?id=${data.id}`);
+  card.setAttribute('href', `#/product?id=${data.id}`);
   (card.querySelector('.product-cart__thumbnail') as HTMLElement).style.backgroundImage =
     `url(${data.thumbnail})`;
   (card.querySelector('.product-cart__title') as HTMLElement).textContent = data.title;
