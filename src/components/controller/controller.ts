@@ -3,12 +3,13 @@ import { Callback } from "../interface/callback";
 import { Product, ProductResponse } from "../interface/product";
 import AppLoader from "./appLoader";
 import { Router } from "../router/router";
-import { DataModel, ProductsParams, ProductParams } from "../model/dataModel";
+import { DataModel } from "../model/dataModel";
 import { Cart } from "../view/cartView/cart/cart";
 import { ErrorView } from "../view/error/error";
 import { MainView } from "../view/mainView/mainView";
 import { ProductView } from "../view/productView/productView";
 import { CartView } from "../view/cartView/cartView";
+import Params from "../utils/params";
 
 export class AppController extends AppLoader {
     private _router: Router;
@@ -68,18 +69,17 @@ export class AppController extends AppLoader {
 
     private loadMainView = async (params: string) => {
         await this._mainView.setView('Online store');
-        const urlparam = (new URLSearchParams(params)).getAll('brand');
-        this._dataModel.setProductsParam({
-            filters: {
-                brand: urlparam
-            }
-        });
+        this._dataModel.setProductsParam(new Params([...(new URLSearchParams(params)).entries()]));
     }
 
     private loadProductView = async (params: string) => {
-        await this._productView.setView('Product');
         const id = (new URLSearchParams(params)).get('id');
-        this._dataModel.setProductParam({ id: (id) ? parseInt(id) : 0 });
+        if (id) {
+            await this._productView.setView('Product');
+            this._dataModel.setProductParam((new Params()).add('id', id));
+        } else {
+            this._errorView.setView('404 Not found');
+        }
     }
 
     private loadCartView = async (params: string) => {
@@ -89,12 +89,8 @@ export class AppController extends AppLoader {
 
     // methods to update model parameters
 
-    private requestUpdateProductsParams = (params: ProductsParams) => {
+    private requestUpdateProductsParams = (params: Params) => {
         this._dataModel.setProductsParam(params);
-        const par = new URLSearchParams();
-        params.filters.brand.forEach((item) => {
-            par.append('brand', item);
-        })
-        this._router.setURLParams(par.toString());
+        this._router.setURLParams((new URLSearchParams(params.getPairs())).toString());
     }
 }

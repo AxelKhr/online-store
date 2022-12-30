@@ -1,7 +1,9 @@
 import { Product } from "../interface/product";
+import Params from "../utils/params";
 
 type Filters = {
     brand: string[];
+    category: string[];
 }
 
 export interface ModelMainState {
@@ -20,23 +22,12 @@ export interface ModelState {
     prod: ModelProductState;
 }
 
-export interface ProductsParams {
-    filters: {
-        brand: string[];
-    }
-}
-
-export interface ProductParams {
-    id: number;
-}
-
 export class DataModel {
     private _products: Product[];
     private _brands: string[];
     private _categories: string[];
     private _updateEvent: Event;
     private _updateProductEvent: Event;
-    private _params: ProductsParams;
     state: ModelState;
 
     constructor() {
@@ -45,11 +36,6 @@ export class DataModel {
         this._categories = [];
         this._updateEvent = new Event('changemodel');
         this._updateProductEvent = new Event('changemodelproduct');
-        this._params = {
-            filters: {
-                brand: []
-            }
-        };
 
         this.state = {
             main: {
@@ -57,7 +43,8 @@ export class DataModel {
                 brands: [],
                 categories: [],
                 filters: {
-                    brand: []
+                    brand: [],
+                    category: []
                 }
             },
             prod: {
@@ -87,25 +74,25 @@ export class DataModel {
         this._brands = [...brands];
     }
 
-    setProductsParam(params: ProductsParams) {
+    setProductsParam(params: Params) {
         this.state.main.products = [];
         this.state.main.categories = this._categories;
         this.state.main.brands = this._brands;
+        this.state.main.filters.brand = params.getAll('brand');
+        this.state.main.filters.category = params.getAll('category');
+
+        const checkList = (list: string[], item: string) => ((list.length === 0) || (list.includes(item)));
         this._products.forEach((item) => {
-            this.state.main.filters.brand = params.filters.brand;
-            if (params.filters.brand.length) {
-                if (params.filters.brand.includes(item.brand)) {
-                    this.state.main.products.push(item);
-                }
-            } else {
+            if (checkList(this.state.main.filters.category, item.category) &&
+                checkList(this.state.main.filters.brand, item.brand)) {
                 this.state.main.products.push(item);
             }
         });
         document.dispatchEvent(this._updateEvent);
     }
 
-    setProductParam(params: ProductParams) {
-        this.state.prod.product = this._products.find((item) => item.id === params.id);
+    setProductParam(params: Params) {
+        this.state.prod.product = this._products.find((item) => item.id === parseInt(params.get('id')));
         document.dispatchEvent(this._updateProductEvent);
     }
 }

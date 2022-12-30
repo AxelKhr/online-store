@@ -4,18 +4,19 @@ import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
 import { createFilterList, FilterListItem } from "./filterList";
 import { Cart } from "../cartView/cart/cart";
-import { ProductsParams, ModelState } from "../../model/dataModel";
+import { ModelState } from "../../model/dataModel";
+import Params from "../../utils/params";
 
 export class MainView extends AbstractView {
 
     private _cart: Cart;
-    private _brand: Set<string>;
-    requestUpdateParams!: (params: ProductsParams) => void;
+    private _params: Params;
+    requestUpdateParams!: (params: Params) => void;
 
     constructor(cart: Cart) {
         super();
         this._cart = cart;
-        this._brand = new Set<string>();
+        this._params = new Params();
     }
 
     async getView(): Promise<HTMLElement> {
@@ -80,7 +81,7 @@ export class MainView extends AbstractView {
             return filterList;
         }
 
-        this.drawCategories(getFilterList(data.main.categories, []));
+        this.drawCategories(getFilterList(data.main.categories, data.main.filters.category));
         this.drawBrands(getFilterList(data.main.brands, data.main.filters.brand));
     }
 
@@ -89,6 +90,19 @@ export class MainView extends AbstractView {
         box.innerHTML = '';
         const list = createFilterList(categories);
         box.append(list);
+        list.addEventListener('click', (event) => {
+            if (event.target instanceof HTMLInputElement) {
+                const elem = event.target as HTMLInputElement;
+                if (elem.dataset.name) {
+                    if (elem.checked) {
+                        this._params.add('category', elem.dataset.name);
+                    } else {
+                        this._params.remove('category', elem.dataset.name)
+                    };
+                }
+                this.requestUpdateParams(this._params);
+            }
+        })
     }
 
     drawBrands(brands: FilterListItem[]) {
@@ -100,28 +114,24 @@ export class MainView extends AbstractView {
             if (event.target instanceof HTMLInputElement) {
                 const elem = event.target as HTMLInputElement;
                 if (elem.dataset.name) {
-                    (elem.checked) ? this._brand.add(elem.dataset.name) : this._brand.delete(elem.dataset.name);
+                    if (elem.checked) {
+                        this._params.add('brand', elem.dataset.name);
+                    } else {
+                        this._params.remove('brand', elem.dataset.name)
+                    };
                 }
-                this.updateParams();
+                this.requestUpdateParams(this._params);
             }
         })
-    }
-
-    private updateParams() {
-        this.requestUpdateParams(
-            {
-                filters: {
-                    brand: [...this._brand]
-                }
-            }
-        );
     }
 
     private setParams(state: ModelState) {
-        this._brand.clear();
-        state.main.filters.brand.forEach((item) => {
-            this._brand.add(item);
+        this._params.clear();
+        state.main.filters.category.forEach((item) => {
+            this._params.add('category', item);
         })
-
+        state.main.filters.brand.forEach((item) => {
+            this._params.add('brand', item);
+        })
     }
 }
