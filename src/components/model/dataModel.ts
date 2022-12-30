@@ -1,25 +1,42 @@
 import { Product } from "../interface/product";
 import Params from "../utils/params";
 
-type Filters = {
+class MainParams {
     brand: string[];
     category: string[];
+
+    constructor() {
+        this.brand = [];
+        this.category = [];
+    }
 }
 
-export interface ModelMainState {
+class ModelMainState {
     products: Product[];
     brands: string[];
     categories: string[];
-    filters: Filters;
+    params: MainParams;
+
+    constructor() {
+        this.products = [];
+        this.brands = [];
+        this.categories = [];
+        this.params = new MainParams();
+    }
 }
 
-export interface ModelProductState {
+class ModelProductState {
     product: Product | undefined;
 }
 
-export interface ModelState {
+export class ModelState {
     main: ModelMainState;
     prod: ModelProductState;
+
+    constructor() {
+        this.main = new ModelMainState();
+        this.prod = new ModelProductState();
+    }
 }
 
 export class DataModel {
@@ -36,21 +53,7 @@ export class DataModel {
         this._categories = [];
         this._updateEvent = new Event('changemodel');
         this._updateProductEvent = new Event('changemodelproduct');
-
-        this.state = {
-            main: {
-                products: [],
-                brands: [],
-                categories: [],
-                filters: {
-                    brand: [],
-                    category: []
-                }
-            },
-            prod: {
-                product: undefined
-            }
-        };
+        this.state = new ModelState();
     }
 
     getProductsData() {
@@ -78,13 +81,13 @@ export class DataModel {
         this.state.main.products = [];
         this.state.main.categories = this._categories;
         this.state.main.brands = this._brands;
-        this.state.main.filters.brand = params.getAll('brand');
-        this.state.main.filters.category = params.getAll('category');
+        this.state.main.params.brand = params.getAll('brand');
+        this.state.main.params.category = params.getAll('category');
 
         const checkList = (list: string[], item: string) => ((list.length === 0) || (list.includes(item)));
         this._products.forEach((item) => {
-            if (checkList(this.state.main.filters.category, item.category) &&
-                checkList(this.state.main.filters.brand, item.brand)) {
+            if (checkList(this.state.main.params.category, item.category) &&
+                checkList(this.state.main.params.brand, item.brand)) {
                 this.state.main.products.push(item);
             }
         });

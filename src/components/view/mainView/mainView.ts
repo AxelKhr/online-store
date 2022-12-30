@@ -81,8 +81,8 @@ export class MainView extends AbstractView {
             return filterList;
         }
 
-        this.drawCategories(getFilterList(data.main.categories, data.main.filters.category));
-        this.drawBrands(getFilterList(data.main.brands, data.main.filters.brand));
+        this.drawCategories(getFilterList(data.main.categories, data.main.params.category));
+        this.drawBrands(getFilterList(data.main.brands, data.main.params.brand));
     }
 
     drawCategories(categories: FilterListItem[]) {
@@ -127,10 +127,10 @@ export class MainView extends AbstractView {
 
     private setParams(state: ModelState) {
         this._params.clear();
-        state.main.filters.category.forEach((item) => {
+        state.main.params.category.forEach((item) => {
             this._params.add('category', item);
         })
-        state.main.filters.brand.forEach((item) => {
+        state.main.params.brand.forEach((item) => {
             this._params.add('brand', item);
         })
     }
