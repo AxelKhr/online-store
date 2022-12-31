@@ -65,4 +65,14 @@ export default class Params {
         }
         return this;
     }
+
+    replace(key: string, value: string) {
+        if (!this._params.has(key)) {
+            this._params.set(key, new Set());
+        }
+        const elem = this._params.get(key);
+        elem?.clear();
+        elem?.add(value);
+        return this;
+    }
 }

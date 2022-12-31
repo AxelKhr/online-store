@@ -86,7 +86,20 @@ export class MainView extends AbstractView {
 
         this.drawCategories(getFilterList(data.main.categories, data.main.params.category));
         this.drawBrands(getFilterList(data.main.brands, data.main.params.brand));
-        this.drawPrice();
+        this.drawPrice({
+            step: data.main.params.price.step,
+            rangeMin: data.main.params.price.rangeMin,
+            rangeMax: data.main.params.price.rangeMax,
+            currMin: data.main.params.price.currMin,
+            currMax: data.main.params.price.currMax
+        });
+        this.drawStock({
+            step: data.main.params.stock.step,
+            rangeMin: data.main.params.stock.rangeMin,
+            rangeMax: data.main.params.stock.rangeMax,
+            currMin: data.main.params.stock.currMin,
+            currMax: data.main.params.stock.currMax
+        });
     }
 
     drawCategories(categories: FilterListItem[]) {
@@ -129,14 +142,37 @@ export class MainView extends AbstractView {
         })
     }
 
-    drawPrice() {
+    drawPrice(data: FilterSliderData) {
         const box = document.querySelector('.price') as HTMLElement;
         box.innerHTML = '';
-        const priceSlider = new FilterDualSlider(10);
-        box.append(priceSlider.content);
-        priceSlider.setData({ rangeMin: 0, rangeMax: 1000, currMin: 100, currMax: 800 });
-        priceSlider.onChange = (min, max) => {
-            console.log(min, max);
+        const slider = new FilterDualSlider(data);
+        box.append(slider.content);
+        slider.setData(data);
+        slider.onChangeMin = (min) => {
+            this._params.replace('price-min', min.toString());
+            this.requestUpdateParams(this._params);
+            console.log('price-min');
+        }
+        slider.onChangeMax = (max) => {
+            this._params.replace('price-max', max.toString());
+            this.requestUpdateParams(this._params);
+        }
+    }
+
+    drawStock(data: FilterSliderData) {
+        const box = document.querySelector('.stock') as HTMLElement;
+        box.innerHTML = '';
+        const slider = new FilterDualSlider(data);
+        box.append(slider.content);
+        slider.setData(data);
+        slider.onChangeMin = (min) => {
+            this._params.replace('stock-min', min.toString());
+            this.requestUpdateParams(this._params);
+            console.log('stock-min');
+        }
+        slider.onChangeMax = (max) => {
+            this._params.replace('stock-max', max.toString());
+            this.requestUpdateParams(this._params);
         }
     }
 
@@ -148,5 +184,17 @@ export class MainView extends AbstractView {
         state.main.params.brand.forEach((item) => {
             this._params.add('brand', item);
         })
+        if (state.main.params.price.minEn) {
+            this._params.replace('price-min', state.main.params.price.currMin.toString());
+        }
+        if (state.main.params.price.maxEn) {
+            this._params.replace('price-max', state.main.params.price.currMax.toString());
+        }
+        if (state.main.params.stock.minEn) {
+            this._params.replace('stock-min', state.main.params.stock.currMin.toString());
+        }
+        if (state.main.params.stock.maxEn) {
+            this._params.replace('stock-max', state.main.params.stock.currMax.toString());
+        }
     }
 }

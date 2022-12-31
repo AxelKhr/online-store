@@ -1,13 +1,43 @@
 import { Product } from "../interface/product";
 import Params from "../utils/params";
 
+type sliderParams = {
+    step: number;
+    minEn: boolean;
+    maxEn: boolean;
+    rangeMin: number;
+    rangeMax: number;
+    currMin: number;
+    currMax: number;
+}
+
 class MainParams {
     brand: string[];
     category: string[];
+    price: sliderParams;
+    stock: sliderParams;
 
     constructor() {
         this.brand = [];
         this.category = [];
+        this.price = {
+            step: 1,
+            minEn: false,
+            maxEn: false,
+            rangeMin: 0,
+            rangeMax: 1,
+            currMin: 0,
+            currMax: 1
+        }
+        this.stock = {
+            step: 1,
+            minEn: false,
+            maxEn: false,
+            rangeMin: 0,
+            rangeMax: 1,
+            currMin: 0,
+            currMax: 1
+        }
     }
 }
 
@@ -75,6 +105,31 @@ export class DataModel {
             brands.add(item.brand);
         });
         this._brands = [...brands];
+
+        if (this._products.length > 0) {
+            let priceMin = this._products[0].price;
+            let priceMax = this._products[0].price;
+            let stockMin = this._products[0].stock;
+            let stockMax = this._products[0].stock;
+            this._products.forEach((item) => {
+                if (item.price < priceMin) {
+                    priceMin = item.price;
+                }
+                if (item.price > priceMax) {
+                    priceMax = item.price;
+                }
+                if (item.stock < stockMin) {
+                    stockMin = item.stock;
+                }
+                if (item.stock > stockMax) {
+                    stockMax = item.stock;
+                }
+            })
+            this.state.main.params.price.rangeMin = priceMin;
+            this.state.main.params.price.rangeMax = priceMax;
+            this.state.main.params.stock.rangeMin = stockMin;
+            this.state.main.params.stock.rangeMax = stockMax;
+        }
     }
 
     setMainParam(params: Params) {
@@ -83,14 +138,34 @@ export class DataModel {
         this.state.main.brands = this._brands;
         this.state.main.params.brand = params.getAll('brand');
         this.state.main.params.category = params.getAll('category');
+        const priceMinParam = params.get('price-min');
+        this.state.main.params.price.minEn = (priceMinParam.length > 0);
+        this.state.main.params.price.currMin = (priceMinParam.length > 0) ? Number(priceMinParam) : this.state.main.params.price.rangeMin;
+        const priceMaxParam = params.get('price-max');
+        this.state.main.params.price.maxEn = (priceMaxParam.length > 0);
+        this.state.main.params.price.currMax = (priceMaxParam.length > 0) ? Number(priceMaxParam) : this.state.main.params.price.rangeMax;
+        const stockMinParam = params.get('stock-min');
+        this.state.main.params.stock.minEn = (stockMinParam.length > 0);
+        this.state.main.params.stock.currMin = (stockMinParam.length > 0) ? Number(stockMinParam) : this.state.main.params.stock.rangeMin;
+        const stockMaxParam = params.get('stock-max');
+        this.state.main.params.stock.maxEn = (stockMaxParam.length > 0);
+        this.state.main.params.stock.currMax = (stockMaxParam.length > 0) ? Number(stockMaxParam) : this.state.main.params.stock.rangeMax;
 
-        const checkList = (list: string[], item: string) => ((list.length === 0) || (list.includes(item)));
-        this._products.forEach((item) => {
-            if (checkList(this.state.main.params.category, item.category) &&
-                checkList(this.state.main.params.brand, item.brand)) {
-                this.state.main.products.push(item);
-            }
-        });
+        if (this._products.length > 0) {
+            const checkList = (list: string[], item: string) => ((list.length === 0) || (list.includes(item)));
+            this._products.forEach((item) => {
+                if (
+                    checkList(this.state.main.params.category, item.category) &&
+                    checkList(this.state.main.params.brand, item.brand) &&
+                    (item.price >= this.state.main.params.price.currMin) &&
+                    (item.price <= this.state.main.params.price.currMax) &&
+                    (item.stock >= this.state.main.params.stock.currMin) &&
+                    (item.stock <= this.state.main.params.stock.currMax)
+                ) {
+                    this.state.main.products.push(item);
+                }
+            });
+        }
         document.dispatchEvent(this._updateEvent);
     }
 

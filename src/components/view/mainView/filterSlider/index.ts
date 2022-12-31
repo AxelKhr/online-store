@@ -1,6 +1,7 @@
 import "./style.scss";
 
 export type FilterSliderData = {
+    step: number;
     rangeMin: number;
     rangeMax: number;
     currMin: number;
@@ -15,15 +16,11 @@ export class FilterDualSlider {
     private rangeFill: HTMLDivElement;
     private labelMin: HTMLLabelElement;
     private labelMax: HTMLLabelElement;
-    onChange!: (min: number, max: number) => void | never;
+    onChangeMin!: (min: number) => void | never;
+    onChangeMax!: (max: number) => void | never;
 
-    constructor(step: number) {
-        this.data = {
-            rangeMin: 0,
-            rangeMax: 0,
-            currMin: 0,
-            currMax: 0
-        };
+    constructor(data: FilterSliderData) {
+        this.data = data;
         this.content = document.createElement('div');
         this.content.classList.add('filter__slider');
         const sliderBox = document.createElement('div');
@@ -32,21 +29,19 @@ export class FilterDualSlider {
         this.rangeMin = document.createElement('input');
         this.rangeMin.classList.add('range-min');
         this.rangeMin.type = 'range';
-        this.rangeMin.step = `${step}`;
         this.rangeMin.addEventListener('input', this.calc);
         this.rangeMin.addEventListener('change', () => {
-            if (this.onChange) {
-                this.onChange(this.data.currMin, this.data.currMax)
+            if (this.onChangeMin) {
+                this.onChangeMin(this.data.currMin);
             }
         });
         this.rangeMax = document.createElement('input');
         this.rangeMax.classList.add('range-max');
         this.rangeMax.type = 'range';
-        this.rangeMax.step = `${step}`;
         this.rangeMax.addEventListener('input', this.calc);
         this.rangeMax.addEventListener('change', () => {
-            if (this.onChange) {
-                this.onChange(this.data.currMin, this.data.currMax)
+            if (this.onChangeMax) {
+                this.onChangeMax(this.data.currMax);
             }
         });
         this.rangeFill = document.createElement('div');
@@ -65,9 +60,11 @@ export class FilterDualSlider {
 
     setData(data: FilterSliderData) {
         this.data = data;
+        this.rangeMin.step = `${this.data.step}`;
         this.rangeMin.min = `${this.data.rangeMin}`;
         this.rangeMin.max = `${this.data.rangeMax}`;
         this.rangeMin.value = `${this.data.currMin}`;
+        this.rangeMax.step = `${this.data.step}`;
         this.rangeMax.min = `${this.data.rangeMin}`;
         this.rangeMax.max = `${this.data.rangeMax}`;
         this.rangeMax.value = `${this.data.currMax}`;
