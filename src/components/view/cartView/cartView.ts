@@ -65,6 +65,9 @@ export class CartView extends AbstractView {
             if(target.closest('.order-num__btn-right')) {
                 e.preventDefault();
                 data.count++;
+                if(data.count > data.product.stock) {
+                    return;
+                }
                 titleNum.innerText = `${Number(titleNum.innerHTML) + 1}`;
                 orderProduct.innerText = `${Number(orderProduct.innerHTML) + 1}`;
                 price.innerText = `${data.product.price * data.count}`;

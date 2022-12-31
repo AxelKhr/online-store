@@ -12,7 +12,6 @@ export abstract class AbstractView {
 
     abstract getView(): Promise<HTMLElement>;
 
-    //    abstract draw(data?: Product[] | Product | ProductResponse): void;
     abstract draw(data?: ModelState): void;
 
     async setView(title: string) {
