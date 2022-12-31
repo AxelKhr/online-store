@@ -1,7 +1,8 @@
 import { Product } from "../../../interface/product";
+import { CartData } from "../cart/cart";
 import "./style.scss";
 
-export function createOrderBlock(data: Product[]): HTMLElement {
+export function createOrderBlock(data: CartData[]): HTMLElement {
   const block = document.createElement('div');
   block.classList.add('order', 'order__block');
 
@@ -18,9 +19,13 @@ export function createOrderBlock(data: Product[]): HTMLElement {
   const info = document.createElement('div');
   info.classList.add('order__info');
 
-  const products = document.createElement('p');
-  products.classList.add('order__product');
-  products.innerText = `Products: ${data.length}`;
+  const productsTitle = document.createElement('p');
+  productsTitle.classList.add('order__product');
+  productsTitle.innerText = `Products: `;
+  
+  const productsCount = document.createElement('span');
+  productsCount.classList.add('order__count');
+  productsCount.innerText = `${data.reduce((count, acc) => count + acc.count, 0)}`;
 
   const cost = document.createElement('p');
   cost.classList.add('order__cost');
@@ -37,7 +42,8 @@ export function createOrderBlock(data: Product[]): HTMLElement {
   btn.innerText = 'PAY';
   btn.addEventListener('click', payOrder);
 
-  info.append(products, cost);
+  productsTitle.append(productsCount);
+  info.append(productsTitle, cost);
   box.append(info, input, btn);
   block.append(title, box);
   return block;
