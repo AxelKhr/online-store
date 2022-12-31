@@ -62,14 +62,15 @@ export class CartView extends AbstractView {
             const orderProduct = document.querySelector('.order__count') as HTMLElement;
             const orderPrice = document.querySelector('.order__cost') as HTMLElement;
             const price = document.getElementById(`price-${data.product.id}`) as HTMLElement;
-            e.preventDefault();
             if(target.closest('.order-num__btn-right')) {
+                e.preventDefault();
                 data.count++;
                 titleNum.innerText = `${Number(titleNum.innerHTML) + 1}`;
                 orderProduct.innerText = `${Number(orderProduct.innerHTML) + 1}`;
                 price.innerText = `${data.product.price * data.count}`;
                 orderPrice.innerText = `Total: ${this._cart.plusNumber(data)}`;
             } else if (target.closest('.order-num__btn-left')) {
+                e.preventDefault();
                 data.count--;
                 if(data.count < 1) {
                     this.removeFromCart(e, data.product, parent);
