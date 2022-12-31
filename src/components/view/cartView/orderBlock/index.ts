@@ -1,7 +1,8 @@
 import { Product } from "../../../interface/product";
+import { CartData } from "../cart/cart";
 import "./style.scss";
 
-export function createOrderBlock(data: Product[]): HTMLElement {
+export function createOrderBlock(data: CartData[]): HTMLElement {
   const block = document.createElement('div');
   block.classList.add('order', 'order__block');
 
@@ -24,7 +25,7 @@ export function createOrderBlock(data: Product[]): HTMLElement {
   
   const productsCount = document.createElement('span');
   productsCount.classList.add('order__count');
-  productsCount.innerText = `${data.length}`;
+  productsCount.innerText = `${data.reduce((count, acc) => count + acc.count, 0)}`;
 
   const cost = document.createElement('p');
   cost.classList.add('order__cost');

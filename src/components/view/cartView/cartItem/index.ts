@@ -1,5 +1,5 @@
 import "./style.scss";
-import { Product } from "../../../interface/product";
+import { CartData } from "../cart/cart";
 
 function createTemplate(): HTMLElement {
   const card = document.createElement('a');
@@ -41,7 +41,6 @@ function createTemplate(): HTMLElement {
   orderBtnLeft.textContent = '-';
 
   const orderCount = document.createElement('p');
-  orderCount.innerText = '1';
   orderCount.classList.add('order-num__count');
 
   const orderBtnRight = document.createElement('button');
@@ -66,16 +65,18 @@ function createTemplate(): HTMLElement {
   return card;
 }
 
-function setData(card: HTMLElement, data: Product): void {
-  card.setAttribute('href', `#/product?id=${data.id}`);
+function setData(card: HTMLElement, data: CartData): void {
+  card.setAttribute('href', `#/product?id=${data.product.id}`);
   (card.querySelector('.product-cart__thumbnail') as HTMLElement).style.backgroundImage =
-    `url(${data.thumbnail})`;
-  (card.querySelector('.product-cart__title') as HTMLElement).textContent = data.title;
-  (card.querySelector('.product-cart__brand') as HTMLElement).textContent = data.brand;
-  (card.querySelector('.product-cart__desc') as HTMLElement).textContent = `${data.description}`;
-  (card.querySelector('.product-cart__price') as HTMLElement).textContent = `${data.price}`;
-  (card.querySelector('.product-cart__count') as HTMLElement).textContent = `Stock: ${data.stock}`;
-  (card.querySelector('.order-num__count') as HTMLElement).id = `count-${data.id}`;
+    `url(${data.product.thumbnail})`;
+  (card.querySelector('.product-cart__title') as HTMLElement).textContent = data.product.title;
+  (card.querySelector('.product-cart__brand') as HTMLElement).textContent = data.product.brand;
+  (card.querySelector('.product-cart__desc') as HTMLElement).textContent = `${data.product.description}`;
+  (card.querySelector('.product-cart__price') as HTMLElement).textContent = `${data.product.price * data.count}`;
+  (card.querySelector('.product-cart__price') as HTMLElement).id = `price-${data.product.id}`;
+  (card.querySelector('.product-cart__count') as HTMLElement).textContent = `Stock: ${data.product.stock}`;
+  (card.querySelector('.order-num__count') as HTMLElement).id = `count-${data.product.id}`;
+  (card.querySelector('.order-num__count') as HTMLElement).innerHTML = `${data.count}`;
 }
 
 export { createTemplate, setData };

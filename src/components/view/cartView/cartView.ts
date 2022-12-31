@@ -4,7 +4,7 @@ import * as CartItem from "./cartItem";
 import { Product } from "../../interface/product";
 import { createOrderBlock } from "./orderBlock";
 import { getModal } from "./modal";
-import { Cart } from "./cart/cart";
+import { Cart, CartData } from "./cart/cart";
 
 export class CartView extends AbstractView {
 
@@ -24,20 +24,16 @@ export class CartView extends AbstractView {
 
     draw(): void {
         const parent = document.querySelector('.cart-page') as HTMLElement;
-        const data: string[] = JSON.parse(localStorage.getItem('cart-items')!);
-        if (data !== null) {
+        if (this._cart.cartData.length !== 0) {
             const fragment = document.createDocumentFragment();
             const cardTemp = CartItem.createTemplate();
-            const arr: Product[] = [];
 
-            data.forEach(item => {
-                const product: Product = JSON.parse(item);
+            this._cart.cartData.forEach(item => {
                 const card = cardTemp.cloneNode(true) as HTMLElement;
                 card.classList.add('products__card');
-                CartItem.setData(card, product);
+                CartItem.setData(card, item);
                 fragment.append(card);
-                arr.push(product);
-                card.addEventListener('click', (e: Event) => this.clickItem(e, product, parent));
+                card.addEventListener('click', (e: Event) => this.clickItem(e, item, parent));
             });
 
             parent.innerHTML = 
@@ -50,43 +46,48 @@ export class CartView extends AbstractView {
             cart.appendChild(fragment);
 
             const order = document.querySelector('.cart__order') as HTMLElement;
-            order.append(createOrderBlock(arr));
+            order.append(createOrderBlock(this._cart.cartData));
 
             const modal = document.querySelector('.modal') as HTMLElement;
             modal.append(getModal());
         }
     }
 
-    clickItem(e: Event, product: Product, parent: HTMLElement) {
+    clickItem(e: Event, data: CartData, parent: HTMLElement) {
         const target = e.target! as HTMLElement;
         if (target.closest('.product-cart__button')) {
-            this.removeFromCart(e, product, parent);
-        } else if(target.closest('.order-num__btn-right')) {
-            e.preventDefault();
-            const titleNum = document.getElementById(`count-${product.id}`) as HTMLElement;
+            this.removeFromCart(e, data.product, parent);
+        } else {
+            const titleNum = document.getElementById(`count-${data.product.id}`) as HTMLElement;
             const orderProduct = document.querySelector('.order__count') as HTMLElement;
-            let title = Number(titleNum.innerHTML) + 1;
-            titleNum.innerText = `${title}`;
-            let orderTitle = Number(orderProduct.innerHTML) + 1;
-            orderProduct.innerText = `${orderTitle}`;
-            this._cart.plusNumber(product, titleNum);
-        } else if(target.closest('.order-num__btn-left')) {
+            const orderPrice = document.querySelector('.order__cost') as HTMLElement;
+            const price = document.getElementById(`price-${data.product.id}`) as HTMLElement;
             e.preventDefault();
-            const titleNum = document.getElementById(`count-${product.id}`) as HTMLElement;
-            const orderProduct = document.querySelector('.order__count') as HTMLElement;
-            let title = Number(titleNum.innerHTML) - 1;
-            titleNum.innerText = `${title}`;
-            let orderTitle = Number(orderProduct.innerHTML) - 1;
-            orderProduct.innerText = `${orderTitle}`;
-            this._cart.minusNumber(product, titleNum);
-        }
+            if(target.closest('.order-num__btn-right')) {
+                data.count++;
+                titleNum.innerText = `${Number(titleNum.innerHTML) + 1}`;
+                orderProduct.innerText = `${Number(orderProduct.innerHTML) + 1}`;
+                price.innerText = `${data.product.price * data.count}`;
+                orderPrice.innerText = `Total: ${this._cart.plusNumber(data)}`;
+            } else if (target.closest('.order-num__btn-left')) {
+                data.count--;
+                if(data.count < 1) {
+                    this.removeFromCart(e, data.product, parent);
+                    return;
+                }
+                titleNum.innerText = `${Number(titleNum.innerHTML) - 1}`;
+                orderProduct.innerText = `${Number(orderProduct.innerHTML) - 1}`;
+                price.innerText = `${data.product.price * data.count}`;
+                orderPrice.innerText = `Total: ${this._cart.minusNumber(data)}`;
+            }
+        } 
     }
 
     removeFromCart(e: Event, product: Product, parent: HTMLElement) {
         e.preventDefault();
         this._cart.removeFromCart(product);
         if(this._cart.getSize() === 0) {
-            localStorage.removeItem('cart-items');
+            localStorage.removeItem('cart-storage');
             parent.innerHTML = this.getEmptyCart();
         } else {
             this.draw();
