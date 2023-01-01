@@ -7,7 +7,7 @@
         width: 100%;
 
         .filter {
-            &__box {
+            &__block {
                 margin-bottom: 10px;
                 background: $colorBackgroundMainBlocks;
             }
@@ -17,14 +17,14 @@
                 border-bottom: 2px solid #ccc;
             }
             
-            &__list-box {
-                height: 250px;
-                overflow: auto;
+            &__box {
                 padding: 10px;
-            }
 
-            &__slider-box {
-                padding: 10px;
+                &.category,
+                &.brand {
+                    height: 250px;
+                    overflow: auto;
+                }
             }
         }
     }

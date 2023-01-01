@@ -9,6 +9,18 @@ import { Cart } from "../cartView/cart/cart";
 import { ModelState } from "../../model/dataModel";
 import Params from "../../utils/params";
 
+const createFilterBlock = (title: string, selClass: string) => {
+    const block = document.createElement('div');
+    block.classList.add('filter__block');
+    const titleElem = document.createElement('p');
+    titleElem.classList.add('filter__title');
+    titleElem.textContent = title;
+    const box = document.createElement('div');
+    box.classList.add('filter__box', selClass);
+    block.append(titleElem, box);
+    return block;
+}
+
 export class MainView extends AbstractView {
 
     private _cart: Cart;
@@ -24,43 +36,28 @@ export class MainView extends AbstractView {
     async getView(): Promise<HTMLElement> {
         let content = document.createElement('div') as HTMLElement;
         content.classList.add('content__table', 'table');
-        content.innerHTML = `
-            <aside class="table__filter">
-                <div class="filter__box">
-                    <p class="filter__title">Category</p>
-                    <div class="filter__list-box category"></div>
-                </div>
-                <div class="filter__box">
-                    <p class="filter__title">Brand</p>
-                    <div class="filter__list-box brand"></div>
-                </div>
-                <div class="filter__box">
-                    <p class="filter__title">Price</p>
-                    <div class="filter__slider-box price"></div>
-                </div>
-                <div class="filter__box">
-                    <p class="filter__title">Stock</p>
-                    <div class="filter__slider-box stock"></div>
-                </div>
-            </aside>
-            <section class="table__products">
-                <div class="table__view">
-                    <div class="view__filter search">
-                    </div>
-                </div>
-                <div class="table__list">
-                    <a href="#product">Product</a>
-                </div>
-            </section>`;
+        const aside = document.createElement('aside');
+        aside.classList.add('table__filter');
+        aside.append(
+            createFilterBlock('Search', 'search'),
+            createFilterBlock('Category', 'category'),
+            createFilterBlock('Brand', 'brand'),
+            createFilterBlock('Price', 'price'),
+            createFilterBlock('Stock', 'stock')
+        );
+        const section = document.createElement('section');
+        section.classList.add('table__products');
+        const table = document.createElement('div');
+        table.classList.add('table__list');
+        section.append(table);
+        content.append(aside, section);
         return content;
     }
 
     draw(data: ModelState): void {
         this.setParams(data);
-
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
-
         data.main.products.forEach(item => {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
@@ -87,22 +84,24 @@ export class MainView extends AbstractView {
             return filterList;
         }
 
-        this.drawCategories(getFilterList(data.main.categories, data.main.params.category));
-        this.drawBrands(getFilterList(data.main.brands, data.main.params.brand));
-        this.drawPrice({
+        this.drawFilterList(getFilterList(data.main.categories, data.main.params.category),
+            'category', 'category');
+        this.drawFilterList(getFilterList(data.main.brands, data.main.params.brand),
+            'brand', 'brand');
+        this.drawFilterSlider({
             step: data.main.params.price.step,
             rangeMin: data.main.params.price.rangeMin,
             rangeMax: data.main.params.price.rangeMax,
             currMin: data.main.params.price.currMin,
             currMax: data.main.params.price.currMax
-        });
-        this.drawStock({
+        }, 'price', 'price');
+        this.drawFilterSlider({
             step: data.main.params.stock.step,
             rangeMin: data.main.params.stock.rangeMin,
             rangeMax: data.main.params.stock.rangeMax,
             currMin: data.main.params.stock.currMin,
             currMax: data.main.params.stock.currMax
-        });
+        }, 'stock', 'stock');
 
         this.drawSearch({
             type: data.main.params.search.type,
@@ -110,8 +109,8 @@ export class MainView extends AbstractView {
         });
     }
 
-    drawCategories(categories: FilterListItem[]) {
-        const box = document.querySelector('.category') as HTMLElement;
+    drawFilterList(categories: FilterListItem[], selClass: string, paramName: string) {
+        const box = document.querySelector(`.${selClass}`) as HTMLElement;
         box.innerHTML = '';
         const list = createFilterList(categories);
         box.append(list);
@@ -120,9 +119,9 @@ export class MainView extends AbstractView {
                 const elem = event.target as HTMLInputElement;
                 if (elem.dataset.name) {
                     if (elem.checked) {
-                        this._params.add('category', elem.dataset.name);
+                        this._params.add(paramName, elem.dataset.name);
                     } else {
-                        this._params.remove('category', elem.dataset.name)
+                        this._params.remove(paramName, elem.dataset.name)
                     };
                 }
                 this.requestUpdateParams(this._params);
@@ -130,55 +129,18 @@ export class MainView extends AbstractView {
         })
     }
 
-    drawBrands(brands: FilterListItem[]) {
-        const box = document.querySelector('.brand') as HTMLElement;
-        box.innerHTML = '';
-        const list = createFilterList(brands);
-        box.append(list);
-        list.addEventListener('click', (event) => {
-            if (event.target instanceof HTMLInputElement) {
-                const elem = event.target as HTMLInputElement;
-                if (elem.dataset.name) {
-                    if (elem.checked) {
-                        this._params.add('brand', elem.dataset.name);
-                    } else {
-                        this._params.remove('brand', elem.dataset.name)
-                    };
-                }
-                this.requestUpdateParams(this._params);
-            }
-        })
-    }
-
-    drawPrice(data: FilterSliderData) {
-        const box = document.querySelector('.price') as HTMLElement;
+    drawFilterSlider(data: FilterSliderData, selClass: string, paramName: string) {
+        const box = document.querySelector(`.${selClass}`) as HTMLElement;
         box.innerHTML = '';
         const slider = new FilterDualSlider(data);
         box.append(slider.content);
         slider.setData(data);
         slider.onChangeMin = (min) => {
-            this._params.replace('price-min', min.toString());
+            this._params.replace(`${paramName}-min`, min.toString());
             this.requestUpdateParams(this._params);
         }
         slider.onChangeMax = (max) => {
-            this._params.replace('price-max', max.toString());
-            this.requestUpdateParams(this._params);
-        }
-    }
-
-    drawStock(data: FilterSliderData) {
-        const box = document.querySelector('.stock') as HTMLElement;
-        box.innerHTML = '';
-        const slider = new FilterDualSlider(data);
-        box.append(slider.content);
-        slider.setData(data);
-        slider.onChangeMin = (min) => {
-            this._params.replace('stock-min', min.toString());
-            this.requestUpdateParams(this._params);
-            console.log('stock-min');
-        }
-        slider.onChangeMax = (max) => {
-            this._params.replace('stock-max', max.toString());
+            this._params.replace(`${paramName}-max`, max.toString());
             this.requestUpdateParams(this._params);
         }
     }
