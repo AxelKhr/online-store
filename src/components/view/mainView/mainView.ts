@@ -159,7 +159,6 @@ export class MainView extends AbstractView {
         slider.onChangeMin = (min) => {
             this._params.replace('price-min', min.toString());
             this.requestUpdateParams(this._params);
-            console.log('price-min');
         }
         slider.onChangeMax = (max) => {
             this._params.replace('price-max', max.toString());

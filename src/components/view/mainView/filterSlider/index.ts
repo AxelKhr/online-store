@@ -87,7 +87,7 @@ export class FilterDualSlider {
         this.rangeMax.value = `${this.data.currMax}`;
 
         const k = this.rangeMax.offsetWidth / (this.data.rangeMax - this.data.rangeMin);
-        this.rangeFill.style.left = `${Math.floor(this.data.currMin * k)}px`;
+        this.rangeFill.style.left = `${Math.floor((this.data.currMin - this.data.rangeMin) * k)}px`;
         this.rangeFill.style.right = `${Math.floor((this.data.rangeMax - this.data.currMax) * k)}px`;
         this.labelMin.textContent = `${this.data.currMin}`;
         this.labelMax.textContent = `${this.data.currMax}`;

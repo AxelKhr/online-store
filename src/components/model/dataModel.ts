@@ -169,6 +169,7 @@ export class DataModel {
         this.state.main.params.search.type = (searchType.length > 0) ? searchType : '';
 
         if (this._products.length > 0) {
+            const productsTemp: Product[] = [];
             const checkList = (list: string[], item: string) => ((list.length === 0) || (list.includes(item)));
             this._products.forEach((item) => {
                 let compareValue: string = '';
@@ -178,16 +179,41 @@ export class DataModel {
                 if (
                     checkList(this.state.main.params.category, item.category) &&
                     checkList(this.state.main.params.brand, item.brand) &&
-                    (item.price >= this.state.main.params.price.currMin) &&
-                    (item.price <= this.state.main.params.price.currMax) &&
                     (item.stock >= this.state.main.params.stock.currMin) &&
                     (item.stock <= this.state.main.params.stock.currMax) &&
                     (!(this.state.main.params.search.enable) ||
                         (compareValue.includes(this.state.main.params.search.value.toLowerCase())))
                 ) {
-                    this.state.main.products.push(item);
+                    productsTemp.push(item);
                 }
             });
+            if (productsTemp.length > 0) {
+                const rangePriceMin = Math.min(...productsTemp.map((item) => item.price))
+                if (this.state.main.params.price.minEn) {
+                    this.state.main.params.price.rangeMin =
+                        Math.min(rangePriceMin, this.state.main.params.price.currMin);
+                } else {
+                    this.state.main.params.price.rangeMin = rangePriceMin;
+                    this.state.main.params.price.currMin = rangePriceMin;
+                }
+                const rangePriceMax = Math.max(...productsTemp.map((item) => item.price));
+                this.state.main.params.price.rangeMax = rangePriceMax;
+                if (this.state.main.params.price.minEn) {
+                    this.state.main.params.price.rangeMax =
+                        Math.max(rangePriceMax, this.state.main.params.price.currMax);
+                } else {
+                    this.state.main.params.price.rangeMax = rangePriceMax;
+                    this.state.main.params.price.currMax = rangePriceMax;
+                }
+                productsTemp.forEach((item) => {
+                    if (
+                        (item.price >= this.state.main.params.price.currMin) &&
+                        (item.price <= this.state.main.params.price.currMax)
+                    ) {
+                        this.state.main.products.push(item);
+                    }
+                });
+            }
         }
         document.dispatchEvent(this._updateEvent);
     }
