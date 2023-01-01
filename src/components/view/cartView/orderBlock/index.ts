@@ -1,4 +1,4 @@
-import { Product } from "../../../interface/product";
+import { PromoCode } from "../../../enum/promo";
 import { CartData } from "../cart/cart";
 import "./style.scss";
 
@@ -32,6 +32,12 @@ export function createOrderBlock(data: CartData[]): HTMLElement {
   const total = document.getElementById('total') as HTMLElement;
   cost.innerText = `Total: ${total.innerText}`;
 
+  const promo = document.createElement('div');
+  promo.classList.add('order__promo-block');
+
+  const promoContent = document.createElement('div');
+  promoContent.classList.add('order__promo-content');
+  
   const input = document.createElement('input');
   input.classList.add('order__promo');
   input.type = 'text';
@@ -44,7 +50,8 @@ export function createOrderBlock(data: CartData[]): HTMLElement {
 
   productsTitle.append(productsCount);
   info.append(productsTitle, cost);
-  box.append(info, input, btn);
+  promo.append(input, promoContent);
+  box.append(info, promo, btn);
   block.append(title, box);
   return block;
 }
@@ -54,4 +61,16 @@ function payOrder() {
     const modalShadow = document.querySelector('.modal__shadow');
     modal?.classList.remove('hidden');
     modalShadow?.classList.remove('hidden');
+}
+
+export function getPromo(parent: HTMLElement, content: string) {
+  const promoTitle = document.createElement('p');
+  promoTitle.classList.add('order__promo-title');
+  promoTitle.innerText = `${content}`;
+
+  const promoBtn = document.createElement('button');
+  promoBtn.classList.add('order__promo-btn');
+  promoBtn.innerText = 'ADD';
+
+  parent.append(promoTitle, promoBtn);
 }

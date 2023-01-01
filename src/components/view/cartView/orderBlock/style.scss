@@ -34,6 +34,17 @@
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
 
+  &__promo-block {
+    padding: 0 30px;
+  }
+
+  &__promo-content {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+
   &__btn {
     width: 60%;
     margin: 0 auto;
