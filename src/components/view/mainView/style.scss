@@ -34,9 +34,16 @@
     }
 
     &__view {
-        height: 50px;
-        background: #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: $colorBackgroundMainBlocks;
         margin-bottom: 10px;
+        padding: 10px;
+
+        .view__filter {
+            width: 400px;
+        }
     }
         
     &__list {
@@ -47,7 +54,7 @@
         width: 100%;
     
         .products__card {
-        width: 100%;
+            width: 100%;
         }
     }
 }

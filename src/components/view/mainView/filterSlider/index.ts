@@ -16,8 +16,8 @@ export class FilterDualSlider {
     private rangeFill: HTMLDivElement;
     private labelMin: HTMLLabelElement;
     private labelMax: HTMLLabelElement;
-    onChangeMin!: (min: number) => void | never;
-    onChangeMax!: (max: number) => void | never;
+    onChangeMin!: (min: number) => void;
+    onChangeMax!: (max: number) => void;
 
     constructor(data: FilterSliderData) {
         this.data = data;

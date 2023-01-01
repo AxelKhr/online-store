@@ -4,6 +4,7 @@ import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
 import { createFilterList, FilterListItem } from "./filterList";
 import { FilterDualSlider, FilterSliderData } from "./filterSlider";
+import { InputSearch, InputSearchData } from "./inputSearch";
 import { Cart } from "../cartView/cart/cart";
 import { ModelState } from "../../model/dataModel";
 import Params from "../../utils/params";
@@ -44,6 +45,8 @@ export class MainView extends AbstractView {
             </aside>
             <section class="table__products">
                 <div class="table__view">
+                    <div class="view__filter search">
+                    </div>
                 </div>
                 <div class="table__list">
                     <a href="#product">Product</a>
@@ -99,6 +102,11 @@ export class MainView extends AbstractView {
             rangeMax: data.main.params.stock.rangeMax,
             currMin: data.main.params.stock.currMin,
             currMax: data.main.params.stock.currMax
+        });
+
+        this.drawSearch({
+            type: data.main.params.search.type,
+            value: data.main.params.search.value,
         });
     }
 
@@ -176,6 +184,23 @@ export class MainView extends AbstractView {
         }
     }
 
+    drawSearch(data: InputSearchData) {
+        const box = document.querySelector('.search') as HTMLElement;
+        box.innerHTML = '';
+        const search = new InputSearch();
+        box.append(search.content);
+        search.setData(data);
+        search.onChange = (type, value) => {
+            this._params.remove('search-type');
+            this._params.remove('search');
+            if (value.length > 0) {
+                this._params.add('search-type', type);
+                this._params.add('search', value);
+            }
+            this.requestUpdateParams(this._params);
+        };
+    }
+
     private setParams(state: ModelState) {
         this._params.clear();
         state.main.params.category.forEach((item) => {
@@ -195,6 +220,10 @@ export class MainView extends AbstractView {
         }
         if (state.main.params.stock.maxEn) {
             this._params.replace('stock-max', state.main.params.stock.currMax.toString());
+        }
+        if (state.main.params.search.enable) {
+            this._params.add('search-type', state.main.params.search.type);
+            this._params.add('search', state.main.params.search.value);
         }
     }
 }

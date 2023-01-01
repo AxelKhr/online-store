@@ -1,6 +1,12 @@
 import { Product } from "../interface/product";
 import Params from "../utils/params";
 
+type searchParams = {
+    enable: boolean;
+    type: string;
+    value: string;
+}
+
 type sliderParams = {
     step: number;
     minEn: boolean;
@@ -16,6 +22,7 @@ class MainParams {
     category: string[];
     price: sliderParams;
     stock: sliderParams;
+    search: searchParams;
 
     constructor() {
         this.brand = [];
@@ -37,6 +44,11 @@ class MainParams {
             rangeMax: 1,
             currMin: 0,
             currMax: 1
+        }
+        this.search = {
+            enable: false,
+            type: '',
+            value: ''
         }
     }
 }
@@ -150,17 +162,28 @@ export class DataModel {
         const stockMaxParam = params.get('stock-max');
         this.state.main.params.stock.maxEn = (stockMaxParam.length > 0);
         this.state.main.params.stock.currMax = (stockMaxParam.length > 0) ? Number(stockMaxParam) : this.state.main.params.stock.rangeMax;
+        const searchValue = params.get('search');
+        this.state.main.params.search.value = (searchValue.length > 0) ? searchValue : '';
+        this.state.main.params.search.enable = (searchValue.length > 0);
+        const searchType = params.get('search-type');
+        this.state.main.params.search.type = (searchType.length > 0) ? searchType : '';
 
         if (this._products.length > 0) {
             const checkList = (list: string[], item: string) => ((list.length === 0) || (list.includes(item)));
             this._products.forEach((item) => {
+                let compareValue: string = '';
+                if (this.state.main.params.search.enable) {
+                    compareValue = (item[this.state.main.params.search.type as keyof Product] as string).toLowerCase();
+                }
                 if (
                     checkList(this.state.main.params.category, item.category) &&
                     checkList(this.state.main.params.brand, item.brand) &&
                     (item.price >= this.state.main.params.price.currMin) &&
                     (item.price <= this.state.main.params.price.currMax) &&
                     (item.stock >= this.state.main.params.stock.currMin) &&
-                    (item.stock <= this.state.main.params.stock.currMax)
+                    (item.stock <= this.state.main.params.stock.currMax) &&
+                    (!(this.state.main.params.search.enable) ||
+                        (compareValue.includes(this.state.main.params.search.value.toLowerCase())))
                 ) {
                     this.state.main.products.push(item);
                 }

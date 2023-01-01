@@ -1,0 +1,75 @@
+$filterSearchHeight: 40px;
+$filterSearchBorderRadius: 20px;
+$filterSearchBorderWidth: 2px;
+$filterSearchButtonWidth: 100px;
+$filterSearchSelectWidth: 140px;
+
+.filter__search {
+    position: relative;
+
+    input[type=text] {
+        outline: none;
+        width: 100%;
+        height: $filterSearchHeight;
+        border: $filterSearchBorderWidth solid $colorInputEditBorder;
+        border-radius: $filterSearchBorderRadius;
+        padding-left: $filterSearchBorderRadius;
+        padding-right: 5px +  $filterSearchButtonWidth + $filterSearchSelectWidth - $filterSearchBorderRadius;
+        background: $colorInputEditBackground;
+        transition: all 0.1s ease-out;
+
+        &:focus {
+            border-color: $colorInputEditBorderFocus;
+            background: $colorInputEditBackgroundFocus;
+        }
+    }
+
+    input[type=button] {
+        position: absolute;
+        z-index: 2;
+        right: 0;
+        top: 0;
+        width: $filterSearchButtonWidth;
+        height: $filterSearchHeight;
+        outline: none;
+        border: none;
+        border-radius: $filterSearchBorderRadius;
+        color: $colorButtonText;
+        background: $colorButtonEnable;
+        padding: 0 $filterSearchBorderRadius;
+
+        &:hover,
+        &:focus {
+            background: $colorButtonHover;
+        }
+    
+        &:focus {
+            outline: 1px dashed #fff;
+            outline-offset: -1px;
+        }
+    
+        &:active {
+            background: $colorButtonActive;
+        }
+    }
+
+    select {
+        position: absolute;
+        z-index: 1;
+        right: $filterSearchButtonWidth - $filterSearchBorderRadius;
+        top: $filterSearchBorderWidth;
+        width: $filterSearchSelectWidth;
+        height: $filterSearchHeight - 2 * $filterSearchBorderWidth;
+        -webkit-appearance: none;
+        background-color: $colorInputEditBackground;
+        border: none;
+        border-left: 2px solid $colorInputEditBorder;
+        padding: 0 5px;
+        outline: none;
+        transition: all 0.5s ease;
+
+        &:focus {
+            background-color: $colorInputEditBackgroundFocus;
+        }
+    }
+}
