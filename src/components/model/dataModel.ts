@@ -1,18 +1,37 @@
 import { Product } from "../interface/product";
 import Params from "../utils/params";
 
-export type ListItem = {
+export class ListItemParam {
     name: string;
     count: number;
+    total: number;
+    checked: boolean;
+
+    constructor(name: string, count: number, total: number, checked: boolean) {
+        this.name = name;
+        this.count = count;
+        this.total = total;
+        this.checked = checked;
+    }
 }
 
-type searchParams = {
+export class ListParams extends Map<string, ListItemParam> {
+    getCheckedNames() {
+        const names: string[] = [];
+        this.forEach((item) => {
+            if (item.checked) { names.push(item.name) }
+        });
+        return names;
+    }
+}
+
+type SearchParams = {
     enable: boolean;
     type: string;
     value: string;
 }
 
-type sliderParams = {
+type SliderParams = {
     step: number;
     minEn: boolean;
     maxEn: boolean;
@@ -23,15 +42,15 @@ type sliderParams = {
 }
 
 class MainParams {
-    category: ListItem[];
-    brand: ListItem[];
-    price: sliderParams;
-    stock: sliderParams;
-    search: searchParams;
+    category: ListParams;
+    brand: ListParams;
+    price: SliderParams;
+    stock: SliderParams;
+    search: SearchParams;
 
     constructor() {
-        this.category = [];
-        this.brand = [];
+        this.category = new ListParams();
+        this.brand = new ListParams();
         this.price = {
             step: 1,
             minEn: false,
@@ -60,14 +79,10 @@ class MainParams {
 
 class ModelMainState {
     products: Product[];
-    categories: ListItem[];
-    brands: ListItem[];
     params: MainParams;
 
     constructor() {
         this.products = [];
-        this.brands = [];
-        this.categories = [];
         this.params = new MainParams();
     }
 }
@@ -88,8 +103,8 @@ export class ModelState {
 
 export class DataModel {
     private _products: Product[];
-    private _brands: ListItem[];
-    private _categories: ListItem[];
+    private _brands: string[];
+    private _categories: string[];
     private _updateEvent: Event;
     private _updateProductEvent: Event;
     state: ModelState;
@@ -116,25 +131,22 @@ export class DataModel {
         this._products.forEach((item) => {
             categories.add(item.category);
         });
-        this._categories = [];
-        [...categories].forEach((item) => {
-            this._categories.push({
-                name: item,
-                count: this._products.reduce((prev, curr) => (curr.category === item) ? prev += 1 : prev, 0)
-            })
+        this._categories = [...categories];
+        this.state.main.params.category.clear();
+        this._categories.forEach((item) => {
+            const cnt = this._products.reduce((prev, curr) => (curr.category === item) ? prev += 1 : prev, 0);
+            this.state.main.params.category.set(item, new ListItemParam(item, 0, cnt, false));
         });
         const brands = new Set<string>;
         this._products.forEach((item) => {
             brands.add(item.brand);
         });
-        this._brands = [];
-        [...brands].forEach((item) => {
-            this._brands.push({
-                name: item,
-                count: this._products.reduce((prev, curr) => (curr.brand === item) ? prev += 1 : prev, 0)
-            })
+        this._brands = [...brands];
+        this.state.main.params.brand.clear();
+        this._brands.forEach((item) => {
+            const cnt = this._products.reduce((prev, curr) => (curr.brand === item) ? prev += 1 : prev, 0);
+            this.state.main.params.brand.set(item, new ListItemParam(item, 0, cnt, false));
         });
-
         if (this._products.length > 0) {
             let priceMin = this._products[0].price;
             let priceMax = this._products[0].price;
@@ -163,16 +175,14 @@ export class DataModel {
 
     setMainParam(params: Params) {
         this.state.main.products = [];
-        this.state.main.categories = this._categories;
-        this.state.main.brands = this._brands;
-        this.state.main.params.category = [];
-        params.getAll('category').forEach((item) => {
-            this.state.main.params.category.push({ name: item, count: 0 });
-        })
-        this.state.main.params.brand = [];
-        params.getAll('brand').forEach((item) => {
-            this.state.main.params.brand.push({ name: item, count: 0 });
-        })
+        const categoryParams = params.getAll('category');
+        this.state.main.params.category.forEach((item) => {
+            item.checked = categoryParams.includes(item.name);
+        });
+        const brandParams = params.getAll('brand');
+        this.state.main.params.brand.forEach((item) => {
+            item.checked = brandParams.includes(item.name);
+        });
         const priceMinParam = params.get('price-min');
         this.state.main.params.price.minEn = (priceMinParam.length > 0);
         this.state.main.params.price.currMin = (priceMinParam.length > 0) ? Number(priceMinParam) : this.state.main.params.price.rangeMin;
@@ -193,16 +203,16 @@ export class DataModel {
 
         if (this._products.length > 0) {
             const productsTemp: Product[] = [];
-            const checkList = (list: ListItem[], item: string) =>
-                ((list.length === 0) || (list.findIndex((el) => el.name === item) >= 0));
+            const categoriesChecked = this.state.main.params.category.getCheckedNames();
+            const brandsChecked = this.state.main.params.brand.getCheckedNames();
             this._products.forEach((item) => {
                 let compareValue: string = '';
                 if (this.state.main.params.search.enable) {
                     compareValue = (item[this.state.main.params.search.type as keyof Product] as string).toLowerCase();
                 }
                 if (
-                    checkList(this.state.main.params.category, item.category) &&
-                    checkList(this.state.main.params.brand, item.brand) &&
+                    (categoriesChecked.length === 0 || categoriesChecked.includes(item.category)) &&
+                    (brandsChecked.length === 0 || brandsChecked.includes(item.brand)) &&
                     (item.stock >= this.state.main.params.stock.currMin) &&
                     (item.stock <= this.state.main.params.stock.currMax) &&
                     (!(this.state.main.params.search.enable) ||

@@ -6,7 +6,7 @@ import { createFilterList, FilterListItem } from "./filterList";
 import { FilterDualSlider, FilterSliderData } from "./filterSlider";
 import { InputSearch, InputSearchData } from "./inputSearch";
 import { Cart } from "../cartView/cart/cart";
-import { ModelState, ListItem } from "../../model/dataModel";
+import { ModelState, ListParams } from "../../model/dataModel";
 import Params from "../../utils/params";
 
 const createFilterBlock = (title: string, selClass: string) => {
@@ -76,24 +76,21 @@ export class MainView extends AbstractView {
         parent.innerHTML = '';
         parent.appendChild(fragment);
 
-        const getFilterList = (dataAll: ListItem[], dataFilter: ListItem[]) => {
+        const getFilterList = (data: ListParams) => {
             const filterList: FilterListItem[] = [];
-            dataAll.forEach((item) => {
-                const elem = dataFilter.find((el) => el.name === item.name);
+            data.forEach((item) => {
                 filterList.push({
                     name: item.name,
-                    count: (elem) ? elem.count : 0,
-                    total: item.count,
-                    checked: (item.name === elem?.name)
+                    count: item.count,
+                    total: item.total,
+                    checked: item.checked
                 });
             });
             return filterList;
         }
 
-        this.drawFilterList(getFilterList(data.main.categories, data.main.params.category),
-            'category', 'category');
-        this.drawFilterList(getFilterList(data.main.brands, data.main.params.brand),
-            'brand', 'brand');
+        this.drawFilterList(getFilterList(data.main.params.category), 'category', 'category');
+        this.drawFilterList(getFilterList(data.main.params.brand), 'brand', 'brand');
         this.drawFilterSlider({
             step: data.main.params.price.step,
             rangeMin: data.main.params.price.rangeMin,
@@ -115,10 +112,10 @@ export class MainView extends AbstractView {
         });
     }
 
-    drawFilterList(categories: FilterListItem[], selClass: string, paramName: string) {
+    drawFilterList(data: FilterListItem[], selClass: string, paramName: string) {
         const box = document.querySelector(`.${selClass}`) as HTMLElement;
         box.innerHTML = '';
-        const list = createFilterList(categories);
+        const list = createFilterList(data);
         box.append(list);
         list.addEventListener('click', (event) => {
             if (event.target instanceof HTMLInputElement) {
@@ -171,10 +168,10 @@ export class MainView extends AbstractView {
     private setParams(state: ModelState) {
         this._params.clear();
         state.main.params.category.forEach((item) => {
-            this._params.add('category', item.name);
+            item.checked && this._params.add('category', item.name);
         })
         state.main.params.brand.forEach((item) => {
-            this._params.add('brand', item.name);
+            item.checked && this._params.add('brand', item.name);
         })
         if (state.main.params.price.minEn) {
             this._params.replace('price-min', state.main.params.price.currMin.toString());
