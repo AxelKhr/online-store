@@ -10,11 +10,13 @@
             &__block {
                 margin-bottom: 10px;
                 background: $colorBackgroundMainBlocks;
+                border: $widthBlockBorder solid $colorBlockBorder;
+                border-radius: $radiusBlockBorder;
             }
 
             &__title {
-                height: 40px;
-                border-bottom: 2px solid #ccc;
+                min-height: 2em;
+                padding: 5px 10px;
             }
             
             &__box {

@@ -1,4 +1,4 @@
-$colorBackgroundMainContent: hsl(0, 0%, 90%);
+$colorBackgroundMainContent: hsl(0, 0%, 95%);
 $colorBackgroundMainBlocks: hsl(0, 0%, 100%);
 
 $colorTextNormal: hsl(0, 0%, 0%);
@@ -8,6 +8,10 @@ $colorButtonEnable: hsl(26, 100%, 50%);
 $colorButtonHover: hsl(26, 100%, 65%);
 $colorButtonActive: hsl(26, 50%, 50%);
 $colorButtonText: hsl(0, 0%, 100%);
+
+$colorBlockBorder: hsl(0, 0%, 70%);
+$widthBlockBorder: 1px;
+$radiusBlockBorder: 5px;
 
 $colorTableText: hsl(0, 0%, 40%);
 $colorTableRowEven: hsl(0, 0%, 100%);
