@@ -39,6 +39,8 @@ type SliderParams = {
     rangeMax: number;
     currMin: number;
     currMax: number;
+    srcMin: number;
+    srcMax: number;
 }
 
 class MainParams {
@@ -58,7 +60,9 @@ class MainParams {
             rangeMin: 0,
             rangeMax: 1,
             currMin: 0,
-            currMax: 1
+            currMax: 1,
+            srcMin: 0,
+            srcMax: 1
         }
         this.stock = {
             step: 1,
@@ -67,7 +71,9 @@ class MainParams {
             rangeMin: 0,
             rangeMax: 1,
             currMin: 0,
-            currMax: 1
+            currMax: 1,
+            srcMin: 0,
+            srcMax: 1
         }
         this.search = {
             enable: false,
@@ -166,10 +172,10 @@ export class DataModel {
                     stockMax = item.stock;
                 }
             })
-            this.state.main.params.price.rangeMin = priceMin;
-            this.state.main.params.price.rangeMax = priceMax;
-            this.state.main.params.stock.rangeMin = stockMin;
-            this.state.main.params.stock.rangeMax = stockMax;
+            this.state.main.params.price.srcMin = priceMin;
+            this.state.main.params.price.srcMax = priceMax;
+            this.state.main.params.stock.srcMin = stockMin;
+            this.state.main.params.stock.srcMax = stockMax;
         }
     }
 
@@ -185,16 +191,16 @@ export class DataModel {
         });
         const priceMinParam = params.get('price-min');
         this.state.main.params.price.minEn = (priceMinParam.length > 0);
-        this.state.main.params.price.currMin = (priceMinParam.length > 0) ? Number(priceMinParam) : this.state.main.params.price.rangeMin;
+        this.state.main.params.price.currMin = (priceMinParam.length > 0) ? Number(priceMinParam) : this.state.main.params.price.srcMin;
         const priceMaxParam = params.get('price-max');
         this.state.main.params.price.maxEn = (priceMaxParam.length > 0);
-        this.state.main.params.price.currMax = (priceMaxParam.length > 0) ? Number(priceMaxParam) : this.state.main.params.price.rangeMax;
+        this.state.main.params.price.currMax = (priceMaxParam.length > 0) ? Number(priceMaxParam) : this.state.main.params.price.srcMax;
         const stockMinParam = params.get('stock-min');
         this.state.main.params.stock.minEn = (stockMinParam.length > 0);
-        this.state.main.params.stock.currMin = (stockMinParam.length > 0) ? Number(stockMinParam) : this.state.main.params.stock.rangeMin;
+        this.state.main.params.stock.currMin = (stockMinParam.length > 0) ? Number(stockMinParam) : this.state.main.params.stock.srcMin;
         const stockMaxParam = params.get('stock-max');
         this.state.main.params.stock.maxEn = (stockMaxParam.length > 0);
-        this.state.main.params.stock.currMax = (stockMaxParam.length > 0) ? Number(stockMaxParam) : this.state.main.params.stock.rangeMax;
+        this.state.main.params.stock.currMax = (stockMaxParam.length > 0) ? Number(stockMaxParam) : this.state.main.params.stock.srcMax;
         const searchValue = params.get('search');
         this.state.main.params.search.value = (searchValue.length > 0) ? searchValue : '';
         this.state.main.params.search.enable = (searchValue.length > 0);
@@ -213,8 +219,6 @@ export class DataModel {
                 if (
                     (categoriesChecked.length === 0 || categoriesChecked.includes(item.category)) &&
                     (brandsChecked.length === 0 || brandsChecked.includes(item.brand)) &&
-                    (item.stock >= this.state.main.params.stock.currMin) &&
-                    (item.stock <= this.state.main.params.stock.currMax) &&
                     (!(this.state.main.params.search.enable) ||
                         (compareValue.includes(this.state.main.params.search.value.toLowerCase())))
                 ) {
@@ -222,6 +226,7 @@ export class DataModel {
                 }
             });
             if (productsTemp.length > 0) {
+                // set range for price slider
                 const rangePriceMin = Math.min(...productsTemp.map((item) => item.price))
                 if (this.state.main.params.price.minEn) {
                     this.state.main.params.price.rangeMin =
@@ -230,19 +235,40 @@ export class DataModel {
                     this.state.main.params.price.rangeMin = rangePriceMin;
                     this.state.main.params.price.currMin = rangePriceMin;
                 }
+
                 const rangePriceMax = Math.max(...productsTemp.map((item) => item.price));
-                this.state.main.params.price.rangeMax = rangePriceMax;
-                if (this.state.main.params.price.minEn) {
+                if (this.state.main.params.price.maxEn) {
                     this.state.main.params.price.rangeMax =
                         Math.max(rangePriceMax, this.state.main.params.price.currMax);
                 } else {
                     this.state.main.params.price.rangeMax = rangePriceMax;
                     this.state.main.params.price.currMax = rangePriceMax;
                 }
+                // set range for stock slider
+                const rangeStockMin = Math.min(...productsTemp.map((item) => item.stock));
+                if (this.state.main.params.stock.minEn) {
+                    this.state.main.params.stock.rangeMin =
+                        Math.min(rangeStockMin, this.state.main.params.stock.currMin);
+                } else {
+                    this.state.main.params.stock.rangeMin = rangeStockMin;
+                    this.state.main.params.stock.currMin = rangeStockMin;
+                }
+
+                const rangeStockMax = Math.max(...productsTemp.map((item) => item.stock));
+                if (this.state.main.params.stock.maxEn) {
+                    this.state.main.params.stock.rangeMax =
+                        Math.max(rangeStockMax, this.state.main.params.stock.currMax);
+                } else {
+                    this.state.main.params.stock.rangeMax = rangeStockMax;
+                    this.state.main.params.stock.currMax = rangeStockMax;
+                }
+                // filter products by sliders
                 productsTemp.forEach((item) => {
                     if (
                         (item.price >= this.state.main.params.price.currMin) &&
-                        (item.price <= this.state.main.params.price.currMax)
+                        (item.price <= this.state.main.params.price.currMax) &&
+                        (item.stock >= this.state.main.params.stock.currMin) &&
+                        (item.stock <= this.state.main.params.stock.currMax)
                     ) {
                         this.state.main.products.push(item);
                     }
