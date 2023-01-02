@@ -170,8 +170,10 @@ export class CartView extends AbstractView {
         const promoCost = document.querySelector('.order__promo-cost') as HTMLElement;
         const orderPrice = document.querySelector('.order__cost') as HTMLElement;
         const total = document.getElementById('total') as HTMLElement;
-        orderPrice.classList.add('line');
-        promoCostTitle.classList.remove('transparent');
+        if(this.promos.length !== 0) {
+            orderPrice.classList.add('line');
+            promoCostTitle.classList.remove('transparent');
+        }
         const price = Number(total.innerText);
         const discount = this.promos.reduce((sum, acc) => sum + price * (acc.discount / 100), 0);
         promoCost.innerText = `${price - Math.round(discount)}`;
