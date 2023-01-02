@@ -7,14 +7,16 @@ export type FilterListItem = {
   checked: boolean;
 }
 
-export function createFilterList(data: FilterListItem[]): HTMLUListElement {
+export function createFilterList(data: FilterListItem[]): HTMLDivElement {
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('filter__list-wrapper');
   const list = document.createElement('ul');
   list.classList.add('filter__list');
   data.forEach((item) => {
     const listItem = document.createElement('li');
     listItem.classList.add('list__item');
     const label = document.createElement('label');
-    item.checked || label.classList.add('disable');
+    (item.count > 0) || label.classList.add('disable');
     const checkBox = document.createElement('input');
     checkBox.dataset.name = item.name;
     checkBox.type = 'checkbox';
@@ -29,5 +31,6 @@ export function createFilterList(data: FilterListItem[]): HTMLUListElement {
     listItem.append(label);
     list.append(listItem);
   });
-  return list;
+  wrapper.append(list);
+  return wrapper;
 }
