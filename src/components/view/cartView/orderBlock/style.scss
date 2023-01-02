@@ -1,5 +1,5 @@
 .order {
-  height: 100%;
+  height: calc(100% - 80px);
 
   &__title {
     padding: 10px;
@@ -8,12 +8,28 @@
     border-top-right-radius: 10px;
   }
 
+  &__promo-cost-title {
+    margin-top: 10px;
+    font-size: 1.3rem;
+  }
+
   &__content {
     display: flex;
     flex-direction: column;
     height: 100%;
     row-gap: 10px;
-    justify-content: space-around;
+    justify-content: space-between;
+  }
+
+  &__info {
+    margin-top: 40px;
+  }
+
+  &__product,
+  &__count,
+  &__cost,
+  &__promo-cost {
+    font-size: 1.3rem;
   }
 
   &__promo {
@@ -34,9 +50,70 @@
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
 
-  &__btn {
+  &__promo-block {
+    padding: 0 30px;
+    flex-basis: 30%;
+  }
+
+  &__apply-promo-box {
+    flex-basis: 20%;
+  }
+
+  &__apply-promo {
+    display: flex;
+    margin: 10px 40px;
+    gap: 10px;
+    justify-content: space-between;
+  }
+
+  &__promo-content {
+    margin: 0 auto;
+    flex-basis: 30%;
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__btn,
+  &__promo-btn,
+  &__apply-promo-btn {
+    border: none;
+    background-color: orange;
+    height: 40px;
+    border-radius: 10px;
+    padding: 0;
     width: 60%;
     margin: 0 auto;
   }
+
+  &__promo-btn,
+  &__apply-promo-btn {
+    width: 15%;
+    font-size: 0.8rem;
+    height: 30px;
+    margin: 0;
+  }
+
+  &__btn:hover,
+  &__promo-btn:hover,
+  &__apply-promo-btn:hover {
+    box-shadow: 0px 0px 15px 0px rgba(71, 71, 71, 0.3);
+    color: #fff;
+    cursor: pointer;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.transparent {
+  opacity: 0;
+}
+
+.line {
+  text-decoration: line-through;
 }
 
