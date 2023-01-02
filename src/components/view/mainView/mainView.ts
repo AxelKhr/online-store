@@ -8,6 +8,7 @@ import { InputSearch, InputSearchData } from "./inputSearch";
 import { Cart } from "../cartView/cart/cart";
 import { ModelState, ListParams } from "../../model/dataModel";
 import Params from "../../utils/params";
+import createButtonGeneral from "../elements/buttons/general";
 
 const createFilterBlock = (title: string, selClass: string) => {
     const block = document.createElement('div');
@@ -38,7 +39,23 @@ export class MainView extends AbstractView {
         content.classList.add('content__table', 'table');
         const aside = document.createElement('aside');
         aside.classList.add('table__filter');
+        const filtersControl = document.createElement('div');
+        filtersControl.classList.add('filter__control');
+        const buttonFilterReset = createButtonGeneral('control__button-reset');
+        buttonFilterReset.textContent = 'Reset';
+        buttonFilterReset.addEventListener('click', () => {
+            this._params.clear();
+            this.requestUpdateParams(this._params);
+        });
+        const buttonFilterCopy = createButtonGeneral('control__button-copy');
+        buttonFilterCopy.textContent = 'Copy';
+        buttonFilterCopy.addEventListener('click', () => {
+            navigator.clipboard.writeText(window.location.href);
+        });
+        filtersControl.append(buttonFilterReset, buttonFilterCopy);
+
         aside.append(
+            filtersControl,
             createFilterBlock('Search', 'search'),
             createFilterBlock('Category', 'category'),
             createFilterBlock('Brand', 'brand'),

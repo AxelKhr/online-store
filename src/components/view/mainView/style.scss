@@ -7,6 +7,17 @@
         width: 100%;
 
         .filter {
+            &__control {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+                background: $colorBackgroundMainBlocks;
+                border: $widthBlockBorder solid $colorBlockBorder;
+                border-radius: $radiusBlockBorder;
+                padding: 10px;
+            }
+
             &__block {
                 margin-bottom: 10px;
                 background: $colorBackgroundMainBlocks;
