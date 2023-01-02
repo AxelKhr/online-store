@@ -1,6 +1,11 @@
 import { Product } from "../interface/product";
 import Params from "../utils/params";
 
+export type ListItem = {
+    name: string;
+    count: number;
+}
+
 type searchParams = {
     enable: boolean;
     type: string;
@@ -18,15 +23,15 @@ type sliderParams = {
 }
 
 class MainParams {
-    brand: string[];
-    category: string[];
+    category: ListItem[];
+    brand: ListItem[];
     price: sliderParams;
     stock: sliderParams;
     search: searchParams;
 
     constructor() {
-        this.brand = [];
         this.category = [];
+        this.brand = [];
         this.price = {
             step: 1,
             minEn: false,
@@ -55,8 +60,8 @@ class MainParams {
 
 class ModelMainState {
     products: Product[];
-    brands: string[];
-    categories: string[];
+    categories: ListItem[];
+    brands: ListItem[];
     params: MainParams;
 
     constructor() {
@@ -83,8 +88,8 @@ export class ModelState {
 
 export class DataModel {
     private _products: Product[];
-    private _brands: string[];
-    private _categories: string[];
+    private _brands: ListItem[];
+    private _categories: ListItem[];
     private _updateEvent: Event;
     private _updateProductEvent: Event;
     state: ModelState;
@@ -111,12 +116,24 @@ export class DataModel {
         this._products.forEach((item) => {
             categories.add(item.category);
         });
-        this._categories = [...categories];
+        this._categories = [];
+        [...categories].forEach((item) => {
+            this._categories.push({
+                name: item,
+                count: this._products.reduce((prev, curr) => (curr.category === item) ? prev += 1 : prev, 0)
+            })
+        });
         const brands = new Set<string>;
         this._products.forEach((item) => {
             brands.add(item.brand);
         });
-        this._brands = [...brands];
+        this._brands = [];
+        [...brands].forEach((item) => {
+            this._brands.push({
+                name: item,
+                count: this._products.reduce((prev, curr) => (curr.brand === item) ? prev += 1 : prev, 0)
+            })
+        });
 
         if (this._products.length > 0) {
             let priceMin = this._products[0].price;
@@ -148,8 +165,14 @@ export class DataModel {
         this.state.main.products = [];
         this.state.main.categories = this._categories;
         this.state.main.brands = this._brands;
-        this.state.main.params.brand = params.getAll('brand');
-        this.state.main.params.category = params.getAll('category');
+        this.state.main.params.category = [];
+        params.getAll('category').forEach((item) => {
+            this.state.main.params.category.push({ name: item, count: 0 });
+        })
+        this.state.main.params.brand = [];
+        params.getAll('brand').forEach((item) => {
+            this.state.main.params.brand.push({ name: item, count: 0 });
+        })
         const priceMinParam = params.get('price-min');
         this.state.main.params.price.minEn = (priceMinParam.length > 0);
         this.state.main.params.price.currMin = (priceMinParam.length > 0) ? Number(priceMinParam) : this.state.main.params.price.rangeMin;
@@ -170,7 +193,8 @@ export class DataModel {
 
         if (this._products.length > 0) {
             const productsTemp: Product[] = [];
-            const checkList = (list: string[], item: string) => ((list.length === 0) || (list.includes(item)));
+            const checkList = (list: ListItem[], item: string) =>
+                ((list.length === 0) || (list.findIndex((el) => el.name === item) >= 0));
             this._products.forEach((item) => {
                 let compareValue: string = '';
                 if (this.state.main.params.search.enable) {
@@ -214,6 +238,15 @@ export class DataModel {
                     }
                 });
             }
+            // counts for filter lists
+            this.state.main.params.category.forEach((item) => {
+                item.count = this.state.main.products.reduce((prev, curr) =>
+                    (curr.category === item.name) ? prev += 1 : prev, 0);
+            });
+            this.state.main.params.brand.forEach((item) => {
+                item.count = this.state.main.products.reduce((prev, curr) =>
+                    (curr.brand === item.name) ? prev += 1 : prev, 0);
+            });
         }
         document.dispatchEvent(this._updateEvent);
     }

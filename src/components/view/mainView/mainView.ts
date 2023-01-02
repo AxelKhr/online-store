@@ -6,7 +6,7 @@ import { createFilterList, FilterListItem } from "./filterList";
 import { FilterDualSlider, FilterSliderData } from "./filterSlider";
 import { InputSearch, InputSearchData } from "./inputSearch";
 import { Cart } from "../cartView/cart/cart";
-import { ModelState } from "../../model/dataModel";
+import { ModelState, ListItem } from "../../model/dataModel";
 import Params from "../../utils/params";
 
 const createFilterBlock = (title: string, selClass: string) => {
@@ -76,10 +76,16 @@ export class MainView extends AbstractView {
         parent.innerHTML = '';
         parent.appendChild(fragment);
 
-        const getFilterList = (dataAll: string[], dataFilter: string[]) => {
+        const getFilterList = (dataAll: ListItem[], dataFilter: ListItem[]) => {
             const filterList: FilterListItem[] = [];
             dataAll.forEach((item) => {
-                filterList.push({ name: item, checked: dataFilter.includes(item) });
+                const elem = dataFilter.find((el) => el.name === item.name);
+                filterList.push({
+                    name: item.name,
+                    count: (elem) ? elem.count : 0,
+                    total: item.count,
+                    checked: (item.name === elem?.name)
+                });
             });
             return filterList;
         }
@@ -165,10 +171,10 @@ export class MainView extends AbstractView {
     private setParams(state: ModelState) {
         this._params.clear();
         state.main.params.category.forEach((item) => {
-            this._params.add('category', item);
+            this._params.add('category', item.name);
         })
         state.main.params.brand.forEach((item) => {
-            this._params.add('brand', item);
+            this._params.add('brand', item.name);
         })
         if (state.main.params.price.minEn) {
             this._params.replace('price-min', state.main.params.price.currMin.toString());

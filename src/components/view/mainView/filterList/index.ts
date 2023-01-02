@@ -2,6 +2,8 @@ import "./style.scss";
 
 export type FilterListItem = {
   name: string;
+  count: number;
+  total: number;
   checked: boolean;
 }
 
@@ -16,7 +18,7 @@ export function createFilterList(data: FilterListItem[]): HTMLUListElement {
     checkBox.dataset.name = item.name;
     checkBox.type = 'checkbox';
     checkBox.checked = item.checked;
-    label.append(checkBox, item.name);
+    label.append(checkBox, item.name + ` ${item.count} / ${item.total}`);
     listItem.append(label);
     list.append(listItem);
   });
