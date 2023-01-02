@@ -95,7 +95,7 @@ export class AppController extends AppLoader {
     // methods to update model parameters
 
     private requestUpdateMainParams = (params: Params) => {
-        this._dataModel.setMainParam(params);
         this._router.setURLParams((new URLSearchParams(params.getPairs())).toString());
+        this._dataModel.setMainParam(params);
     }
 }

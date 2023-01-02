@@ -3,9 +3,23 @@ import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
 import { createFilterList, FilterListItem } from "./filterList";
+import { FilterDualSlider, FilterSliderData } from "./filterSlider";
+import { InputSearch, InputSearchData } from "./inputSearch";
 import { Cart } from "../cartView/cart/cart";
-import { ModelState } from "../../model/dataModel";
+import { ModelState, ListItem } from "../../model/dataModel";
 import Params from "../../utils/params";
+
+const createFilterBlock = (title: string, selClass: string) => {
+    const block = document.createElement('div');
+    block.classList.add('filter__block');
+    const titleElem = document.createElement('p');
+    titleElem.classList.add('filter__title');
+    titleElem.textContent = title;
+    const box = document.createElement('div');
+    box.classList.add('filter__box', selClass);
+    block.append(titleElem, box);
+    return block;
+}
 
 export class MainView extends AbstractView {
 
@@ -22,39 +36,28 @@ export class MainView extends AbstractView {
     async getView(): Promise<HTMLElement> {
         let content = document.createElement('div') as HTMLElement;
         content.classList.add('content__table', 'table');
-        content.innerHTML = `
-            <aside class="table__filters">
-                <div class="table__filter">
-                    <p class="filter__title">Category</p>
-                    <div class="filter__list-box category"></div>
-                </div>
-                <div class="table__filter">
-                    <p class="filter__title">Brand</p>
-                    <div class="filter__list-box brand"></div>
-                </div>
-                <div class="table__filter price">
-                    <p class="filter__title">Price</p>
-                </div>
-                <div class="table__filter stock">
-                    <p class="filter__title">Stock</p>
-                </div>
-            </aside>
-            <section class="table__products">
-                <div class="table__view">
-                </div>
-                <div class="table__list">
-                    <a href="#product">Product</a>
-                </div>
-            </section>`;
+        const aside = document.createElement('aside');
+        aside.classList.add('table__filter');
+        aside.append(
+            createFilterBlock('Search', 'search'),
+            createFilterBlock('Category', 'category'),
+            createFilterBlock('Brand', 'brand'),
+            createFilterBlock('Price', 'price'),
+            createFilterBlock('Stock', 'stock')
+        );
+        const section = document.createElement('section');
+        section.classList.add('table__products');
+        const table = document.createElement('div');
+        table.classList.add('table__list');
+        section.append(table);
+        content.append(aside, section);
         return content;
     }
 
     draw(data: ModelState): void {
         this.setParams(data);
-
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
-
         data.main.products.forEach(item => {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
@@ -73,20 +76,47 @@ export class MainView extends AbstractView {
         parent.innerHTML = '';
         parent.appendChild(fragment);
 
-        const getFilterList = (dataAll: string[], dataFilter: string[]) => {
+        const getFilterList = (dataAll: ListItem[], dataFilter: ListItem[]) => {
             const filterList: FilterListItem[] = [];
             dataAll.forEach((item) => {
-                filterList.push({ name: item, checked: dataFilter.includes(item) });
+                const elem = dataFilter.find((el) => el.name === item.name);
+                filterList.push({
+                    name: item.name,
+                    count: (elem) ? elem.count : 0,
+                    total: item.count,
+                    checked: (item.name === elem?.name)
+                });
             });
             return filterList;
         }
 
-        this.drawCategories(getFilterList(data.main.categories, data.main.params.category));
-        this.drawBrands(getFilterList(data.main.brands, data.main.params.brand));
+        this.drawFilterList(getFilterList(data.main.categories, data.main.params.category),
+            'category', 'category');
+        this.drawFilterList(getFilterList(data.main.brands, data.main.params.brand),
+            'brand', 'brand');
+        this.drawFilterSlider({
+            step: data.main.params.price.step,
+            rangeMin: data.main.params.price.rangeMin,
+            rangeMax: data.main.params.price.rangeMax,
+            currMin: data.main.params.price.currMin,
+            currMax: data.main.params.price.currMax
+        }, 'price', 'price');
+        this.drawFilterSlider({
+            step: data.main.params.stock.step,
+            rangeMin: data.main.params.stock.rangeMin,
+            rangeMax: data.main.params.stock.rangeMax,
+            currMin: data.main.params.stock.currMin,
+            currMax: data.main.params.stock.currMax
+        }, 'stock', 'stock');
+
+        this.drawSearch({
+            type: data.main.params.search.type,
+            value: data.main.params.search.value,
+        });
     }
 
-    drawCategories(categories: FilterListItem[]) {
-        const box = document.querySelector('.category') as HTMLElement;
+    drawFilterList(categories: FilterListItem[], selClass: string, paramName: string) {
+        const box = document.querySelector(`.${selClass}`) as HTMLElement;
         box.innerHTML = '';
         const list = createFilterList(categories);
         box.append(list);
@@ -95,9 +125,9 @@ export class MainView extends AbstractView {
                 const elem = event.target as HTMLInputElement;
                 if (elem.dataset.name) {
                     if (elem.checked) {
-                        this._params.add('category', elem.dataset.name);
+                        this._params.add(paramName, elem.dataset.name);
                     } else {
-                        this._params.remove('category', elem.dataset.name)
+                        this._params.remove(paramName, elem.dataset.name)
                     };
                 }
                 this.requestUpdateParams(this._params);
@@ -105,33 +135,62 @@ export class MainView extends AbstractView {
         })
     }
 
-    drawBrands(brands: FilterListItem[]) {
-        const box = document.querySelector('.brand') as HTMLElement;
+    drawFilterSlider(data: FilterSliderData, selClass: string, paramName: string) {
+        const box = document.querySelector(`.${selClass}`) as HTMLElement;
         box.innerHTML = '';
-        const list = createFilterList(brands);
-        box.append(list);
-        list.addEventListener('click', (event) => {
-            if (event.target instanceof HTMLInputElement) {
-                const elem = event.target as HTMLInputElement;
-                if (elem.dataset.name) {
-                    if (elem.checked) {
-                        this._params.add('brand', elem.dataset.name);
-                    } else {
-                        this._params.remove('brand', elem.dataset.name)
-                    };
-                }
-                this.requestUpdateParams(this._params);
+        const slider = new FilterDualSlider(data);
+        box.append(slider.content);
+        slider.setData(data);
+        slider.onChangeMin = (min) => {
+            this._params.replace(`${paramName}-min`, min.toString());
+            this.requestUpdateParams(this._params);
+        }
+        slider.onChangeMax = (max) => {
+            this._params.replace(`${paramName}-max`, max.toString());
+            this.requestUpdateParams(this._params);
+        }
+    }
+
+    drawSearch(data: InputSearchData) {
+        const box = document.querySelector('.search') as HTMLElement;
+        box.innerHTML = '';
+        const search = new InputSearch();
+        box.append(search.content);
+        search.setData(data);
+        search.onChange = (type, value) => {
+            this._params.remove('search-type');
+            this._params.remove('search');
+            if (value.length > 0) {
+                this._params.add('search-type', type);
+                this._params.add('search', value);
             }
-        })
+            this.requestUpdateParams(this._params);
+        };
     }
 
     private setParams(state: ModelState) {
         this._params.clear();
         state.main.params.category.forEach((item) => {
-            this._params.add('category', item);
+            this._params.add('category', item.name);
         })
         state.main.params.brand.forEach((item) => {
-            this._params.add('brand', item);
+            this._params.add('brand', item.name);
         })
+        if (state.main.params.price.minEn) {
+            this._params.replace('price-min', state.main.params.price.currMin.toString());
+        }
+        if (state.main.params.price.maxEn) {
+            this._params.replace('price-max', state.main.params.price.currMax.toString());
+        }
+        if (state.main.params.stock.minEn) {
+            this._params.replace('stock-min', state.main.params.stock.currMin.toString());
+        }
+        if (state.main.params.stock.maxEn) {
+            this._params.replace('stock-max', state.main.params.stock.currMax.toString());
+        }
+        if (state.main.params.search.enable) {
+            this._params.add('search-type', state.main.params.search.type);
+            this._params.add('search', state.main.params.search.value);
+        }
     }
 }

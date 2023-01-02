@@ -1,15 +1,37 @@
 .filter__list {
-  .list__item {
-    label {
-      display: block;
+    .list__item {
+        label {
+            display: flex;
+            width: 100%;
+            padding: 10px 0;
+            line-height: 100%;
+            color: $colorTextNormal;
+            background: $colorBackgroundList;
 
-      &:hover {
-        background-color: #fff;
-      }
-    }
+            &.disable {
+                color: $colorTextNormalLight;
+                background: $colorBackgroundListDisable;
+            }
 
-    input {
-      margin: 0 10px;
-    }
-  } 
+            div {
+                flex: 1 1 auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                p:last-child {
+                    flex: 0 0 auto;
+                    padding: 0 5px;
+                }
+            }
+
+            &:hover {
+                background-color: $colorBackgroundListHover;
+            }
+        }
+
+        input {
+            margin: 0 10px;
+        }
+    } 
 }

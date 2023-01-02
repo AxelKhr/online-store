@@ -1,0 +1,81 @@
+$filterSearchBorderRadius: 5px;
+$filterSearchBorderWidth: 1px;
+$filterSearchSelectWidth: 140px;
+
+.filter__search {
+    position: relative;
+    text-align: right;
+
+    select {
+        width: 100%;
+        height: 1.6em;
+        //-webkit-appearance: none;
+        color: $colorTextNormalLight;
+        background-color: $colorInputEditBackground;
+        border: $filterSearchBorderWidth solid $colorInputEditBorder;
+        border-radius: $filterSearchBorderRadius;
+        outline: none;
+        padding: 0 5px;
+        transition: all 0.5s ease;
+        margin-bottom: 10px;
+        transition: all 0.1s ease-out;
+
+        &:hover {
+            border-color: $colorInputEditBorderFocus;
+        }
+
+        &:focus {
+            color: $colorTextNormal;
+            background-color: $colorInputEditBackgroundFocus;
+            border-color: $colorInputEditBorderFocus;
+        }
+    }
+
+    input[type=text] {
+        outline: none;
+        width: 100%;
+        height: 1.6em;
+        color: $colorTextNormalLight;
+        border: $filterSearchBorderWidth solid $colorInputEditBorder;
+        border-radius: $filterSearchBorderRadius;
+        padding: 10px;
+        background: $colorInputEditBackground;
+        transition: all 0.1s ease-out;
+        margin-bottom: 10px;
+
+        &:hover {
+            border-color: $colorInputEditBorderFocus;
+        }
+
+        &:focus {
+            color: $colorTextNormal;
+            border-color: $colorInputEditBorderFocus;
+            background: $colorInputEditBackgroundFocus;
+        }
+    }
+
+    input[type=button] {
+        width: 100px;
+        height: 1.6em;
+        outline: none;
+        border: none;
+        border-radius: $filterSearchBorderRadius;
+        color: $colorButtonText;
+        background: $colorButtonEnable;
+
+        &:hover,
+        &:focus {
+            background: $colorButtonHover;
+        }
+    
+        &:focus {
+            outline: 1px dashed #fff;
+            outline-offset: -1px;
+        }
+    
+        &:active {
+            background: $colorButtonActive;
+        }
+    }
+
+}

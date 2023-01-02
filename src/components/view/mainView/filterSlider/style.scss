@@ -1,0 +1,65 @@
+$filterSliderTrackHeight: 6px;
+$filterSliderThumbSize: 20px;
+
+.filter__slider {
+    .slider__range {
+        position: relative;
+        min-height: $filterSliderThumbSize;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 5px;
+
+        div {
+            position: relative;
+            width: 100%;
+            height: $filterSliderThumbSize;
+        }
+
+        input[type=range] {
+
+            -webkit-appearance: none; 
+            appearance: none;
+            height: $filterSliderThumbSize;
+            width: 100%;
+            position: absolute;
+            pointer-events: none;
+            background: none;
+
+            &::-webkit-slider-runnable-track {
+                width: 100%;
+                height: $filterSliderTrackHeight;
+                background: #C6C6C6;
+                border-radius: 0.5 * $filterSliderTrackHeight;
+            }
+
+            &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                pointer-events: all;
+                position: relative;
+                z-index: 1;
+                width: $filterSliderThumbSize;
+                height: $filterSliderThumbSize;
+                background-color: white;
+                border: 2px solid $colorButtonEnable;
+                border-radius: 50%;
+                margin-top: -0.5 * ($filterSliderThumbSize - $filterSliderTrackHeight);
+                cursor: pointer;
+            }
+        }
+
+        .range-fill {
+            position: absolute;
+            top: 0.5 * ($filterSliderThumbSize - $filterSliderTrackHeight);
+            height: $filterSliderTrackHeight;
+            width: auto;
+            background: $colorButtonEnable;
+            border-radius: 0.5 * $filterSliderTrackHeight;
+        }
+    }
+
+    .slider__labels {
+        display: flex;
+        justify-content: space-between;
+    }
+}

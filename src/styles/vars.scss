@@ -1,10 +1,27 @@
-$colorBackgroundMainContent: hsl(0, 0%, 90%);
+$colorBackgroundMainContent: hsl(0, 0%, 95%);
 $colorBackgroundMainBlocks: hsl(0, 0%, 100%);
+
+$colorTextNormal: hsl(0, 0%, 0%);
+$colorTextNormalLight: hsl(0, 0%, 40%);
 
 $colorButtonEnable: hsl(26, 100%, 50%);
 $colorButtonHover: hsl(26, 100%, 65%);
 $colorButtonActive: hsl(26, 50%, 50%);
+$colorButtonText: hsl(0, 0%, 100%);
+
+$colorBlockBorder: hsl(0, 0%, 70%);
+$widthBlockBorder: 1px;
+$radiusBlockBorder: 5px;
+
+$colorBackgroundList: hsl(0, 0%, 100%);
+$colorBackgroundListHover: hsl(26, 100%, 65%);
+$colorBackgroundListDisable: hsl(0, 0%, 95%);
 
 $colorTableText: hsl(0, 0%, 40%);
 $colorTableRowEven: hsl(0, 0%, 100%);
 $colorTableRowOdd: hsl(0, 0%, 95%);
+
+$colorInputEditBorder: hsl(0, 0%, 70%);
+$colorInputEditBorderFocus: hsl(26, 100%, 50%);
+$colorInputEditBackground: hsl(0, 0%, 95%);
+$colorInputEditBackgroundFocus: hsl(0, 0%, 100%);

@@ -53,16 +53,30 @@ export default class Params {
         return this;
     }
 
-    remove(key: string, value: string) {
-        if (this._params.has(key)) {
-            const elem = this._params.get(key);
-            if (elem) {
-                elem.delete(value);
-                if (elem.size === 0) {
-                    this._params.delete(key);
+    remove(key: string, value?: string) {
+        if (value) {
+            if (this._params.has(key)) {
+                const elem = this._params.get(key);
+                if (elem) {
+                    elem.delete(value);
+                    if (elem.size === 0) {
+                        this._params.delete(key);
+                    }
                 }
             }
+        } else {
+            this._params.delete(key);
         }
+        return this;
+    }
+
+    replace(key: string, value: string) {
+        if (!this._params.has(key)) {
+            this._params.set(key, new Set());
+        }
+        const elem = this._params.get(key);
+        elem?.clear();
+        elem?.add(value);
         return this;
     }
 }
