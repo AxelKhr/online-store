@@ -1,5 +1,5 @@
-import { PromoCode } from "../../../enum/promo";
 import { CartData } from "../cart/cart";
+import { Promo } from "../cartView";
 import "./style.scss";
 
 export function createOrderBlock(data: CartData[]): HTMLElement {
@@ -32,8 +32,19 @@ export function createOrderBlock(data: CartData[]): HTMLElement {
   const total = document.getElementById('total') as HTMLElement;
   cost.innerText = `Total: ${total.innerText}`;
 
+  const promoCostBlock = document.createElement('p');
+  promoCostBlock.classList.add('order__promo-cost-title', 'transparent');
+  promoCostBlock.innerText = 'Total: ';
+  const promoCost = document.createElement('span');
+  promoCost.classList.add('order__promo-cost');
+  promoCost.innerText = `${total.innerText}`;
+  promoCostBlock.append(promoCost);
+
   const promo = document.createElement('div');
   promo.classList.add('order__promo-block');
+
+  const applyPromo = document.createElement('div');
+  applyPromo.classList.add('order__apply-promo-box');
 
   const promoContent = document.createElement('div');
   promoContent.classList.add('order__promo-content');
@@ -41,7 +52,7 @@ export function createOrderBlock(data: CartData[]): HTMLElement {
   const input = document.createElement('input');
   input.classList.add('order__promo');
   input.type = 'text';
-  input.placeholder = 'Promo code'
+  input.placeholder = 'test promo: "RS", "EPM"';
 
   const btn = document.createElement('button');
   btn.classList.add('order__btn');
@@ -49,9 +60,9 @@ export function createOrderBlock(data: CartData[]): HTMLElement {
   btn.addEventListener('click', payOrder);
 
   productsTitle.append(productsCount);
-  info.append(productsTitle, cost);
+  info.append(productsTitle, cost, promoCostBlock);
   promo.append(input, promoContent);
-  box.append(info, promo, btn);
+  box.append(info, applyPromo, promo, btn);
   block.append(title, box);
   return block;
 }
@@ -63,14 +74,32 @@ function payOrder() {
     modalShadow?.classList.remove('hidden');
 }
 
-export function getPromo(parent: HTMLElement, content: string) {
+export function getPromo(parent: HTMLElement, promo: Promo) {
   const promoTitle = document.createElement('p');
   promoTitle.classList.add('order__promo-title');
-  promoTitle.innerText = `${content}`;
+  promoTitle.innerText = `${promo.name}`;
 
   const promoBtn = document.createElement('button');
-  promoBtn.classList.add('order__promo-btn');
+  promoBtn.classList.add('order__promo-btn', 'hidden');
   promoBtn.innerText = 'ADD';
 
   parent.append(promoTitle, promoBtn);
+}
+
+export function getApplyPromo(parent: HTMLElement, promo: Promo) {
+  const applyBox = document.createElement('div');
+  applyBox.classList.add('order__apply-promo');
+  applyBox.id = `promo-${promo.id.toLowerCase()}`;
+
+  const promoTitle = document.createElement('p');
+  promoTitle.classList.add('order__promo-title');
+  promoTitle.innerText = `${promo.name}`;
+
+  const promoBtn = document.createElement('button');
+  promoBtn.classList.add('order__apply-promo-btn');
+  promoBtn.innerText = 'DROP';
+  promoBtn.id = `btn-${promo.id.toLowerCase()}`;
+
+  applyBox.append(promoTitle, promoBtn);
+  parent.appendChild(applyBox);
 }

@@ -1,1 +1,1 @@
-export enum PromoCode {RSS = 'RSS', EPM = 'EPM'};
+export enum PromoCode {RS = 'RS', EPM = 'EPM'};
