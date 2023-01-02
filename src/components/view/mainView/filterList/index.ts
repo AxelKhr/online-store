@@ -18,7 +18,13 @@ export function createFilterList(data: FilterListItem[]): HTMLUListElement {
     checkBox.dataset.name = item.name;
     checkBox.type = 'checkbox';
     checkBox.checked = item.checked;
-    label.append(checkBox, item.name + ` ${item.count} / ${item.total}`);
+    const box = document.createElement('div');
+    const name = document.createElement('p');
+    name.textContent = item.name;
+    const counts = document.createElement('p');
+    counts.textContent = `${item.count} / ${item.total}`;
+    box.append(name, counts);
+    label.append(checkBox, box);
     listItem.append(label);
     list.append(listItem);
   });
