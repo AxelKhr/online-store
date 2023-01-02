@@ -8,6 +8,11 @@
             color: $colorTextNormal;
             background: $colorBackgroundList;
 
+            &.disable {
+                color: $colorTextNormalLight;
+                background: $colorBackgroundListDisable;
+            }
+
             div {
                 flex: 1 1 auto;
                 display: flex;
