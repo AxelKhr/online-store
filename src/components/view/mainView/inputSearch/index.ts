@@ -14,6 +14,7 @@ export class InputSearch {
     constructor() {
         this.content = document.createElement('div');
         this.content.classList.add('filter__search');
+
         this.inputEdit = document.createElement('input');
         this.inputEdit.type = 'text';
         this.inputEdit.placeholder = 'Search';
@@ -23,7 +24,7 @@ export class InputSearch {
         button.value = 'Search';
         this.select = document.createElement('select');
         const option1 = document.createElement('option');
-        option1.textContent = 'Name';
+        option1.textContent = 'Title';
         option1.value = 'title';
         const option2 = document.createElement('option');
         option2.textContent = 'Category';
@@ -32,7 +33,8 @@ export class InputSearch {
         option3.textContent = 'Brand';
         option3.value = 'brand';
         this.select.append(option1, option2, option3);
-        this.content.append(this.inputEdit, button, this.select);
+
+        this.content.append(this.select, this.inputEdit, button,);
 
         button.addEventListener('click', () => {
             this.changeData();

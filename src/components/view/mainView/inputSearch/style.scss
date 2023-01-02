@@ -1,42 +1,67 @@
-$filterSearchHeight: 40px;
-$filterSearchBorderRadius: 20px;
-$filterSearchBorderWidth: 2px;
-$filterSearchButtonWidth: 100px;
+$filterSearchBorderRadius: 5px;
+$filterSearchBorderWidth: 1px;
 $filterSearchSelectWidth: 140px;
 
 .filter__search {
     position: relative;
+    text-align: right;
+
+    select {
+        width: 100%;
+        height: 1.6em;
+        //-webkit-appearance: none;
+        color: $colorTextNormalLight;
+        background-color: $colorInputEditBackground;
+        border: $filterSearchBorderWidth solid $colorInputEditBorder;
+        border-radius: $filterSearchBorderRadius;
+        outline: none;
+        padding: 0 5px;
+        transition: all 0.5s ease;
+        margin-bottom: 10px;
+        transition: all 0.1s ease-out;
+
+        &:hover {
+            border-color: $colorInputEditBorderFocus;
+        }
+
+        &:focus {
+            color: $colorTextNormal;
+            background-color: $colorInputEditBackgroundFocus;
+            border-color: $colorInputEditBorderFocus;
+        }
+    }
 
     input[type=text] {
         outline: none;
         width: 100%;
-        height: $filterSearchHeight;
+        height: 1.6em;
+        color: $colorTextNormalLight;
         border: $filterSearchBorderWidth solid $colorInputEditBorder;
         border-radius: $filterSearchBorderRadius;
-        padding-left: $filterSearchBorderRadius;
-        padding-right: 5px +  $filterSearchButtonWidth + $filterSearchSelectWidth - $filterSearchBorderRadius;
+        padding: 10px;
         background: $colorInputEditBackground;
         transition: all 0.1s ease-out;
+        margin-bottom: 10px;
+
+        &:hover {
+            border-color: $colorInputEditBorderFocus;
+        }
 
         &:focus {
+            color: $colorTextNormal;
             border-color: $colorInputEditBorderFocus;
             background: $colorInputEditBackgroundFocus;
         }
     }
 
     input[type=button] {
-        position: absolute;
-        z-index: 2;
-        right: 0;
-        top: 0;
-        width: $filterSearchButtonWidth;
-        height: $filterSearchHeight;
+        width: 100px;
+        height: 1.6em;
         outline: none;
         border: none;
         border-radius: $filterSearchBorderRadius;
         color: $colorButtonText;
         background: $colorButtonEnable;
-        padding: 0 $filterSearchBorderRadius;
 
         &:hover,
         &:focus {
@@ -53,23 +78,4 @@ $filterSearchSelectWidth: 140px;
         }
     }
 
-    select {
-        position: absolute;
-        z-index: 1;
-        right: $filterSearchButtonWidth - $filterSearchBorderRadius;
-        top: $filterSearchBorderWidth;
-        width: $filterSearchSelectWidth;
-        height: $filterSearchHeight - 2 * $filterSearchBorderWidth;
-        -webkit-appearance: none;
-        background-color: $colorInputEditBackground;
-        border: none;
-        border-left: 2px solid $colorInputEditBorder;
-        padding: 0 5px;
-        outline: none;
-        transition: all 0.5s ease;
-
-        &:focus {
-            background-color: $colorInputEditBackgroundFocus;
-        }
-    }
 }
