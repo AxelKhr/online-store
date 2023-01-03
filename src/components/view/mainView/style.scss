@@ -46,17 +46,16 @@
         width: 100%;
     }
 
-    &__view {
+    &__control {
         display: flex;
         justify-content: space-between;
         align-items: center;
         background: $colorBackgroundMainBlocks;
+        border: $widthBlockBorder solid $colorBlockBorder;
+        border-radius: $radiusBlockBorder;
         margin-bottom: 10px;
         padding: 10px;
 
-        .view__filter {
-            width: 400px;
-        }
     }
         
     &__list {

@@ -6,9 +6,11 @@ import { createFilterList, FilterListItem } from "./filterList";
 import { FilterDualSlider, FilterSliderData } from "./filterSlider";
 import { InputSearch, InputSearchData } from "./inputSearch";
 import { Cart } from "../cartView/cart/cart";
-import { ModelState, ListParams } from "../../model/dataModel";
+import { ModelMainState } from "../../model/modelMain";
+import { ListParams } from "../../model/filterList";
 import Params from "../../utils/params";
 import createButtonGeneral from "../elements/buttons/general";
+import { createSortList } from "./sortList";
 
 const createFilterBlock = (title: string, selClass: string) => {
     const block = document.createElement('div');
@@ -64,18 +66,27 @@ export class MainView extends AbstractView {
         );
         const section = document.createElement('section');
         section.classList.add('table__products');
+        const tableControl = document.createElement('div');
+        tableControl.classList.add('table__control');
+        const controlSort = document.createElement('div');
+        controlSort.classList.add('control__sorting');
+        const controlCount = document.createElement('div');
+        controlCount.classList.add('control__count');
+        const controlView = document.createElement('div');
+        controlView.classList.add('control__view');
+        tableControl.append(controlSort, controlCount, controlView);
         const table = document.createElement('div');
         table.classList.add('table__list');
-        section.append(table);
+        section.append(tableControl, table);
         content.append(aside, section);
         return content;
     }
 
-    draw(data: ModelState): void {
+    draw(data: ModelMainState): void {
         this.setParams(data);
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
-        data.main.products.forEach(item => {
+        data.productsList.forEach(item => {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
             ProductCard.setData(card, item);
@@ -106,27 +117,29 @@ export class MainView extends AbstractView {
             return filterList;
         }
 
-        this.drawFilterList(getFilterList(data.main.params.category), 'category', 'category');
-        this.drawFilterList(getFilterList(data.main.params.brand), 'brand', 'brand');
+        this.drawFilterList(getFilterList(data.params.category), 'category', 'category');
+        this.drawFilterList(getFilterList(data.params.brand), 'brand', 'brand');
         this.drawFilterSlider({
-            step: data.main.params.price.step,
-            rangeMin: data.main.params.price.rangeMin,
-            rangeMax: data.main.params.price.rangeMax,
-            currMin: data.main.params.price.currMin,
-            currMax: data.main.params.price.currMax
+            step: data.params.price.step,
+            rangeMin: data.params.price.rangeMin,
+            rangeMax: data.params.price.rangeMax,
+            currMin: data.params.price.currMin,
+            currMax: data.params.price.currMax
         }, 'price', 'price');
         this.drawFilterSlider({
-            step: data.main.params.stock.step,
-            rangeMin: data.main.params.stock.rangeMin,
-            rangeMax: data.main.params.stock.rangeMax,
-            currMin: data.main.params.stock.currMin,
-            currMax: data.main.params.stock.currMax
+            step: data.params.stock.step,
+            rangeMin: data.params.stock.rangeMin,
+            rangeMax: data.params.stock.rangeMax,
+            currMin: data.params.stock.currMin,
+            currMax: data.params.stock.currMax
         }, 'stock', 'stock');
 
         this.drawSearch({
-            type: data.main.params.search.type,
-            value: data.main.params.search.value,
+            type: data.params.search.type,
+            value: data.params.search.value,
         });
+
+        this.drawSorting();
     }
 
     drawFilterList(data: FilterListItem[], selClass: string, paramName: string) {
@@ -182,29 +195,36 @@ export class MainView extends AbstractView {
         };
     }
 
-    private setParams(state: ModelState) {
+    drawSorting() {
+        const box = document.querySelector('.control__sorting') as HTMLElement;
+        box.innerHTML = '';
+        const sorting = createSortList();
+        box.append(sorting);
+    }
+
+    private setParams(state: ModelMainState) {
         this._params.clear();
-        state.main.params.category.forEach((item) => {
+        state.params.category.forEach((item) => {
             item.checked && this._params.add('category', item.name);
         })
-        state.main.params.brand.forEach((item) => {
+        state.params.brand.forEach((item) => {
             item.checked && this._params.add('brand', item.name);
         })
-        if (state.main.params.price.minEn) {
-            this._params.replace('price-min', state.main.params.price.currMin.toString());
+        if (state.params.price.minEn) {
+            this._params.replace('price-min', state.params.price.currMin.toString());
         }
-        if (state.main.params.price.maxEn) {
-            this._params.replace('price-max', state.main.params.price.currMax.toString());
+        if (state.params.price.maxEn) {
+            this._params.replace('price-max', state.params.price.currMax.toString());
         }
-        if (state.main.params.stock.minEn) {
-            this._params.replace('stock-min', state.main.params.stock.currMin.toString());
+        if (state.params.stock.minEn) {
+            this._params.replace('stock-min', state.params.stock.currMin.toString());
         }
-        if (state.main.params.stock.maxEn) {
-            this._params.replace('stock-max', state.main.params.stock.currMax.toString());
+        if (state.params.stock.maxEn) {
+            this._params.replace('stock-max', state.params.stock.currMax.toString());
         }
-        if (state.main.params.search.enable) {
-            this._params.add('search-type', state.main.params.search.type);
-            this._params.add('search', state.main.params.search.value);
+        if (state.params.search.enable) {
+            this._params.add('search-type', state.params.search.type);
+            this._params.add('search', state.params.search.value);
         }
     }
 }

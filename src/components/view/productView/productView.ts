@@ -6,7 +6,7 @@ import SliderSingle from "../elements/sliderSingle";
 import * as tableTwoCols from "../elements/tableTwoCols";
 import * as ModalWindow from "../elements/modalWindow";
 import { Cart } from "../cartView/cart/cart";
-import { ModelState } from "../../model/dataModel";
+import { ModelProductState } from "../../model/modelProduct";
 
 export class ProductView extends AbstractView {
 
@@ -37,8 +37,8 @@ export class ProductView extends AbstractView {
         return content;
     }
 
-    draw(data: ModelState) {
-        if (data.prod.product) {
+    draw(data: ModelProductState) {
+        if (data.product) {
             const createElemP = (textContent: string, classNames?: string[]): HTMLParagraphElement => {
                 const par = document.createElement('p');
                 if (classNames) {
@@ -49,7 +49,7 @@ export class ProductView extends AbstractView {
             }
 
             const path = document.querySelector('.product-page__path') as HTMLElement;
-            path.textContent = `Store >> ${data.prod.product.category} >> ${data.prod.product.brand} >> ${data.prod.product.title}`.toUpperCase();
+            path.textContent = `Store >> ${data.product.category} >> ${data.product.brand} >> ${data.product.title}`.toUpperCase();
 
             const view = document.querySelector('.product-page__view') as HTMLElement;
             const sliderContainer = document.createElement('div');
@@ -59,8 +59,8 @@ export class ProductView extends AbstractView {
             sliderWrapper.classList.add('view__slider-wrapper');
             const slider = new SliderSingle();
             slider.content.classList.add('view__slider');
-            const altText = data.prod.product.title;
-            data.prod.product.images.forEach((item) => {
+            const altText = data.product.title;
+            data.product.images.forEach((item) => {
                 const box = document.createElement('div');
                 box.classList.add('view__image');
                 const imageWrapper = document.createElement('div');
@@ -72,7 +72,6 @@ export class ProductView extends AbstractView {
                 slider.addItem(box);
             });
             sliderContainer.addEventListener('click', (event) => {
-                console.dir(event);
                 ModalWindow.show('product-page__modal-image', slider.getCurrentItem() as HTMLDivElement);
             });
             sliderWrapper.append(slider.content);
@@ -96,24 +95,24 @@ export class ProductView extends AbstractView {
             const control = document.querySelector('.product-page__control') as HTMLElement;
             const buttonAdd = createButtonGeneral('control__button-add');
             buttonAdd.textContent = 'ADD';
-            buttonAdd.addEventListener('click', () => this.cart.addToCart(data.prod.product!));
+            buttonAdd.addEventListener('click', () => this.cart.addToCart(data.product!));
             const buttonBuy = createButtonGeneral('control__button-buy');
             buttonBuy.textContent = 'BUY';
             control.append(
-                createElemP(data.prod.product.title, ['control__title']),
-                createElemP(data.prod.product.brand, ['control__brand']),
-                createElemP(`Rating: ${data.prod.product.rating}`, ['control__rating']),
-                createElemP(`Discount: ${data.prod.product.discountPercentage}%`, ['control__discount']),
-                createElemP(`Stock: ${data.prod.product.stock}`, ['control__stock']),
-                createElemP(`Price: ${data.prod.product.price}`, ['control__price']),
+                createElemP(data.product.title, ['control__title']),
+                createElemP(data.product.brand, ['control__brand']),
+                createElemP(`Rating: ${data.product.rating}`, ['control__rating']),
+                createElemP(`Discount: ${data.product.discountPercentage}%`, ['control__discount']),
+                createElemP(`Stock: ${data.product.stock}`, ['control__stock']),
+                createElemP(`Price: ${data.product.price}`, ['control__price']),
                 buttonAdd, buttonBuy);
 
             const detailing = document.querySelector('.product-page__detailing') as HTMLElement;
             const table = tableTwoCols.createTable();
             table.classList.add('detailing__table');
-            tableTwoCols.addRow(table, 'Category', `${data.prod.product.category}`)
-            tableTwoCols.addRow(table, 'Brand', `${data.prod.product.brand}`)
-            tableTwoCols.addRow(table, 'Description', `${data.prod.product.description}`)
+            tableTwoCols.addRow(table, 'Category', `${data.product.category}`)
+            tableTwoCols.addRow(table, 'Brand', `${data.product.brand}`)
+            tableTwoCols.addRow(table, 'Description', `${data.product.description}`)
             detailing.append(
                 createElemP('Detailing', ['detailing__title']),
                 table
