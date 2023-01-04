@@ -44,6 +44,18 @@
 
     &__products {
         width: 100%;
+
+        .products__not-found {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            font-size: 2em;
+
+            &.block--hidden {
+                display: none;
+            }
+        }
     }
 
     &__control {
@@ -56,6 +68,15 @@
         margin-bottom: 10px;
         padding: 10px;
 
+        .control {
+            &__sorting {
+                width: 200px;
+            }
+
+            &__count {
+                width: 150px;
+            }
+        }
     }
         
     &__list {
@@ -64,10 +85,11 @@
         grid-auto-rows: auto;
         gap: 10px;
         width: 100%;
-    
+
         .products__card {
             width: 100%;
         }
     }
 }
+
 

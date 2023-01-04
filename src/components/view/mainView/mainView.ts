@@ -54,7 +54,6 @@ export class MainView extends AbstractView {
             navigator.clipboard.writeText(window.location.href);
         });
         filtersControl.append(buttonFilterReset, buttonFilterCopy);
-
         aside.append(
             filtersControl,
             createFilterBlock('Search', 'search'),
@@ -76,7 +75,10 @@ export class MainView extends AbstractView {
         tableControl.append(controlSort, controlCount, controlView);
         const table = document.createElement('div');
         table.classList.add('table__list');
-        section.append(tableControl, table);
+        const boxNotFound = document.createElement('div');
+        boxNotFound.classList.add('products__not-found');
+        boxNotFound.textContent = 'Items not found';
+        section.append(tableControl, boxNotFound, table);
         content.append(aside, section);
         return content;
     }
@@ -102,6 +104,16 @@ export class MainView extends AbstractView {
         const parent = document.querySelector('.table__list') as HTMLElement;
         parent.innerHTML = '';
         parent.appendChild(fragment);
+
+        const productCount = document.querySelector('.control__count') as HTMLDivElement;
+        productCount.textContent = `Found: ${data.productsList.length}`;
+
+        const boxNotFound = document.querySelector('.products__not-found') as HTMLDivElement;
+        if (data.productsList.length > 0) {
+            boxNotFound.classList.add('block--hidden');
+        } else {
+            boxNotFound.classList.remove('block--hidden');
+        }
 
         const getFilterList = (data: ListParams) => {
             const filterList: FilterListItem[] = [];
