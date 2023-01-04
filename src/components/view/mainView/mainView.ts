@@ -87,6 +87,10 @@ export class MainView extends AbstractView {
         return content;
     }
 
+    checkCart(item: Product) {
+        return (this._cart.cartData.findIndex((elem) => elem.product.id === item.id) >= 0);
+    }
+
     draw(data: ModelMainState): void {
         this.setParams(data);
         const fragment = document.createDocumentFragment();
@@ -94,13 +98,18 @@ export class MainView extends AbstractView {
         data.productsList.forEach(item => {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
-            ProductCard.setData(card, item);
+            ProductCard.setData(card, item, this.checkCart(item));
             fragment.append(card);
             card.addEventListener('click', (e: Event) => {
                 const target = e.target! as HTMLElement;
                 if (target.closest('button')) {
                     e.preventDefault();
-                    this._cart.addToCart(item);
+                    if (this.checkCart(item)) {
+                        this._cart.removeFromCart(item);
+                    } else {
+                        this._cart.addToCart(item);
+                    }
+                    ProductCard.setButtonStatus(target, this.checkCart(item));
                 }
             });
         });
@@ -118,6 +127,8 @@ export class MainView extends AbstractView {
         } else {
             boxNotFound.classList.remove('block--hidden');
         }
+
+        console.log(this._cart.cartData);
 
         const getFilterList = (data: ListParams) => {
             const filterList: FilterListItem[] = [];
