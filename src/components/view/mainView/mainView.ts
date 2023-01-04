@@ -51,7 +51,11 @@ export class MainView extends AbstractView {
         const buttonFilterCopy = createButtonGeneral('control__button-copy');
         buttonFilterCopy.textContent = 'Copy';
         buttonFilterCopy.addEventListener('click', () => {
+            buttonFilterCopy.classList.add('button-copy--active');
             navigator.clipboard.writeText(window.location.href);
+            setTimeout(() => {
+                buttonFilterCopy.classList.remove('button-copy--active');
+            }, 1000);
         });
         filtersControl.append(buttonFilterReset, buttonFilterCopy);
         aside.append(

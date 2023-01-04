@@ -16,6 +16,12 @@
                 border: $widthBlockBorder solid $colorBlockBorder;
                 border-radius: $radiusBlockBorder;
                 padding: 10px;
+
+                .control__button-copy {
+                    &.button-copy--active {
+                        background: green;
+                    }
+                }
             }
 
             &__block {
