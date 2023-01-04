@@ -1,0 +1,46 @@
+$sortingBorderRadius: 5px;
+$sortingBorderWidth: 1px;
+
+.view__buttons {
+    display: flex;
+
+    .view-button {
+        position: relative;
+        width: 40px;
+        height: 40px;
+
+        &:not(:first-child) {
+            margin-left: 5px;
+        }
+
+        input {
+            appearance: none;
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            appearance: none;
+            display: block;
+
+            &:checked ~ div {
+                background-color: lightgreen;
+            }
+
+            &:hover ~ div {
+                border-color: $colorInputEditBorderFocus;
+            }
+        }
+
+        div {
+            width: 100%;
+            height: 100%;
+            background-color: $colorInputEditBackground;
+            border: $sortingBorderWidth solid $colorInputEditBorder;
+            border-radius: $sortingBorderRadius;
+
+        }
+    }
+
+}

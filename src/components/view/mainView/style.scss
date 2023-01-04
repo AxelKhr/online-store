@@ -92,6 +92,10 @@
         gap: 10px;
         width: 100%;
 
+        &.table-view--lines {
+            grid-template-columns: repeat(1, 1fr);
+        }
+
         .products__card {
             width: 100%;
         }

@@ -12,6 +12,7 @@ class MainParams {
     stock: RangeParams;
     search: SearchParams;
     sorting: SortingParams;
+    view: string;
 
     constructor() {
         this.category = new ListParams('category');
@@ -20,6 +21,7 @@ class MainParams {
         this.stock = new RangeParams('stock');
         this.search = new SearchParams();
         this.sorting = new SortingParams();
+        this.view = 'grid';
     }
 }
 
@@ -135,5 +137,7 @@ export class ModelMain {
         this._params.search.type = (searchType.length > 0) ? searchType : '';
         const sorting = params.get('sort');
         this._params.sorting.current = (sorting.length > 0) ? sorting : '';
+        const viewControl = params.get('view');
+        this._params.view = (viewControl.length > 0) ? viewControl : 'grid';
     }
 }

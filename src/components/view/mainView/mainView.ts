@@ -11,6 +11,7 @@ import { ListParams } from "../../model/filterList";
 import Params from "../../utils/params";
 import createButtonGeneral from "../elements/buttons/general";
 import { SortList, SortListData } from "./sortList";
+import { ViewControl } from "./viewControl";
 
 const createFilterBlock = (title: string, selClass: string) => {
     const block = document.createElement('div');
@@ -128,8 +129,6 @@ export class MainView extends AbstractView {
             boxNotFound.classList.remove('block--hidden');
         }
 
-        console.log(this._cart.cartData);
-
         const getFilterList = (data: ListParams) => {
             const filterList: FilterListItem[] = [];
             data.forEach((item) => {
@@ -165,6 +164,8 @@ export class MainView extends AbstractView {
             value: data.params.search.value,
         });
         this.drawSorting(data.params.sorting.list, data.params.sorting.current);
+        this.drawViewButtons(data.params.view);
+        this.setTableView();
     }
 
     drawFilterList(data: FilterListItem[], selClass: string, paramName: string) {
@@ -231,6 +232,35 @@ export class MainView extends AbstractView {
         }
     }
 
+    drawViewButtons(value: string) {
+        const box = document.querySelector('.control__view') as HTMLElement;
+        box.innerHTML = '';
+        const viewButtons = new ViewControl(value);
+        box.append(viewButtons.content);
+        viewButtons.onChange = (value) => {
+            if (value !== 'grid') {
+                this._params.replace('view', value);
+            } else {
+                this._params.remove('view');
+            }
+            this.requestUpdateParams(this._params);
+        }
+    }
+
+    setTableView() {
+        const viewType = this._params.get('view');
+        const table = document.querySelector('.table__list') as HTMLElement;
+        const cards = document.querySelectorAll('.products__card');
+        let viewList = [...table.classList].filter((item) => item.match(/^table-view--/));
+        if (viewType.length > 0) {
+            viewList = viewList.filter((item) => !item.includes(viewType));
+            table.classList.add(`table-view--${viewType}`);
+            cards.forEach((card) => card.classList.add(`table-view--${viewType}`))
+        }
+        table.classList.remove(...viewList);
+        cards.forEach((card) => card.classList.remove(...viewList));
+    }
+
     private setParams(state: ModelMainState) {
         this._params.clear();
         state.params.category.forEach((item) => {
@@ -259,6 +289,11 @@ export class MainView extends AbstractView {
             this._params.replace('sort', state.params.sorting.current);
         } else {
             this._params.remove('sort');
+        }
+        if ((state.params.view.length > 0) && (state.params.view !== 'grid')) {
+            this._params.replace('view', state.params.view);
+        } else {
+            this._params.remove('view');
         }
     }
 
