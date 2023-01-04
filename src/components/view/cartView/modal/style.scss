@@ -14,6 +14,10 @@
   padding:30px 0;
   display: block;
 
+  &__title {
+    font-size: 1.4rem;
+  }
+
   &__wrap {
     flex-shrink: 0;
     flex-grow: 0;
@@ -26,6 +30,7 @@
 
   &__window {
     padding: 10px;
+    padding-bottom: 40px;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -43,18 +48,25 @@
     transform: scale(0.9);
   }
 
+  &__input::placeholder {
+    color: gray;
+    font-weight: 300;
+    font-size: 1.15rem;
+  }
+
   &__input {
     display: block;
     margin: 0 auto;
     width: 75%;
     outline: none;
-    height: calc(2.25rem + 1px);
+    height: calc(2.25rem + 4px);
     padding: 0.375rem 0.75rem;
     font-family: inherit;
-    font-size: 1.1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #212529;
+    font-size: 1.25rem;
+    font-weight: 500;
+    font-style: bold;
+    line-height: 1.4;
+    color: #000000;
     background-color: #f2f2f2;
     background-clip: padding-box;
     border: 1px solid #bdbdbd;
@@ -65,7 +77,7 @@
   &__input:focus:valid,
   &__input:valid {
     border-color: green;
-    border-width: 1px;
+    border-width: 2px;
   }
 
   &__input:invalid,
@@ -82,7 +94,7 @@
     height: auto;
     background-color: gainsboro;
     border-radius: 15px;
-    box-shadow: 0px 0px 8px 0px rgba(34, 60, 80, 0.2);
+    box-shadow: -4px 4px 8px 0px rgba(0, 0, 0, 0.2);
   }
 
   &__personal {
@@ -108,6 +120,28 @@
     height: 50px;
   }
 
+  .visa,
+  .master,
+  .american {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  .visa {
+    background-image: url('./assets/visa.png');
+  }
+
+  .master {
+    background-image: url('./assets/master.png');
+  }
+
+  .american {
+    background-image: url('./assets/american.png');
+  }
+
   &__bottom-block {
     width: 100%;
     display: flex;
@@ -116,7 +150,7 @@
 
   &__date,
   &__code {
-    width: 20%;
+    width: 25%;
     margin: 0 25px 40px 25px;
   }
 
@@ -128,6 +162,31 @@
     padding: 0;
     width: 75%;
     margin: 0 auto;
+  }
+
+  &__btn:hover {
+    box-shadow: 0px 0px 15px 0px rgba(71, 71, 71, 0.3);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .success {
+    background-image: url('./assets/check.png');
+    height: 300px;
+    width: 300px;
+    align-self: center;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .success-title {
+    font-size: 2.5rem;
+    color: green;
+  }
+
+  .success-redirect {
+    font-size: 1.4rem;
+    font-weight: 500;
   }
 
   &__shadow{
