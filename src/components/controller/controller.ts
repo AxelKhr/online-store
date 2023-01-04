@@ -35,12 +35,12 @@ export class AppController extends AppLoader {
         this._router.addRoute('cart', this.loadCartView);
         this._router.addRoute('', this.loadMainView);
 
-        document.addEventListener('changemodel', (event) => {
-            this._mainView.draw(this._dataModel.state);
+        document.addEventListener('changemodelmain', (event) => {
+            this._mainView.draw(this._dataModel.state.main);
         });
 
         document.addEventListener('changemodelproduct', (event) => {
-            this._productView.draw(this._dataModel.state);
+            this._productView.draw(this._dataModel.state.product);
         });
     }
 

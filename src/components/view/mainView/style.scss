@@ -16,6 +16,12 @@
                 border: $widthBlockBorder solid $colorBlockBorder;
                 border-radius: $radiusBlockBorder;
                 padding: 10px;
+
+                .control__button-copy {
+                    &.button-copy--active {
+                        background: green;
+                    }
+                }
             }
 
             &__block {
@@ -44,18 +50,38 @@
 
     &__products {
         width: 100%;
+
+        .products__not-found {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            font-size: 2em;
+
+            &.block--hidden {
+                display: none;
+            }
+        }
     }
 
-    &__view {
+    &__control {
         display: flex;
         justify-content: space-between;
         align-items: center;
         background: $colorBackgroundMainBlocks;
+        border: $widthBlockBorder solid $colorBlockBorder;
+        border-radius: $radiusBlockBorder;
         margin-bottom: 10px;
         padding: 10px;
 
-        .view__filter {
-            width: 400px;
+        .control {
+            &__sorting {
+                width: 200px;
+            }
+
+            &__count {
+                width: 150px;
+            }
         }
     }
         
@@ -65,10 +91,15 @@
         grid-auto-rows: auto;
         gap: 10px;
         width: 100%;
-    
+
+        &.table-view--lines {
+            grid-template-columns: repeat(1, 1fr);
+        }
+
         .products__card {
             width: 100%;
         }
     }
 }
+
 

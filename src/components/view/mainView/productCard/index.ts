@@ -21,6 +21,9 @@ function createTemplate(): HTMLElement {
   const brand = document.createElement('p');
   brand.classList.add('product-card__brand');
 
+  const rating = document.createElement('p');
+  rating.classList.add('product-card__rating');
+
   const buy = document.createElement('div');
   buy.classList.add('product-card__buy');
 
@@ -33,7 +36,7 @@ function createTemplate(): HTMLElement {
 
   buy.append(price, button);
 
-  detailing.append(title, brand, buy);
+  detailing.append(title, brand, rating, buy);
 
   const discount = document.createElement('div');
   discount.classList.add('product-card__discount');
@@ -44,13 +47,15 @@ function createTemplate(): HTMLElement {
   return card;
 }
 
-function setData(card: HTMLElement, data: Product): void {
+function setData(card: HTMLElement, data: Product, isInCart: boolean): void {
   card.setAttribute('href', `#/product?id=${data.id}`);
   (card.querySelector('.product-card__thumbnail') as HTMLElement).style.backgroundImage =
     `url(${data.thumbnail})`;
   (card.querySelector('.product-card__title') as HTMLElement).textContent = data.title;
   (card.querySelector('.product-card__brand') as HTMLElement).textContent = data.brand;
+  (card.querySelector('.product-card__rating') as HTMLElement).textContent = `Rating: ${data.rating}`;
   (card.querySelector('.product-card__price') as HTMLElement).textContent = `${data.price}`;
+  setButtonStatus(card.querySelector('.product-card__button') as HTMLElement, isInCart);
   const discount = (card.querySelector('.product-card__discount') as HTMLElement);
   if (data.discountPercentage > 0) {
     discount.classList.remove('block--hidden');
@@ -60,4 +65,8 @@ function setData(card: HTMLElement, data: Product): void {
   }
 }
 
-export { createTemplate, setData };
+function setButtonStatus(button: HTMLElement, isInCart: boolean) {
+  button.textContent = isInCart ? 'REM' : 'ADD';
+}
+
+export { createTemplate, setData, setButtonStatus };

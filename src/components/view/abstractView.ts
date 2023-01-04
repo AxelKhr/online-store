@@ -1,5 +1,5 @@
 import { Product, ProductResponse } from "../interface/product";
-import { ModelState } from "../model/dataModel";
+import { ModelStates } from "../model/dataModel";
 
 export abstract class AbstractView {
     constructor() {
@@ -11,8 +11,6 @@ export abstract class AbstractView {
     }
 
     abstract getView(): Promise<HTMLElement>;
-
-    abstract draw(data?: ModelState): void;
 
     async setView(title: string) {
         const view = await this.getView();

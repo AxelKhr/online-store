@@ -1,6 +1,5 @@
 $filterSearchBorderRadius: 5px;
 $filterSearchBorderWidth: 1px;
-$filterSearchSelectWidth: 140px;
 
 .filter__search {
     position: relative;
@@ -16,7 +15,6 @@ $filterSearchSelectWidth: 140px;
         border-radius: $filterSearchBorderRadius;
         outline: none;
         padding: 0 5px;
-        transition: all 0.5s ease;
         margin-bottom: 10px;
         transition: all 0.1s ease-out;
 
