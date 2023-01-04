@@ -1,5 +1,6 @@
 import { CartData } from "../cart/cart";
 import { Promo } from "../cartView";
+import { ModalView } from "../modalView";
 import "./style.scss";
 
 export function createOrderBlock(data: CartData[]): HTMLElement {
@@ -72,6 +73,7 @@ function payOrder() {
     const modalShadow = document.querySelector('.modal__shadow');
     modal?.classList.remove('hidden');
     modalShadow?.classList.remove('hidden');
+    new ModalView().getView();
 }
 
 export function getPromo(parent: HTMLElement, promo: Promo) {
