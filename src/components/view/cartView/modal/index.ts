@@ -10,8 +10,8 @@ export function getModal(): HTMLElement {
     <form class="modal__window">
         <div class="modal__personal">
             <p class="modal__title">Personal details</p>
-            <input class="modal__input" type="text" pattern="^\\w{3,}\\s+\\w{3,}$" placeholder="Name Surname" required>
-            <input class="modal__input" type="tel" placeholder="Phone number (+xxxxxxxxxxx)" pattern="^[\+]\\d{9,}$" required >
+            <input title="Name Surname" class="modal__input" type="text" pattern="^\\w{3,}\\s+\\w{3,}$" placeholder="Name Surname" required>
+            <input title="+xxxxxxxxx" class="modal__input" type="tel" placeholder="Phone number (+xxxxxxxxxxx)" pattern="^[\+]\\d{9,}$" required >
             <input class="modal__input" type="text" placeholder="Address" pattern="^\\w{5,}\\s+\\w{5,}\\s+\\w{5,}$" required>
             <input class="modal__input" type="email" placeholder="E-mail (example@email.com)" pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$" required>
         </div>

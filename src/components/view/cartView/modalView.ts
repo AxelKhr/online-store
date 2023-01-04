@@ -15,15 +15,13 @@ export class ModalView {
         dateMonth.addEventListener('keydown', (e) => this.dateValid(e.target as HTMLInputElement, e));
 
         const btn = document.querySelector('.modal__btn') as HTMLElement;
-        btn.addEventListener('click', (e) => { 
+        modal.addEventListener('submit', (e) => { 
             e.preventDefault();
             localStorage.removeItem('cart-storage');
             localStorage.removeItem('promo');
-            modal.innerHTML = `
-                <div class='success'></div>
+            modal.innerHTML = `<div class='success'></div>
                 <p class='success-title'>Success!</p>
-                <p class='success-redirect'>You'll be redirected to the main page</p>
-            `;
+                <p class='success-redirect'>You'll be redirected to the main page</p>`;
             setTimeout(() => window.location.href = '/', 2000);
         });
     }
