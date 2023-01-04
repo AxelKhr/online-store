@@ -1,21 +1,28 @@
 import "./style.scss";
 
-export function createSortList(): HTMLDivElement {
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('sort-list');
+export type SortListData = Map<string, string>;
 
-    const select = document.createElement('select');
-    const option1 = document.createElement('option');
-    option1.textContent = 'Title';
-    option1.value = 'title';
-    const option2 = document.createElement('option');
-    option2.textContent = 'Category';
-    option2.value = 'category';
-    const option3 = document.createElement('option');
-    option3.textContent = 'Brand';
-    option3.value = 'brand';
-    select.append(option1, option2, option3);
+export class SortList {
+    content: HTMLElement;
+    private selector: HTMLSelectElement;
+    onChange!: (current: string) => void;
 
-    wrapper.append(select);
-    return wrapper;
+    constructor(list: SortListData, current: string) {
+        this.content = document.createElement('div');
+        this.content.classList.add('sort-list');
+        this.selector = document.createElement('select');
+        [...list.entries()].forEach((item) => {
+            const option = document.createElement('option');
+            option.value = item[0];
+            option.textContent = item[1];
+            this.selector.append(option);
+        });
+        this.selector.value = current;
+        this.selector.addEventListener('change', () => {
+            if (this.onChange) {
+                this.onChange(this.selector.value);
+            }
+        })
+        this.content.append(this.selector);
+    }
 }

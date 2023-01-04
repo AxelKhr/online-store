@@ -1,0 +1,26 @@
+$sortingBorderRadius: 5px;
+$sortingBorderWidth: 1px;
+
+.sort-list {
+    width: 200px;
+    select {
+        width: 100%;
+        height: 1.6em;
+        color: $colorTextNormalLight;
+        background-color: $colorInputEditBackground;
+        border: $sortingBorderWidth solid $colorInputEditBorder;
+        border-radius: $sortingBorderRadius;
+        outline: none;
+        padding: 0 5px;
+
+        &:hover {
+            border-color: $colorInputEditBorderFocus;
+        }
+
+        &:focus {
+            color: $colorTextNormal;
+            background-color: $colorInputEditBackgroundFocus;
+            border-color: $colorInputEditBorderFocus;
+        }
+    }
+}

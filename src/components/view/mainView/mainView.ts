@@ -10,7 +10,7 @@ import { ModelMainState } from "../../model/modelMain";
 import { ListParams } from "../../model/filterList";
 import Params from "../../utils/params";
 import createButtonGeneral from "../elements/buttons/general";
-import { createSortList } from "./sortList";
+import { SortList, SortListData } from "./sortList";
 
 const createFilterBlock = (title: string, selClass: string) => {
     const block = document.createElement('div');
@@ -25,7 +25,6 @@ const createFilterBlock = (title: string, selClass: string) => {
 }
 
 export class MainView extends AbstractView {
-
     private _cart: Cart;
     private _params: Params;
     requestUpdateParams!: (params: Params) => void;
@@ -138,8 +137,7 @@ export class MainView extends AbstractView {
             type: data.params.search.type,
             value: data.params.search.value,
         });
-
-        this.drawSorting();
+        this.drawSorting(data.params.sorting.list, data.params.sorting.current);
     }
 
     drawFilterList(data: FilterListItem[], selClass: string, paramName: string) {
@@ -195,11 +193,15 @@ export class MainView extends AbstractView {
         };
     }
 
-    drawSorting() {
+    drawSorting(data: SortListData, current: string) {
         const box = document.querySelector('.control__sorting') as HTMLElement;
         box.innerHTML = '';
-        const sorting = createSortList();
-        box.append(sorting);
+        const sorting = new SortList(data, current);
+        box.append(sorting.content);
+        sorting.onChange = (value) => {
+            this._params.replace('sort', value);
+            this.requestUpdateParams(this._params);
+        }
     }
 
     private setParams(state: ModelMainState) {
@@ -225,6 +227,11 @@ export class MainView extends AbstractView {
         if (state.params.search.enable) {
             this._params.add('search-type', state.params.search.type);
             this._params.add('search', state.params.search.value);
+        }
+        if (state.params.sorting.enable) {
+            this._params.replace('sort', state.params.sorting.current);
+        } else {
+            this._params.remove('sort');
         }
     }
 }

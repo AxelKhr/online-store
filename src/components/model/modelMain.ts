@@ -3,7 +3,7 @@ import Params from "../utils/params";
 import { filterList, ListParams, ListItemParam } from "./filterList";
 import { filterSearch, SearchParams } from "./filterSearch";
 import { setRange, filterRange, RangeParams } from "./filterRange";
-import { Sorting, SortingData } from "./sorting";
+import { sortData, SortingParams } from "./sorting";
 
 class MainParams {
     category: ListParams;
@@ -11,7 +11,7 @@ class MainParams {
     price: RangeParams;
     stock: RangeParams;
     search: SearchParams;
-    //sorting: SortingData;
+    sorting: SortingParams;
 
     constructor() {
         this.category = new ListParams('category');
@@ -19,6 +19,7 @@ class MainParams {
         this.price = new RangeParams('price');
         this.stock = new RangeParams('stock');
         this.search = new SearchParams();
+        this.sorting = new SortingParams();
     }
 }
 
@@ -75,7 +76,7 @@ export class ModelMain {
         this._productsList = [];
         this.parseParams(params);
 
-        // filters
+        // filters and sorting
         await filterList(this._products, this._params.category)
             .then((products) => filterList(products, this._params.brand))
             .then((products) => filterSearch(products, this._params.search))
@@ -83,6 +84,7 @@ export class ModelMain {
             .then((products) => setRange(products, this._params.stock))
             .then((products) => filterRange(products, this._params.price))
             .then((products) => filterRange(products, this._params.stock))
+            .then((products) => sortData(products, this._params.sorting))
             .then((products) => this._productsList = products);
 
         // counts for filter lists
@@ -131,5 +133,7 @@ export class ModelMain {
         this._params.search.enable = (searchValue.length > 0);
         const searchType = params.get('search-type');
         this._params.search.type = (searchType.length > 0) ? searchType : '';
+        const sorting = params.get('sort');
+        this._params.sorting.current = (sorting.length > 0) ? sorting : '';
     }
 }
