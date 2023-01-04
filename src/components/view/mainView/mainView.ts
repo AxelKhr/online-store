@@ -45,7 +45,7 @@ export class MainView extends AbstractView {
         const buttonFilterReset = createButtonGeneral('control__button-reset');
         buttonFilterReset.textContent = 'Reset';
         buttonFilterReset.addEventListener('click', () => {
-            this._params.clear();
+            this.resetFilters();
             this.requestUpdateParams(this._params);
         });
         const buttonFilterCopy = createButtonGeneral('control__button-copy');
@@ -233,5 +233,16 @@ export class MainView extends AbstractView {
         } else {
             this._params.remove('sort');
         }
+    }
+
+    resetFilters() {
+        this._params.remove('category');
+        this._params.remove('brand');
+        this._params.remove('price-min');
+        this._params.remove('price-max');
+        this._params.remove('stock-min');
+        this._params.remove('stock-max');
+        this._params.remove('search-type');
+        this._params.remove('search');
     }
 }
