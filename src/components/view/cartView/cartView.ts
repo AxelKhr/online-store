@@ -6,6 +6,8 @@ import { createOrderBlock, getApplyPromo, getPromo } from "./orderBlock";
 import { getModal } from "./modal";
 import { Cart, CartData } from "./cart/cart";
 import { PromoCode } from "../../enum/promo";
+import Params from "../../utils/params";
+import * as ModelCart from "../../model/modelCart";
 
 export interface Promo {
     id: string;
@@ -19,17 +21,20 @@ export class CartView extends AbstractView {
     private readonly rsPromo: Promo;
     private readonly epmPromo: Promo;
     private promos: Promo[];
+    private _params: Params;
+    requestUpdateParams!: (params: Params) => void;
 
     constructor(cart: Cart) {
         super();
         this._cart = cart;
         const data = JSON.parse(localStorage.getItem('promo')!);
         this.promos = (data !== null) ? Array.from(data) : [];
-        this.rsPromo = { id: PromoCode.RS, name: 'Rolling Scopes School - 10%', discount: 10};
-        this.epmPromo = { id: PromoCode.EPM, name: 'EPAM Systems - 10%', discount: 10};
+        this.rsPromo = { id: PromoCode.RS, name: 'Rolling Scopes School - 10%', discount: 10 };
+        this.epmPromo = { id: PromoCode.EPM, name: 'EPAM Systems - 10%', discount: 10 };
+        this._params = new Params();
     }
-    
-    async getView(): Promise<HTMLElement>  {
+
+    async getView(): Promise<HTMLElement> {
         let content = document.createElement('section') as HTMLElement;
         content.classList.add('cart-page');
         content.innerHTML = this.getEmptyCart();
@@ -50,19 +55,41 @@ export class CartView extends AbstractView {
                 card.addEventListener('click', (e: Event) => this.clickItem(e, item, parent));
             });
 
-            parent.innerHTML = 
-            `<section class="cart__products">
+            parent.innerHTML =
+                `<section class="cart__products">
                 <div class="cart__list"></div>
                 <div class="cart__order"></div>
                 <div class="modal hidden"></div>
             </section>`;
+
+            // for paging --------------------- begin
+            const box = document.querySelector('.cart__list') as HTMLElement;
+            const pageControl = document.createElement('div');
+            const limit = document.createElement('input');
+            limit.classList.add('page-limit');
+            limit.type = 'number';
+            limit.addEventListener('change', () => {
+                this._params.replace('limit', limit.value);
+                this.requestUpdateParams(this._params);
+            });
+            const page = document.createElement('input');
+            page.classList.add('page-current');
+            page.type = 'number';
+            page.addEventListener('change', () => {
+                this._params.replace('page', page.value);
+                this.requestUpdateParams(this._params);
+            });
+            pageControl.append(limit, page);
+            box.prepend(pageControl);
+            // for paging --------------------- end
+
             const cart = document.querySelector('.cart__list') as HTMLElement;
             cart.appendChild(fragment);
 
             const order = document.querySelector('.cart__order') as HTMLElement;
             order.append(createOrderBlock(this._cart.cartData));
 
-            if(this.promos.length !== 0) {
+            if (this.promos.length !== 0) {
                 this.calcDiscount();
             }
 
@@ -88,10 +115,10 @@ export class CartView extends AbstractView {
             const orderProduct = document.querySelector('.order__count') as HTMLElement;
             const orderPrice = document.querySelector('.order__cost') as HTMLElement;
             const price = document.getElementById(`price-${data.product.id}`) as HTMLElement;
-            if(target.closest('.order-num__btn-right')) {
+            if (target.closest('.order-num__btn-right')) {
                 e.preventDefault();
                 data.count++;
-                if(data.count > data.product.stock) {
+                if (data.count > data.product.stock) {
                     return;
                 }
                 titleNum.innerText = `${Number(titleNum.innerHTML) + 1}`;
@@ -102,7 +129,7 @@ export class CartView extends AbstractView {
             } else if (target.closest('.order-num__btn-left')) {
                 e.preventDefault();
                 data.count--;
-                if(data.count < 1) {
+                if (data.count < 1) {
                     this.removeFromCart(e, data.product, parent);
                     return;
                 }
@@ -112,13 +139,13 @@ export class CartView extends AbstractView {
                 orderPrice.innerText = `Total: ${this._cart.minusNumber(data)}`;
                 this.calcDiscount();
             }
-        } 
+        }
     }
 
     private removeFromCart(e: Event, product: Product, parent: HTMLElement) {
         e.preventDefault();
         this._cart.removeFromCart(product);
-        if(this._cart.getSize() === 0) {
+        if (this._cart.getSize() === 0) {
             localStorage.removeItem('cart-storage');
             parent.innerHTML = this.getEmptyCart();
         } else {
@@ -128,9 +155,9 @@ export class CartView extends AbstractView {
 
     private findPromo(e: Event, parent: HTMLElement) {
         const input = (<HTMLTextAreaElement>e.target).value.toUpperCase();
-        if(input == PromoCode.RS) {
+        if (input == PromoCode.RS) {
             this.drawPromo(parent, this.rsPromo);
-        } else if(input == PromoCode.EPM) {
+        } else if (input == PromoCode.EPM) {
             this.drawPromo(parent, this.epmPromo);
         } else {
             parent.innerHTML = '';
@@ -140,7 +167,7 @@ export class CartView extends AbstractView {
     private drawPromo(parent: HTMLElement, promo: Promo) {
         getPromo(parent, promo);
         const addBtn = document.querySelector('.order__promo-btn') as HTMLInputElement;
-        if(!this.promos.find(el => el.id == promo.id)) {
+        if (!this.promos.find(el => el.id == promo.id)) {
             addBtn.classList.remove('hidden');
             addBtn.addEventListener('click', () => {
                 this.promos.push(promo);
@@ -154,7 +181,7 @@ export class CartView extends AbstractView {
 
     private removePromo(e: Event, parent: HTMLElement) {
         const target = e.target as HTMLElement;
-        if(target.closest('button')) {
+        if (target.closest('button')) {
             const promoName = `${target.id.split('-')[1]}`;
             const id = `promo-${promoName}`;
             const child = document.getElementById(id) as HTMLElement;
@@ -170,7 +197,7 @@ export class CartView extends AbstractView {
         const promoCost = document.querySelector('.order__promo-cost') as HTMLElement;
         const orderPrice = document.querySelector('.order__cost') as HTMLElement;
         const total = document.getElementById('total') as HTMLElement;
-        if(this.promos.length !== 0) {
+        if (this.promos.length !== 0) {
             orderPrice.classList.add('line');
             promoCostTitle.classList.remove('transparent');
         }
@@ -186,4 +213,11 @@ export class CartView extends AbstractView {
                 </div>`;
     }
 
+    // for paging
+    update(data: ModelCart.ModelCartState) {
+        const limit = document.querySelector('.page-limit') as HTMLInputElement;
+        limit.value = data.limit.toString();
+        const page = document.querySelector('.page-current') as HTMLInputElement;
+        page.value = data.page.toString();
+    }
 }
