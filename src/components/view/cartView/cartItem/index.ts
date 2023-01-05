@@ -9,6 +9,9 @@ function createTemplate(): HTMLElement {
   const box = document.createElement('div');
   box.classList.add('product-cart__box');
 
+  const id = document.createElement('span');
+  id.classList.add('product-cart__id');
+
   const image = document.createElement('div');
   image.classList.add('product-cart__thumbnail');
 
@@ -59,14 +62,15 @@ function createTemplate(): HTMLElement {
 
 
 
-  box.append(image, detailing, buy);
+  box.append(id, image, detailing, buy);
   card.append(box);
 
   return card;
 }
 
-function setData(card: HTMLElement, data: CartData): void {
+function setData(card: HTMLElement, data: CartData, index: number): void {
   card.setAttribute('href', `#/product?id=${data.product.id}`);
+  (card.querySelector('.product-cart__id') as HTMLElement).innerText = index.toString();
   (card.querySelector('.product-cart__thumbnail') as HTMLElement).style.backgroundImage =
     `url(${data.product.thumbnail})`;
   (card.querySelector('.product-cart__title') as HTMLElement).textContent = data.product.title;
