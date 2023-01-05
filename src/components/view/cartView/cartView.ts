@@ -88,8 +88,6 @@ export class CartView extends AbstractView {
         page.classList.add('page-current');
         if(this._page !== undefined) { 
             page.innerText = this._page!.toString(); 
-        } else if (this._page < helper.pageCount()){
-            console.log(123);
         }
 
         const leftPageBtn = document.createElement('button');
