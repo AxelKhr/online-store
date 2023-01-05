@@ -9,6 +9,7 @@ import { PromoCode } from "../../enum/promo";
 import Params from "../../utils/params";
 import * as ModelCart from "../../model/modelCart";
 import { PaginationHelper } from "../../utils/pagination";
+import { ErrorView } from "../error/error";
 
 export interface Promo {
     id: string;
@@ -70,55 +71,59 @@ export class CartView extends AbstractView {
     private drawControl(cart: HTMLElement, parent: HTMLElement) {
         parent.innerHTML = '';
         const limit = document.createElement('input');
-            limit.classList.add('page-limit');
-            limit.type = 'number';
-            if(this._limit !== undefined) limit.value = this._limit.toString();
-            limit.addEventListener('change', () => {
-                this._params.replace('limit', limit.value);
-                this.requestUpdateParams(this._params);
-                this.drawCards(cart, parent);
-            });
+        limit.classList.add('page-limit');
+        limit.type = 'number';
+        if(this._limit !== undefined) limit.value = this._limit.toString();
+        limit.addEventListener('change', () => {
+            this._params.replace('limit', limit.value);
+            this.requestUpdateParams(this._params);
+            this.drawCards(cart, parent);
+        });
             
-            const page = document.createElement('span');
-            const totalPage = document.createElement('span');
-            page.classList.add('page-current');
-            if(this._page !== undefined) page.innerText = this._page!.toString();
+        const page = document.createElement('span');
+        const totalPage = document.createElement('span');
+        const helper = new PaginationHelper(this._cart.cartData, this._limit);
+        totalPage.innerText = `/${helper.pageCount().toString()}`;
 
-            const leftPageBtn = document.createElement('button');
-            const rightPageBtn = document.createElement('button');
-            leftPageBtn.classList.add('control-btn');
-            leftPageBtn.innerText = '<';
-            leftPageBtn.addEventListener('click', () => {
-                if(this._page !== 1) {
-                    this._page--;
-                    page.innerText = this._page.toString();
-                    this._params.replace('page', page.innerText);
-                    this.requestUpdateParams(this._params);
-                    this.drawCards(cart, parent);
-                }
-            });
-            const helper = new PaginationHelper(this._cart.cartData, this._limit);
-            totalPage.innerText = `/${helper.pageCount().toString()}`;
+        page.classList.add('page-current');
+        if(this._page !== undefined) { 
+            page.innerText = this._page!.toString(); 
+        } else if (this._page < helper.pageCount()){
+            console.log(123);
+        }
 
-            if(this._page > helper.pageCount()) {
-                --this._page;
+        const leftPageBtn = document.createElement('button');
+        const rightPageBtn = document.createElement('button');
+        leftPageBtn.classList.add('control-btn');
+        leftPageBtn.innerText = '<';
+        leftPageBtn.addEventListener('click', () => {
+        if(this._page !== 1) {
+            this._page--;
+            page.innerText = this._page.toString();
+            this._params.replace('page', page.innerText);
+            this.requestUpdateParams(this._params);
+            this.drawCards(cart, parent);
+            }
+        });
+
+        if(this._page > helper.pageCount()) {
+            --this._page;
+            page.innerText = this._page.toString();
+            this._params.replace('page', page.innerText);
+        }
+
+        rightPageBtn.classList.add('control-btn');
+        rightPageBtn.innerText = '>';
+        rightPageBtn.addEventListener('click', () => {
+            if(this._page !== helper.pageCount()) {
+                this._page++;
                 page.innerText = this._page.toString();
                 this._params.replace('page', page.innerText);
+                this.requestUpdateParams(this._params);
+                this.drawCards(cart, parent);
             }
-
-            rightPageBtn.classList.add('control-btn');
-            rightPageBtn.innerText = '>';
-            rightPageBtn.addEventListener('click', () => {
-                if(this._page !== helper.pageCount()) {
-                    this._page++;
-                    page.innerText = this._page.toString();
-                    this._params.replace('page', page.innerText);
-                    this.requestUpdateParams(this._params);
-                    this.drawCards(cart, parent);
-                }
-            });
-            
-            parent.append(limit, leftPageBtn, page, totalPage, rightPageBtn);
+        });
+        parent.append(limit, leftPageBtn, page, totalPage, rightPageBtn);
     }
 
     private drawCards(cart: HTMLElement, parent: HTMLElement) {
@@ -208,6 +213,8 @@ export class CartView extends AbstractView {
             parentBox.innerHTML = this.getEmptyCart();
         } else {
             this.drawControl(cart, pageControl);
+            this._params.replace('page', this._page.toString());
+            this.requestUpdateParams(this._params);
             this.drawCards(cart, parentBox);
             this.drawOrder();
         }
@@ -279,14 +286,17 @@ export class CartView extends AbstractView {
         const cart = document.querySelector('.cart__list') as HTMLElement;
         const pageControl = document.querySelector('.cart__control') as HTMLElement;
 
-
         const limit = document.querySelector('.page-limit') as HTMLInputElement;
         limit.value = data.limit.toString();
         this._limit = +limit.value;
         const page = document.querySelector('.page-current') as HTMLInputElement;
         page.innerText = data.page.toString();
         this._page = +page.innerText;
-
+        const helper = new PaginationHelper(this._cart.cartData, this._limit);
+        if(this._page > helper.pageCount()) {
+            this._page = helper.pageCount();
+            this._params.replace('page', this._page.toString());
+        }
         pageControl.innerHTML = '';
         this.drawControl(cart, pageControl);
         this.drawCards(cart, parent);
