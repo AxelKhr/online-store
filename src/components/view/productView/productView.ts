@@ -10,11 +10,11 @@ import { ModelProductState } from "../../model/modelProduct";
 
 export class ProductView extends AbstractView {
 
-    private cart: Cart;
+    private _cart: Cart;
 
     constructor(cart: Cart) {
         super();
-        this.cart = cart;
+        this._cart = cart;
     }
 
     async getView(): Promise<HTMLElement> {
@@ -95,7 +95,16 @@ export class ProductView extends AbstractView {
             const control = document.querySelector('.product-page__control') as HTMLElement;
             const buttonAdd = createButtonGeneral('control__button-add');
             buttonAdd.textContent = 'ADD';
-            buttonAdd.addEventListener('click', () => this.cart.addToCart(data.product!));
+            buttonAdd.addEventListener('click', () => {
+                if (data.product) {
+                    if (this.checkCart(data.product)) {
+                        this._cart.removeFromCart(data.product);
+                    } else {
+                        this._cart.addToCart(data.product);
+                    }
+                    this.setAddButtonStatus(this.checkCart(data.product));
+                }
+            });
             const buttonBuy = createButtonGeneral('control__button-buy');
             buttonBuy.textContent = 'BUY';
             control.append(
@@ -106,6 +115,7 @@ export class ProductView extends AbstractView {
                 createElemP(`Stock: ${data.product.stock}`, ['control__stock']),
                 createElemP(`Price: ${data.product.price}`, ['control__price']),
                 buttonAdd, buttonBuy);
+            this.setAddButtonStatus(this.checkCart(data.product));
 
             const detailing = document.querySelector('.product-page__detailing') as HTMLElement;
             const table = tableTwoCols.createTable();
@@ -119,4 +129,14 @@ export class ProductView extends AbstractView {
             );
         }
     }
+
+    private checkCart(item: Product) {
+        return (this._cart.cartData.findIndex((elem) => elem.product.id === item.id) >= 0);
+    }
+
+    private setAddButtonStatus(isInCart: boolean) {
+        const button = document.querySelector('.control__button-add') as HTMLElement;
+        button.textContent = isInCart ? 'REMOVE' : 'ADD';
+    }
+
 }

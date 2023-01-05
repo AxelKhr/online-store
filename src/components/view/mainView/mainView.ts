@@ -88,7 +88,7 @@ export class MainView extends AbstractView {
         return content;
     }
 
-    checkCart(item: Product) {
+    private checkCart(item: Product) {
         return (this._cart.cartData.findIndex((elem) => elem.product.id === item.id) >= 0);
     }
 
