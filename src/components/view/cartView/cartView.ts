@@ -6,6 +6,10 @@ import { createOrderBlock, getApplyPromo, getPromo } from "./orderBlock";
 import { getModal } from "./modal";
 import { Cart, CartData } from "./cart/cart";
 import { PromoCode } from "../../enum/promo";
+import Params from "../../utils/params";
+import * as ModelCart from "../../model/modelCart";
+import { PaginationHelper } from "../../utils/pagination";
+import { ErrorView } from "../error/error";
 
 export interface Promo {
     id: string;
@@ -19,17 +23,23 @@ export class CartView extends AbstractView {
     private readonly rsPromo: Promo;
     private readonly epmPromo: Promo;
     private promos: Promo[];
+    private _params: Params;
+    requestUpdateParams!: (params: Params) => void;
+
+    private _limit!: number;
+    private _page!: number;
 
     constructor(cart: Cart) {
         super();
         this._cart = cart;
         const data = JSON.parse(localStorage.getItem('promo')!);
         this.promos = (data !== null) ? Array.from(data) : [];
-        this.rsPromo = { id: PromoCode.RS, name: 'Rolling Scopes School - 10%', discount: 10};
-        this.epmPromo = { id: PromoCode.EPM, name: 'EPAM Systems - 10%', discount: 10};
+        this.rsPromo = { id: PromoCode.RS, name: 'Rolling Scopes School - 10%', discount: 10 };
+        this.epmPromo = { id: PromoCode.EPM, name: 'EPAM Systems - 10%', discount: 10 };
+        this._params = new Params();
     }
-    
-    async getView(): Promise<HTMLElement>  {
+
+    async getView(): Promise<HTMLElement> {
         let content = document.createElement('section') as HTMLElement;
         content.classList.add('cart-page');
         content.innerHTML = this.getEmptyCart();
@@ -39,98 +49,180 @@ export class CartView extends AbstractView {
     draw(): void {
         const parent = document.querySelector('.cart-page') as HTMLElement;
         if (this._cart.cartData.length !== 0) {
-            const fragment = document.createDocumentFragment();
-            const cardTemp = CartItem.createTemplate();
-
-            this._cart.cartData.forEach(item => {
-                const card = cardTemp.cloneNode(true) as HTMLElement;
-                card.classList.add('products__card');
-                CartItem.setData(card, item);
-                fragment.append(card);
-                card.addEventListener('click', (e: Event) => this.clickItem(e, item, parent));
-            });
-
-            parent.innerHTML = 
-            `<section class="cart__products">
-                <div class="cart__list"></div>
-                <div class="cart__order"></div>
-                <div class="modal hidden"></div>
-            </section>`;
+            parent.innerHTML =
+                `<div class="cart__control"></div>
+                <section class="cart__products">
+                    <div class="cart__list"></div>
+                    <div class="cart__order"></div>
+                    <div class="modal hidden"></div>
+                </section>`;
             const cart = document.querySelector('.cart__list') as HTMLElement;
-            cart.appendChild(fragment);
+            const pageControl = document.querySelector('.cart__control') as HTMLElement;
 
-            const order = document.querySelector('.cart__order') as HTMLElement;
-            order.append(createOrderBlock(this._cart.cartData));
-
-            if(this.promos.length !== 0) {
-                this.calcDiscount();
-            }
-
-            const orderParent = document.querySelector('.order__promo-content') as HTMLElement;
-            const orderInput = document.querySelector('.order__promo') as HTMLInputElement;
-            orderInput.addEventListener('input', (e) => this.findPromo(e, orderParent));
-
-            const applyParent = document.querySelector('.order__apply-promo-box') as HTMLElement;
-            this.promos.forEach(el => getApplyPromo(applyParent, el));
-            applyParent.addEventListener('click', (e) => this.removePromo(e, applyParent));
+            this.drawControl(cart, pageControl);
+            this.drawCards(cart, parent);
+            this.drawOrder();
 
             const modal = document.querySelector('.modal') as HTMLElement;
             modal.append(getModal());
         }
     }
 
-    private clickItem(e: Event, data: CartData, parent: HTMLElement) {
+    private drawControl(cart: HTMLElement, parent: HTMLElement) {
+        parent.innerHTML = '';
+        const limit = document.createElement('input');
+        limit.classList.add('page-limit');
+        limit.type = 'number';
+        if(this._limit !== undefined) limit.value = this._limit.toString();
+        limit.addEventListener('change', () => {
+            this._params.replace('limit', limit.value);
+            this.requestUpdateParams(this._params);
+            this.drawCards(cart, parent);
+        });
+            
+        const page = document.createElement('span');
+        const totalPage = document.createElement('span');
+        const helper = new PaginationHelper(this._cart.cartData, this._limit);
+        totalPage.innerText = `/${helper.pageCount().toString()}`;
+
+        page.classList.add('page-current');
+        if(this._page !== undefined) { 
+            page.innerText = this._page!.toString(); 
+        }
+
+        const leftPageBtn = document.createElement('button');
+        const rightPageBtn = document.createElement('button');
+        leftPageBtn.classList.add('control-btn');
+        leftPageBtn.innerText = '<';
+        leftPageBtn.addEventListener('click', () => {
+        if(this._page !== 1) {
+            this._page--;
+            page.innerText = this._page.toString();
+            this._params.replace('page', page.innerText);
+            this.requestUpdateParams(this._params);
+            this.drawCards(cart, parent);
+            }
+        });
+
+        if(this._page > helper.pageCount()) {
+            --this._page;
+            page.innerText = this._page.toString();
+            this._params.replace('page', page.innerText);
+        }
+
+        rightPageBtn.classList.add('control-btn');
+        rightPageBtn.innerText = '>';
+        rightPageBtn.addEventListener('click', () => {
+            if(this._page !== helper.pageCount()) {
+                this._page++;
+                page.innerText = this._page.toString();
+                this._params.replace('page', page.innerText);
+                this.requestUpdateParams(this._params);
+                this.drawCards(cart, parent);
+            }
+        });
+        parent.append(limit, leftPageBtn, page, totalPage, rightPageBtn);
+    }
+
+    private drawCards(cart: HTMLElement, parent: HTMLElement) {
+        const cardTemp = CartItem.createTemplate();
+        cart.innerHTML = "";
+        const fragment = document.createDocumentFragment();
+        const startIndex = (this._page * this._limit) - this._limit;
+        for(let i = startIndex; (i < this._page * this._limit && i < this._cart.cartData.length); i++) {
+            const card = cardTemp.cloneNode(true) as HTMLElement;
+            card.classList.add('products__card');
+            CartItem.setData(card, this._cart.cartData[i], i + 1);
+            fragment.append(card);
+            card.addEventListener('click', (e: Event) => this.clickItem(e, this._cart.cartData[i]));
+        } 
+        cart.appendChild(fragment);
+    }
+
+    private drawOrder() {
+        const order = document.querySelector('.cart__order') as HTMLElement;
+        order.innerHTML = '';
+        order.append(createOrderBlock(this._cart.cartData));
+
+        if (this.promos.length !== 0) {
+            this.calcDiscount();
+        }
+
+        const orderParent = document.querySelector('.order__promo-content') as HTMLElement;
+        const orderInput = document.querySelector('.order__promo') as HTMLInputElement;
+        orderInput.addEventListener('input', (e) => this.findPromo(e, orderParent));
+
+        const applyParent = document.querySelector('.order__apply-promo-box') as HTMLElement;
+        this.promos.forEach(el => getApplyPromo(applyParent, el));
+        applyParent.addEventListener('click', (e) => this.removePromo(e, applyParent));
+    }
+
+    private clickItem(e: Event, data: CartData) {
+        const titleNum = document.getElementById(`count-${data.product.id}`) as HTMLElement;
+        const orderPrice = document.querySelector('.order__cost') as HTMLElement;
         const target = e.target! as HTMLElement;
         if (target.closest('.product-cart__button')) {
-            this.removeFromCart(e, data.product, parent);
+            this.removeFromCart(e, data.product);
         } else {
-            const titleNum = document.getElementById(`count-${data.product.id}`) as HTMLElement;
-            const orderProduct = document.querySelector('.order__count') as HTMLElement;
-            const orderPrice = document.querySelector('.order__cost') as HTMLElement;
-            const price = document.getElementById(`price-${data.product.id}`) as HTMLElement;
-            if(target.closest('.order-num__btn-right')) {
+            if (target.closest('.order-num__btn-right')) {
                 e.preventDefault();
                 data.count++;
-                if(data.count > data.product.stock) {
+                if (data.count > data.product.stock) {
                     return;
                 }
                 titleNum.innerText = `${Number(titleNum.innerHTML) + 1}`;
-                orderProduct.innerText = `${Number(orderProduct.innerHTML) + 1}`;
-                price.innerText = `${data.product.price * data.count}`;
                 orderPrice.innerText = `Total: ${this._cart.plusNumber(data)}`;
+                this.incrementCount(data);
                 this.calcDiscount();
             } else if (target.closest('.order-num__btn-left')) {
                 e.preventDefault();
                 data.count--;
-                if(data.count < 1) {
-                    this.removeFromCart(e, data.product, parent);
+                if (data.count < 1) {
+                    this.removeFromCart(e, data.product);
                     return;
                 }
                 titleNum.innerText = `${Number(titleNum.innerHTML) - 1}`;
-                orderProduct.innerText = `${Number(orderProduct.innerHTML) - 1}`;
-                price.innerText = `${data.product.price * data.count}`;
                 orderPrice.innerText = `Total: ${this._cart.minusNumber(data)}`;
+                this.incrementCount(data);
                 this.calcDiscount();
             }
-        } 
+        }
     }
 
-    private removeFromCart(e: Event, product: Product, parent: HTMLElement) {
+    private incrementCount(data: CartData) {
+        const price = document.getElementById(`price-${data.product.id}`) as HTMLElement;
+
+        const cartIcon = document.querySelector('.indicator__span') as HTMLElement;
+        const orderProduct = document.querySelector('.order__count') as HTMLElement;
+
+        price.innerText = `${data.product.price * data.count}`;
+        orderProduct.innerText = `${cartIcon.innerText}`;
+    }
+
+    private removeFromCart(e: Event, product: Product) {
+        const cart = document.querySelector('.cart__list') as HTMLElement;
+        const parentBox = document.querySelector('.cart-page') as HTMLElement;
+        const pageControl = document.querySelector('.cart__control') as HTMLElement;
+
         e.preventDefault();
         this._cart.removeFromCart(product);
-        if(this._cart.getSize() === 0) {
+        if (this._cart.getSize() === 0) {
             localStorage.removeItem('cart-storage');
-            parent.innerHTML = this.getEmptyCart();
+            parentBox.innerHTML = this.getEmptyCart();
         } else {
-            this.draw();
+            this.drawControl(cart, pageControl);
+            this._params.replace('page', this._page.toString());
+            this.requestUpdateParams(this._params);
+            this.drawCards(cart, parentBox);
+            this.drawOrder();
         }
     }
 
     private findPromo(e: Event, parent: HTMLElement) {
         const input = (<HTMLTextAreaElement>e.target).value.toUpperCase();
-        if(input == PromoCode.RS) {
+        if (input == PromoCode.RS) {
             this.drawPromo(parent, this.rsPromo);
-        } else if(input == PromoCode.EPM) {
+        } else if (input == PromoCode.EPM) {
             this.drawPromo(parent, this.epmPromo);
         } else {
             parent.innerHTML = '';
@@ -140,12 +232,12 @@ export class CartView extends AbstractView {
     private drawPromo(parent: HTMLElement, promo: Promo) {
         getPromo(parent, promo);
         const addBtn = document.querySelector('.order__promo-btn') as HTMLInputElement;
-        if(!this.promos.find(el => el.id == promo.id)) {
+        if (!this.promos.find(el => el.id == promo.id)) {
             addBtn.classList.remove('hidden');
             addBtn.addEventListener('click', () => {
                 this.promos.push(promo);
                 localStorage.setItem('promo', JSON.stringify(this.promos));
-                this.draw();
+                this.drawOrder();
             });
         } else {
             addBtn.classList.add('hidden');
@@ -154,14 +246,14 @@ export class CartView extends AbstractView {
 
     private removePromo(e: Event, parent: HTMLElement) {
         const target = e.target as HTMLElement;
-        if(target.closest('button')) {
+        if (target.closest('button')) {
             const promoName = `${target.id.split('-')[1]}`;
             const id = `promo-${promoName}`;
             const child = document.getElementById(id) as HTMLElement;
             this.promos = this.promos.filter(el => el.id !== promoName.toUpperCase());
             localStorage.setItem('promo', JSON.stringify(this.promos));
             parent.removeChild(child);
-            this.draw();
+            this.drawOrder();
         }
     }
 
@@ -170,7 +262,7 @@ export class CartView extends AbstractView {
         const promoCost = document.querySelector('.order__promo-cost') as HTMLElement;
         const orderPrice = document.querySelector('.order__cost') as HTMLElement;
         const total = document.getElementById('total') as HTMLElement;
-        if(this.promos.length !== 0) {
+        if (this.promos.length !== 0) {
             orderPrice.classList.add('line');
             promoCostTitle.classList.remove('transparent');
         }
@@ -186,4 +278,25 @@ export class CartView extends AbstractView {
                 </div>`;
     }
 
+    // for paging
+    update(data: ModelCart.ModelCartState) {
+        const parent = document.querySelector('.cart-page') as HTMLElement;
+        const cart = document.querySelector('.cart__list') as HTMLElement;
+        const pageControl = document.querySelector('.cart__control') as HTMLElement;
+
+        const limit = document.querySelector('.page-limit') as HTMLInputElement;
+        limit.value = data.limit.toString();
+        this._limit = +limit.value;
+        const page = document.querySelector('.page-current') as HTMLInputElement;
+        page.innerText = data.page.toString();
+        this._page = +page.innerText;
+        const helper = new PaginationHelper(this._cart.cartData, this._limit);
+        if(this._page > helper.pageCount()) {
+            this._page = helper.pageCount();
+            this._params.replace('page', this._page.toString());
+        }
+        pageControl.innerHTML = '';
+        this.drawControl(cart, pageControl);
+        this.drawCards(cart, parent);
+    }
 }

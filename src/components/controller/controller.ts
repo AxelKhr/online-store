@@ -31,6 +31,7 @@ export class AppController extends AppLoader {
         this._productView = new ProductView(this._cart);
         this._productView.requestQuickBuy = this.routeToQuickBuy;
         this._cartView = new CartView(this._cart);
+        this._cartView.requestUpdateParams = this.requestUpdateCartParams;
 
         this._router.addRoute('product', this.loadProductView);
         this._router.addRoute('cart', this.loadCartView);
@@ -42,6 +43,10 @@ export class AppController extends AppLoader {
 
         document.addEventListener('changemodelproduct', (event) => {
             this._productView.draw(this._dataModel.state.product);
+        });
+
+        document.addEventListener('changemodelcart', (event) => {
+            this._cartView.update(this._dataModel.state.cart);
         });
     }
 
@@ -91,6 +96,7 @@ export class AppController extends AppLoader {
     private loadCartView = async (params: string) => {
         await this._cartView.setView('Cart');
         this._cartView.draw();
+        this._dataModel.setCartParam(new Params([...(new URLSearchParams(params)).entries()]));
     }
 
     // methods to update model parameters
@@ -98,6 +104,11 @@ export class AppController extends AppLoader {
     private requestUpdateMainParams = (params: Params) => {
         this._router.setURLParams((new URLSearchParams(params.getPairs())).toString());
         this._dataModel.setMainParam(params);
+    }
+
+    private requestUpdateCartParams = (params: Params) => {
+        this._router.setURLParams((new URLSearchParams(params.getPairs())).toString());
+        this._dataModel.setCartParam(params);
     }
 
     // other methods
