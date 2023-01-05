@@ -115,6 +115,7 @@ export class AppController extends AppLoader {
 
     private routeToQuickBuy = async (item: Product) => {
         this._cart.addToCart(item);
+        this._dataModel.modelCart.setModalWindowState(true);
         window.location.href = window.location.origin + '#/cart';
     }
 }

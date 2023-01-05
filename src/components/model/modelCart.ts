@@ -6,24 +6,30 @@ export const CART_VIEW_PAGE_DEFAULT = 1;
 export interface ModelCartState {
     limit: number;
     page: number;
+    isModalEnable: boolean;
 }
 
 export class ModelCart {
     private _limit: number;
     private _page: number;
+    private _isModalEnable: boolean;
     private _updateCartEvent: Event;
 
     constructor() {
         this._limit = CART_VIEW_LIMIT_DEFAULT;
         this._page = CART_VIEW_PAGE_DEFAULT;
+        this._isModalEnable = false;
         this._updateCartEvent = new Event('changemodelcart');
     }
 
     get state(): ModelCartState {
-        return {
+        const res: ModelCartState = {
             limit: this._limit,
-            page: this._page
+            page: this._page,
+            isModalEnable: this._isModalEnable
         }
+        this._isModalEnable = false;
+        return res;
     }
 
     setParams(params: Params) {
@@ -33,4 +39,10 @@ export class ModelCart {
         this._page = (page.length > 0) ? +page : CART_VIEW_PAGE_DEFAULT;
         document.dispatchEvent(this._updateCartEvent);
     }
+
+    setModalWindowState(isEnable: boolean) {
+        this._isModalEnable = true;
+    }
 }
+
+
