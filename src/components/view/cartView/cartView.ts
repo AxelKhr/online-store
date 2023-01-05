@@ -24,6 +24,9 @@ export class CartView extends AbstractView {
     private _params: Params;
     requestUpdateParams!: (params: Params) => void;
 
+    private _limit!: number;
+    private _page!: number;
+
     constructor(cart: Cart) {
         super();
         this._cart = cart;
@@ -44,33 +47,25 @@ export class CartView extends AbstractView {
     draw(): void {
         const parent = document.querySelector('.cart-page') as HTMLElement;
         if (this._cart.cartData.length !== 0) {
-            const fragment = document.createDocumentFragment();
-            const cardTemp = CartItem.createTemplate();
-
-            this._cart.cartData.forEach(item => {
-                const card = cardTemp.cloneNode(true) as HTMLElement;
-                card.classList.add('products__card');
-                CartItem.setData(card, item);
-                fragment.append(card);
-                card.addEventListener('click', (e: Event) => this.clickItem(e, item, parent));
-            });
-
             parent.innerHTML =
-                `<section class="cart__products">
-                <div class="cart__list"></div>
-                <div class="cart__order"></div>
-                <div class="modal hidden"></div>
-            </section>`;
+                `<div class="cart__control"></div>
+                <section class="cart__products">
+                    <div class="cart__list"></div>
+                    <div class="cart__order"></div>
+                    <div class="modal hidden"></div>
+                </section>`;
 
-            // for paging --------------------- begin
-            const box = document.querySelector('.cart__list') as HTMLElement;
-            const pageControl = document.createElement('div');
+            
+            const cart = document.querySelector('.cart__list') as HTMLElement;
+            const pageControl = document.querySelector('.cart__control') as HTMLElement;
+
             const limit = document.createElement('input');
             limit.classList.add('page-limit');
             limit.type = 'number';
             limit.addEventListener('change', () => {
                 this._params.replace('limit', limit.value);
                 this.requestUpdateParams(this._params);
+                this.drawCards(cart, parent);
             });
             const page = document.createElement('input');
             page.classList.add('page-current');
@@ -78,43 +73,61 @@ export class CartView extends AbstractView {
             page.addEventListener('change', () => {
                 this._params.replace('page', page.value);
                 this.requestUpdateParams(this._params);
+                this.drawCards(cart, parent);
             });
+
             pageControl.append(limit, page);
-            box.prepend(pageControl);
-            // for paging --------------------- end
-
-            const cart = document.querySelector('.cart__list') as HTMLElement;
-            cart.appendChild(fragment);
-
-            const order = document.querySelector('.cart__order') as HTMLElement;
-            order.append(createOrderBlock(this._cart.cartData));
-
-            if (this.promos.length !== 0) {
-                this.calcDiscount();
-            }
-
-            const orderParent = document.querySelector('.order__promo-content') as HTMLElement;
-            const orderInput = document.querySelector('.order__promo') as HTMLInputElement;
-            orderInput.addEventListener('input', (e) => this.findPromo(e, orderParent));
-
-            const applyParent = document.querySelector('.order__apply-promo-box') as HTMLElement;
-            this.promos.forEach(el => getApplyPromo(applyParent, el));
-            applyParent.addEventListener('click', (e) => this.removePromo(e, applyParent));
+            this.drawCards(cart, parent);
+            this.drawOrder();
 
             const modal = document.querySelector('.modal') as HTMLElement;
             modal.append(getModal());
         }
     }
 
+    private drawCards(cart: HTMLElement, parent: HTMLElement) {
+        const cardTemp = CartItem.createTemplate();
+        cart.innerHTML = "";
+        const fragment = document.createDocumentFragment();
+        const startIndex = (this._page * this._limit) - this._limit;
+        for(let i = startIndex; (i < this._page * this._limit && i < this._cart.cartData.length); i++) {
+            const card = cardTemp.cloneNode(true) as HTMLElement;
+            card.classList.add('products__card');
+            CartItem.setData(card, this._cart.cartData[i]);
+            fragment.append(card);
+            card.addEventListener('click', (e: Event) => this.clickItem(e, this._cart.cartData[i], parent));
+        } 
+        cart.appendChild(fragment);
+    }
+
+    private drawOrder() {
+        const order = document.querySelector('.cart__order') as HTMLElement;
+        order.innerHTML = '';
+        order.append(createOrderBlock(this._cart.cartData));
+
+        if (this.promos.length !== 0) {
+            this.calcDiscount();
+        }
+
+        const orderParent = document.querySelector('.order__promo-content') as HTMLElement;
+        const orderInput = document.querySelector('.order__promo') as HTMLInputElement;
+        orderInput.addEventListener('input', (e) => this.findPromo(e, orderParent));
+
+        const applyParent = document.querySelector('.order__apply-promo-box') as HTMLElement;
+        this.promos.forEach(el => getApplyPromo(applyParent, el));
+        applyParent.addEventListener('click', (e) => this.removePromo(e, applyParent));
+    }
+
     private clickItem(e: Event, data: CartData, parent: HTMLElement) {
+        const cartIcon = document.querySelector('.indicator__span') as HTMLElement;
+        const orderProduct = document.querySelector('.order__count') as HTMLElement;
+
+        const titleNum = document.getElementById(`count-${data.product.id}`) as HTMLElement;
+        const orderPrice = document.querySelector('.order__cost') as HTMLElement;
         const target = e.target! as HTMLElement;
         if (target.closest('.product-cart__button')) {
             this.removeFromCart(e, data.product, parent);
         } else {
-            const titleNum = document.getElementById(`count-${data.product.id}`) as HTMLElement;
-            const orderProduct = document.querySelector('.order__count') as HTMLElement;
-            const orderPrice = document.querySelector('.order__cost') as HTMLElement;
-            const price = document.getElementById(`price-${data.product.id}`) as HTMLElement;
             if (target.closest('.order-num__btn-right')) {
                 e.preventDefault();
                 data.count++;
@@ -122,9 +135,8 @@ export class CartView extends AbstractView {
                     return;
                 }
                 titleNum.innerText = `${Number(titleNum.innerHTML) + 1}`;
-                orderProduct.innerText = `${Number(orderProduct.innerHTML) + 1}`;
-                price.innerText = `${data.product.price * data.count}`;
                 orderPrice.innerText = `Total: ${this._cart.plusNumber(data)}`;
+                this.incrementCount(data);
                 this.calcDiscount();
             } else if (target.closest('.order-num__btn-left')) {
                 e.preventDefault();
@@ -134,22 +146,33 @@ export class CartView extends AbstractView {
                     return;
                 }
                 titleNum.innerText = `${Number(titleNum.innerHTML) - 1}`;
-                orderProduct.innerText = `${Number(orderProduct.innerHTML) - 1}`;
-                price.innerText = `${data.product.price * data.count}`;
                 orderPrice.innerText = `Total: ${this._cart.minusNumber(data)}`;
+                this.incrementCount(data);
                 this.calcDiscount();
             }
         }
     }
 
+    private incrementCount(data: CartData) {
+        const price = document.getElementById(`price-${data.product.id}`) as HTMLElement;
+
+        const cartIcon = document.querySelector('.indicator__span') as HTMLElement;
+        const orderProduct = document.querySelector('.order__count') as HTMLElement;
+
+        price.innerText = `${data.product.price * data.count}`;
+        orderProduct.innerText = `${cartIcon.innerText}`;
+    }
+
     private removeFromCart(e: Event, product: Product, parent: HTMLElement) {
+        const cart = document.querySelector('.cart__list') as HTMLElement;
         e.preventDefault();
         this._cart.removeFromCart(product);
         if (this._cart.getSize() === 0) {
             localStorage.removeItem('cart-storage');
             parent.innerHTML = this.getEmptyCart();
         } else {
-            this.draw();
+            this.drawCards(cart, parent);
+            this.drawOrder();
         }
     }
 
@@ -172,7 +195,7 @@ export class CartView extends AbstractView {
             addBtn.addEventListener('click', () => {
                 this.promos.push(promo);
                 localStorage.setItem('promo', JSON.stringify(this.promos));
-                this.draw();
+                this.drawOrder();
             });
         } else {
             addBtn.classList.add('hidden');
@@ -188,7 +211,7 @@ export class CartView extends AbstractView {
             this.promos = this.promos.filter(el => el.id !== promoName.toUpperCase());
             localStorage.setItem('promo', JSON.stringify(this.promos));
             parent.removeChild(child);
-            this.draw();
+            this.drawOrder();
         }
     }
 
@@ -215,9 +238,17 @@ export class CartView extends AbstractView {
 
     // for paging
     update(data: ModelCart.ModelCartState) {
+        const parent = document.querySelector('.cart-page') as HTMLElement;
+        const cart = document.querySelector('.cart__list') as HTMLElement;
+
+
         const limit = document.querySelector('.page-limit') as HTMLInputElement;
         limit.value = data.limit.toString();
+        this._limit = +limit.value;
         const page = document.querySelector('.page-current') as HTMLInputElement;
         page.value = data.page.toString();
+        this._page = +page.value;
+
+        this.drawCards(cart, parent);
     }
 }
