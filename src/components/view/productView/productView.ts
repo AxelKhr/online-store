@@ -7,6 +7,7 @@ import * as tableTwoCols from "../elements/tableTwoCols";
 import * as ModalWindow from "../elements/modalWindow";
 import { Cart } from "../cartView/cart/cart";
 import { ModelProductState } from "../../model/modelProduct";
+import { createPathList, addToPathList } from "../pathList";
 
 export class ProductView extends AbstractView {
 
@@ -49,7 +50,14 @@ export class ProductView extends AbstractView {
             }
 
             const path = document.querySelector('.product-page__path') as HTMLElement;
-            path.textContent = `Store >> ${data.product.category} >> ${data.product.brand} >> ${data.product.title}`.toUpperCase();
+            path.append(createPathList('path__list'));
+            addToPathList('path__list', 'Store', '#/');
+            addToPathList('path__list', `${data.product.category}`,
+                `#/?category=${data.product.category}`);
+            addToPathList('path__list', `${data.product.brand}`,
+                `#/?brand=${data.product.brand}`);
+            addToPathList('path__list', `${data.product.title}`,
+                `#/?search-type=title&search=${data.product.title}`);
 
             const view = document.querySelector('.product-page__view') as HTMLElement;
             const sliderContainer = document.createElement('div');
