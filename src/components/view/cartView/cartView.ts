@@ -122,7 +122,7 @@ export class CartView extends AbstractView {
         for(let i = startIndex; (i < this._page * this._limit && i < this._cart.cartData.length); i++) {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
-            CartItem.setData(card, this._cart.cartData[i]);
+            CartItem.setData(card, this._cart.cartData[i], i + 1);
             fragment.append(card);
             card.addEventListener('click', (e: Event) => this.clickItem(e, this._cart.cartData[i], parent));
         } 
