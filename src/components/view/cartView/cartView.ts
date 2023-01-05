@@ -99,6 +99,13 @@ export class CartView extends AbstractView {
             });
             const helper = new PaginationHelper(this._cart.cartData, this._limit);
             totalPage.innerText = `/${helper.pageCount().toString()}`;
+
+            if(this._page > helper.pageCount()) {
+                --this._page;
+                page.innerText = this._page.toString();
+                this._params.replace('page', page.innerText);
+            }
+
             rightPageBtn.classList.add('control-btn');
             rightPageBtn.innerText = '>';
             rightPageBtn.addEventListener('click', () => {
@@ -124,7 +131,7 @@ export class CartView extends AbstractView {
             card.classList.add('products__card');
             CartItem.setData(card, this._cart.cartData[i], i + 1);
             fragment.append(card);
-            card.addEventListener('click', (e: Event) => this.clickItem(e, this._cart.cartData[i], parent));
+            card.addEventListener('click', (e: Event) => this.clickItem(e, this._cart.cartData[i]));
         } 
         cart.appendChild(fragment);
     }
@@ -147,12 +154,12 @@ export class CartView extends AbstractView {
         applyParent.addEventListener('click', (e) => this.removePromo(e, applyParent));
     }
 
-    private clickItem(e: Event, data: CartData, parent: HTMLElement) {
+    private clickItem(e: Event, data: CartData) {
         const titleNum = document.getElementById(`count-${data.product.id}`) as HTMLElement;
         const orderPrice = document.querySelector('.order__cost') as HTMLElement;
         const target = e.target! as HTMLElement;
         if (target.closest('.product-cart__button')) {
-            this.removeFromCart(e, data.product, parent);
+            this.removeFromCart(e, data.product);
         } else {
             if (target.closest('.order-num__btn-right')) {
                 e.preventDefault();
@@ -168,7 +175,7 @@ export class CartView extends AbstractView {
                 e.preventDefault();
                 data.count--;
                 if (data.count < 1) {
-                    this.removeFromCart(e, data.product, parent);
+                    this.removeFromCart(e, data.product);
                     return;
                 }
                 titleNum.innerText = `${Number(titleNum.innerHTML) - 1}`;
@@ -189,15 +196,19 @@ export class CartView extends AbstractView {
         orderProduct.innerText = `${cartIcon.innerText}`;
     }
 
-    private removeFromCart(e: Event, product: Product, parent: HTMLElement) {
+    private removeFromCart(e: Event, product: Product) {
         const cart = document.querySelector('.cart__list') as HTMLElement;
+        const parentBox = document.querySelector('.cart-page') as HTMLElement;
+        const pageControl = document.querySelector('.cart__control') as HTMLElement;
+
         e.preventDefault();
         this._cart.removeFromCart(product);
         if (this._cart.getSize() === 0) {
             localStorage.removeItem('cart-storage');
-            parent.innerHTML = this.getEmptyCart();
+            parentBox.innerHTML = this.getEmptyCart();
         } else {
-            this.drawCards(cart, parent);
+            this.drawControl(cart, pageControl);
+            this.drawCards(cart, parentBox);
             this.drawOrder();
         }
     }
