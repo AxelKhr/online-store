@@ -29,6 +29,7 @@ export class AppController extends AppLoader {
         this._mainView = new MainView(this._cart);
         this._mainView.requestUpdateParams = this.requestUpdateMainParams;
         this._productView = new ProductView(this._cart);
+        this._productView.requestQuickBuy = this.routeToQuickBuy;
         this._cartView = new CartView(this._cart);
 
         this._router.addRoute('product', this.loadProductView);
@@ -97,5 +98,12 @@ export class AppController extends AppLoader {
     private requestUpdateMainParams = (params: Params) => {
         this._router.setURLParams((new URLSearchParams(params.getPairs())).toString());
         this._dataModel.setMainParam(params);
+    }
+
+    // other methods
+
+    private routeToQuickBuy = async (item: Product) => {
+        this._cart.addToCart(item);
+        window.location.href = window.location.origin + '#/cart';
     }
 }

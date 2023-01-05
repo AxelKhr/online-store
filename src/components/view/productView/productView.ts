@@ -12,6 +12,7 @@ import { createPathList, addToPathList } from "../pathList";
 export class ProductView extends AbstractView {
 
     private _cart: Cart;
+    requestQuickBuy!: (item: Product) => void;
 
     constructor(cart: Cart) {
         super();
@@ -115,6 +116,11 @@ export class ProductView extends AbstractView {
             });
             const buttonBuy = createButtonGeneral('control__button-buy');
             buttonBuy.textContent = 'BUY';
+            buttonBuy.addEventListener('click', () => {
+                if ((this.requestQuickBuy) && (data.product)) {
+                    this.requestQuickBuy(data.product);
+                }
+            });
             control.append(
                 createElemP(data.product.title, ['control__title']),
                 createElemP(data.product.brand, ['control__brand']),

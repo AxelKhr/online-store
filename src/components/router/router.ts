@@ -14,7 +14,8 @@ export class Router {
     async locationHandler() {
         const search = (window.location.href.split('?')[1] || '');
         let path = window.location.hash.replace('#', '').replace(/\?(.*)$/, '').replace(/\/$/, '').replace(/^\//, '');
-        window.location.href = `${window.location.href.replace(/#(.*)$/, '')}#/${path}${(search.length) ? '?' + search : ''}`;
+        const href = `${window.location.href.replace(/#(.*)$/, '')}#/${path}${(search.length) ? '?' + search : ''}`
+        window.history.replaceState({}, '', href);
         const route = this.findRoute(path);
         if (route) {
             route.loader(search);
