@@ -3,6 +3,10 @@
   grid-template-columns: 1fr;
   column-gap: 20px;
 
+  &__control {
+    margin-bottom: 20px;
+  }
+
   &__products {
     display: grid;
     grid-template-columns: 1fr 30%;
@@ -27,7 +31,7 @@
     border: 2px solid #ddd;
     border-radius: 10px;
     background: #fff;
-    height: 80vh;
+    height: 70vh;
     width: 100%;
   }
 
@@ -36,5 +40,21 @@
     width: 100%;
     font-size: 1.5rem;
   }
+}
+
+.page-current,
+.page-limit {
+  width: 40px;
+}
+
+.control-btn {
+  width: 25px;
+  height: 25px;
+  background-color: #aaa;
+  color: #fff;
+  margin: 0 5px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 50%;
 }
 

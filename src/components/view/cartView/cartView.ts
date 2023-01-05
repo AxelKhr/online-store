@@ -8,6 +8,7 @@ import { Cart, CartData } from "./cart/cart";
 import { PromoCode } from "../../enum/promo";
 import Params from "../../utils/params";
 import * as ModelCart from "../../model/modelCart";
+import { PaginationHelper } from "../../utils/pagination";
 
 export interface Promo {
     id: string;
@@ -54,35 +55,63 @@ export class CartView extends AbstractView {
                     <div class="cart__order"></div>
                     <div class="modal hidden"></div>
                 </section>`;
-
-            
             const cart = document.querySelector('.cart__list') as HTMLElement;
             const pageControl = document.querySelector('.cart__control') as HTMLElement;
 
-            const limit = document.createElement('input');
-            limit.classList.add('page-limit');
-            limit.type = 'number';
-            limit.addEventListener('change', () => {
-                this._params.replace('limit', limit.value);
-                this.requestUpdateParams(this._params);
-                this.drawCards(cart, parent);
-            });
-            const page = document.createElement('input');
-            page.classList.add('page-current');
-            page.type = 'number';
-            page.addEventListener('change', () => {
-                this._params.replace('page', page.value);
-                this.requestUpdateParams(this._params);
-                this.drawCards(cart, parent);
-            });
-
-            pageControl.append(limit, page);
+            this.drawControl(cart, pageControl);
             this.drawCards(cart, parent);
             this.drawOrder();
 
             const modal = document.querySelector('.modal') as HTMLElement;
             modal.append(getModal());
         }
+    }
+
+    private drawControl(cart: HTMLElement, parent: HTMLElement) {
+        parent.innerHTML = '';
+        const limit = document.createElement('input');
+            limit.classList.add('page-limit');
+            limit.type = 'number';
+            if(this._limit !== undefined) limit.value = this._limit.toString();
+            limit.addEventListener('change', () => {
+                this._params.replace('limit', limit.value);
+                this.requestUpdateParams(this._params);
+                this.drawCards(cart, parent);
+            });
+            
+            const page = document.createElement('span');
+            const totalPage = document.createElement('span');
+            page.classList.add('page-current');
+            if(this._page !== undefined) page.innerText = this._page!.toString();
+
+            const leftPageBtn = document.createElement('button');
+            const rightPageBtn = document.createElement('button');
+            leftPageBtn.classList.add('control-btn');
+            leftPageBtn.innerText = '<';
+            leftPageBtn.addEventListener('click', () => {
+                if(this._page !== 1) {
+                    this._page--;
+                    page.innerText = this._page.toString();
+                    this._params.replace('page', page.innerText);
+                    this.requestUpdateParams(this._params);
+                    this.drawCards(cart, parent);
+                }
+            });
+            const helper = new PaginationHelper(this._cart.cartData, this._limit);
+            totalPage.innerText = `/${helper.pageCount().toString()}`;
+            rightPageBtn.classList.add('control-btn');
+            rightPageBtn.innerText = '>';
+            rightPageBtn.addEventListener('click', () => {
+                if(this._page !== helper.pageCount()) {
+                    this._page++;
+                    page.innerText = this._page.toString();
+                    this._params.replace('page', page.innerText);
+                    this.requestUpdateParams(this._params);
+                    this.drawCards(cart, parent);
+                }
+            });
+            
+            parent.append(limit, leftPageBtn, page, totalPage, rightPageBtn);
     }
 
     private drawCards(cart: HTMLElement, parent: HTMLElement) {
@@ -119,9 +148,6 @@ export class CartView extends AbstractView {
     }
 
     private clickItem(e: Event, data: CartData, parent: HTMLElement) {
-        const cartIcon = document.querySelector('.indicator__span') as HTMLElement;
-        const orderProduct = document.querySelector('.order__count') as HTMLElement;
-
         const titleNum = document.getElementById(`count-${data.product.id}`) as HTMLElement;
         const orderPrice = document.querySelector('.order__cost') as HTMLElement;
         const target = e.target! as HTMLElement;
@@ -240,15 +266,18 @@ export class CartView extends AbstractView {
     update(data: ModelCart.ModelCartState) {
         const parent = document.querySelector('.cart-page') as HTMLElement;
         const cart = document.querySelector('.cart__list') as HTMLElement;
+        const pageControl = document.querySelector('.cart__control') as HTMLElement;
 
 
         const limit = document.querySelector('.page-limit') as HTMLInputElement;
         limit.value = data.limit.toString();
         this._limit = +limit.value;
         const page = document.querySelector('.page-current') as HTMLInputElement;
-        page.value = data.page.toString();
-        this._page = +page.value;
+        page.innerText = data.page.toString();
+        this._page = +page.innerText;
 
+        pageControl.innerHTML = '';
+        this.drawControl(cart, pageControl);
         this.drawCards(cart, parent);
     }
 }
