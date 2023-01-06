@@ -8,7 +8,7 @@ import { InputSearch, InputSearchData } from "./inputSearch";
 import { Cart } from "../cartView/cart/cart";
 import { ModelMainState } from "../../model/modelMain";
 import { ListParams } from "../../model/filterList";
-import Params from "../../utils/params";
+import { Params, getParamsFromURL } from "../../utils/params";
 import createButtonGeneral from "../elements/buttons/general";
 import { SortList, SortListData } from "./sortList";
 import { ViewControl } from "./viewControl";
@@ -28,7 +28,7 @@ const createFilterBlock = (title: string, selClass: string) => {
 export class MainView extends AbstractView {
     private _cart: Cart;
     private _params: Params;
-    requestUpdateParams!: (params: Params) => void;
+    requestUpdateParams!: () => void;
 
     constructor(cart: Cart) {
         super();
@@ -47,7 +47,7 @@ export class MainView extends AbstractView {
         buttonFilterReset.textContent = 'Reset';
         buttonFilterReset.addEventListener('click', () => {
             this.resetFilters();
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
         });
         const buttonFilterCopy = createButtonGeneral('control__button-copy');
         buttonFilterCopy.textContent = 'Copy';
@@ -93,7 +93,8 @@ export class MainView extends AbstractView {
     }
 
     draw(data: ModelMainState): void {
-        this.setParams(data);
+        this._params = getParamsFromURL(window.location.href);
+
         const fragment = document.createDocumentFragment();
         const cardTemp = ProductCard.createTemplate();
         data.productsList.forEach(item => {
@@ -183,7 +184,7 @@ export class MainView extends AbstractView {
                         this._params.remove(paramName, elem.dataset.name)
                     };
                 }
-                this.requestUpdateParams(this._params);
+                this.requestUpdateParams();
             }
         })
     }
@@ -196,11 +197,11 @@ export class MainView extends AbstractView {
         slider.setData(data);
         slider.onChangeMin = (min) => {
             this._params.replace(`${paramName}-min`, min.toString());
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
         }
         slider.onChangeMax = (max) => {
             this._params.replace(`${paramName}-max`, max.toString());
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
         }
     }
 
@@ -217,7 +218,7 @@ export class MainView extends AbstractView {
                 this._params.add('search-type', type);
                 this._params.add('search', value);
             }
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
         };
     }
 
@@ -228,7 +229,7 @@ export class MainView extends AbstractView {
         box.append(sorting.content);
         sorting.onChange = (value) => {
             this._params.replace('sort', value);
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
         }
     }
 
@@ -243,7 +244,7 @@ export class MainView extends AbstractView {
             } else {
                 this._params.remove('view');
             }
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
         }
     }
 
@@ -259,42 +260,6 @@ export class MainView extends AbstractView {
         }
         table.classList.remove(...viewList);
         cards.forEach((card) => card.classList.remove(...viewList));
-    }
-
-    private setParams(state: ModelMainState) {
-        this._params.clear();
-        state.params.category.forEach((item) => {
-            item.checked && this._params.add('category', item.name);
-        })
-        state.params.brand.forEach((item) => {
-            item.checked && this._params.add('brand', item.name);
-        })
-        if (state.params.price.minEn) {
-            this._params.replace('price-min', state.params.price.currMin.toString());
-        }
-        if (state.params.price.maxEn) {
-            this._params.replace('price-max', state.params.price.currMax.toString());
-        }
-        if (state.params.stock.minEn) {
-            this._params.replace('stock-min', state.params.stock.currMin.toString());
-        }
-        if (state.params.stock.maxEn) {
-            this._params.replace('stock-max', state.params.stock.currMax.toString());
-        }
-        if (state.params.search.enable) {
-            this._params.add('search-type', state.params.search.type);
-            this._params.add('search', state.params.search.value);
-        }
-        if (state.params.sorting.enable) {
-            this._params.replace('sort', state.params.sorting.current);
-        } else {
-            this._params.remove('sort');
-        }
-        if ((state.params.view.length > 0) && (state.params.view !== 'grid')) {
-            this._params.replace('view', state.params.view);
-        } else {
-            this._params.remove('view');
-        }
     }
 
     resetFilters() {

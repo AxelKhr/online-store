@@ -29,10 +29,5 @@ export class Router {
     }
 
     findRoute = (url: string) => this._routes.find((route) => (url === route.path));
-
-    setURLParams(paramsStr: string) {
-        let path = window.location.href.split('?')[0];
-        window.history.pushState({}, '', path + ((paramsStr.length) ? '?' + paramsStr : ''));
-    }
 }
 

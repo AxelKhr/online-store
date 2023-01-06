@@ -6,7 +6,7 @@ import { createOrderBlock, getApplyPromo, getPromo, payOrder } from "./orderBloc
 import { getModal } from "./modal";
 import { Cart, CartData } from "./cart/cart";
 import { PromoCode } from "../../enum/promo";
-import Params from "../../utils/params";
+import { Params, getParamsFromURL } from "../../utils/params";
 import * as ModelCart from "../../model/modelCart";
 import { PaginationHelper } from "../../utils/pagination";
 import { ErrorView } from "../error/error";
@@ -24,7 +24,7 @@ export class CartView extends AbstractView {
     private readonly epmPromo: Promo;
     private promos: Promo[];
     private _params: Params;
-    requestUpdateParams!: (params: Params) => void;
+    requestUpdateParams!: () => void;
 
     private _limit!: number;
     private _page!: number;
@@ -76,7 +76,7 @@ export class CartView extends AbstractView {
         if (this._limit !== undefined) limit.value = this._limit.toString();
         limit.addEventListener('change', () => {
             this._params.replace('limit', limit.value);
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
             this.drawCards(cart, parent);
         });
 
@@ -99,7 +99,7 @@ export class CartView extends AbstractView {
                 this._page--;
                 page.innerText = this._page.toString();
                 this._params.replace('page', page.innerText);
-                this.requestUpdateParams(this._params);
+                this.requestUpdateParams();
                 this.drawCards(cart, parent);
             }
         });
@@ -117,7 +117,7 @@ export class CartView extends AbstractView {
                 this._page++;
                 page.innerText = this._page.toString();
                 this._params.replace('page', page.innerText);
-                this.requestUpdateParams(this._params);
+                this.requestUpdateParams();
                 this.drawCards(cart, parent);
             }
         });
@@ -212,7 +212,7 @@ export class CartView extends AbstractView {
         } else {
             this.drawControl(cart, pageControl);
             this._params.replace('page', this._page.toString());
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
             this.drawCards(cart, parentBox);
             this.drawOrder();
         }
@@ -280,6 +280,8 @@ export class CartView extends AbstractView {
 
     // for paging
     update(data: ModelCart.ModelCartState) {
+        this._params = getParamsFromURL(window.location.href);
+
         const parent = document.querySelector('.cart-page') as HTMLElement;
         const cart = document.querySelector('.cart__list') as HTMLElement;
         const pageControl = document.querySelector('.cart__control') as HTMLElement;

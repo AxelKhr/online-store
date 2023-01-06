@@ -1,5 +1,5 @@
 import { Product } from "../interface/product";
-import Params from "../utils/params";
+import { Params } from "../utils/params";
 import { ModelMain, ModelMainState } from "./modelMain";
 import { ModelProduct, ModelProductState } from "./modelProduct";
 import { ModelCart, ModelCartState } from "./modelCart";
@@ -36,15 +36,15 @@ export class DataModel {
         this.modelProduct.setProducts(products);
     }
 
-    setMainParam(params: Params) {
-        this.modelMain.setParams(params);
+    setMainParam() {
+        this.modelMain.updateModel();
     }
 
-    setProductParam(params: Params) {
-        this.modelProduct.setParams(params);
+    setProductParam() {
+        this.modelProduct.updateModel();
     }
 
-    setCartParam(params: Params) {
-        this.modelCart.setParams(params);
+    setCartParam() {
+        this.modelCart.updateModel();
     }
 }

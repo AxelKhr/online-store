@@ -1,5 +1,5 @@
 import { Product } from "../interface/product";
-import Params from "../utils/params";
+import { Params, getParamsFromURL, setParamsToURL } from "../utils/params";
 import { filterList, ListParams, ListItemParam } from "./filterList";
 import { filterSearch, SearchParams } from "./filterSearch";
 import { setRange, filterRange, RangeParams } from "./filterRange";
@@ -74,9 +74,9 @@ export class ModelMain {
         }
     }
 
-    async setParams(params: Params) {
+    async updateModel() {
         this._productsList = [];
-        this.parseParams(params);
+        this._params = updateMainParamsFromUrl(this._params);
 
         // filters and sorting
         await filterList(this._products, this._params.category)
@@ -99,6 +99,7 @@ export class ModelMain {
                 (curr.brand === item.name) ? prev += 1 : prev, 0);
         });
 
+        updateUrlFromMainParams(this._params)
         document.dispatchEvent(this._updateEvent);
     }
 
@@ -108,36 +109,72 @@ export class ModelMain {
             params: this._params
         }
     }
+}
 
-    private parseParams(params: Params): void {
-        const categoryParams = params.getAll('category');
-        this._params.category.forEach((item) => {
-            item.checked = categoryParams.includes(item.name);
-        });
-        const brandParams = params.getAll('brand');
-        this._params.brand.forEach((item) => {
-            item.checked = brandParams.includes(item.name);
-        });
-        const priceMinParam = params.get('price-min');
-        this._params.price.minEn = (priceMinParam.length > 0);
-        this._params.price.currMin = (priceMinParam.length > 0) ? Number(priceMinParam) : this._params.price.srcMin;
-        const priceMaxParam = params.get('price-max');
-        this._params.price.maxEn = (priceMaxParam.length > 0);
-        this._params.price.currMax = (priceMaxParam.length > 0) ? Number(priceMaxParam) : this._params.price.srcMax;
-        const stockMinParam = params.get('stock-min');
-        this._params.stock.minEn = (stockMinParam.length > 0);
-        this._params.stock.currMin = (stockMinParam.length > 0) ? Number(stockMinParam) : this._params.stock.srcMin;
-        const stockMaxParam = params.get('stock-max');
-        this._params.stock.maxEn = (stockMaxParam.length > 0);
-        this._params.stock.currMax = (stockMaxParam.length > 0) ? Number(stockMaxParam) : this._params.stock.srcMax;
-        const searchValue = params.get('search');
-        this._params.search.value = (searchValue.length > 0) ? searchValue : '';
-        this._params.search.enable = (searchValue.length > 0);
-        const searchType = params.get('search-type');
-        this._params.search.type = (searchType.length > 0) ? searchType : '';
-        const sorting = params.get('sort');
-        this._params.sorting.current = (sorting.length > 0) ? sorting : '';
-        const viewControl = params.get('view');
-        this._params.view = (viewControl.length > 0) ? viewControl : 'grid';
+function updateMainParamsFromUrl(mainParams: MainParams): MainParams {
+    const params = getParamsFromURL(window.location.href);
+
+    const categoryParams = params.getAll('category');
+    mainParams.category.forEach((item) => {
+        item.checked = categoryParams.includes(item.name);
+    });
+    const brandParams = params.getAll('brand');
+    mainParams.brand.forEach((item) => {
+        item.checked = brandParams.includes(item.name);
+    });
+    const priceMinParam = params.get('price-min');
+    mainParams.price.minEn = (priceMinParam.length > 0);
+    mainParams.price.currMin = (priceMinParam.length > 0) ? Number(priceMinParam) : mainParams.price.srcMin;
+    const priceMaxParam = params.get('price-max');
+    mainParams.price.maxEn = (priceMaxParam.length > 0);
+    mainParams.price.currMax = (priceMaxParam.length > 0) ? Number(priceMaxParam) : mainParams.price.srcMax;
+    const stockMinParam = params.get('stock-min');
+    mainParams.stock.minEn = (stockMinParam.length > 0);
+    mainParams.stock.currMin = (stockMinParam.length > 0) ? Number(stockMinParam) : mainParams.stock.srcMin;
+    const stockMaxParam = params.get('stock-max');
+    mainParams.stock.maxEn = (stockMaxParam.length > 0);
+    mainParams.stock.currMax = (stockMaxParam.length > 0) ? Number(stockMaxParam) : mainParams.stock.srcMax;
+    const searchValue = params.get('search');
+    mainParams.search.value = (searchValue.length > 0) ? searchValue : '';
+    mainParams.search.enable = (searchValue.length > 0);
+    const searchType = params.get('search-type');
+    mainParams.search.type = (searchType.length > 0) ? searchType : '';
+    const sorting = params.get('sort');
+    mainParams.sorting.current = (sorting.length > 0) ? sorting : '';
+    const viewControl = params.get('view');
+    mainParams.view = (viewControl.length > 0) ? viewControl : 'grid';
+
+    return mainParams;
+}
+
+function updateUrlFromMainParams(mainParams: MainParams): void {
+    const params = new Params();
+
+    params.setUpdateURLState(false);
+    mainParams.category.forEach((item) => {
+        item.checked && params.add('category', item.name);
+    })
+    mainParams.brand.forEach((item) => {
+        item.checked && params.add('brand', item.name);
+    })
+    mainParams.price.minEn && params.replace('price-min', mainParams.price.currMin.toString());
+    mainParams.price.maxEn && params.replace('price-max', mainParams.price.currMax.toString());
+    mainParams.stock.minEn && params.replace('stock-min', mainParams.stock.currMin.toString());
+    mainParams.stock.maxEn && params.replace('stock-max', mainParams.stock.currMax.toString());
+    if (mainParams.search.enable) {
+        params.add('search-type', mainParams.search.type);
+        params.add('search', mainParams.search.value);
     }
+    if (mainParams.sorting.enable) {
+        params.replace('sort', mainParams.sorting.current);
+    } else {
+        params.remove('sort');
+    }
+    if ((mainParams.view.length > 0) && (mainParams.view !== 'grid')) {
+        params.replace('view', mainParams.view);
+    } else {
+        params.remove('view');
+    }
+    params.setUpdateURLState(true);
+    setParamsToURL(params, true);
 }
