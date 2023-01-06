@@ -14,7 +14,8 @@ export class Router {
     async locationHandler() {
         const search = (window.location.href.split('?')[1] || '');
         let path = window.location.hash.replace('#', '').replace(/\?(.*)$/, '').replace(/\/$/, '').replace(/^\//, '');
-        window.location.href = `${window.location.href.replace(/#(.*)$/, '')}#/${path}${(search.length) ? '?' + search : ''}`;
+        const href = `${window.location.href.replace(/#(.*)$/, '')}#/${path}${(search.length) ? '?' + search : ''}`
+        window.history.replaceState({}, '', href);
         const route = this.findRoute(path);
         if (route) {
             route.loader(search);
@@ -28,10 +29,5 @@ export class Router {
     }
 
     findRoute = (url: string) => this._routes.find((route) => (url === route.path));
-
-    setURLParams(paramsStr: string) {
-        let path = window.location.href.split('?')[0];
-        window.history.pushState({}, '', path + ((paramsStr.length) ? '?' + paramsStr : ''));
-    }
 }
 

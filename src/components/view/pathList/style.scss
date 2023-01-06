@@ -1,0 +1,12 @@
+.list-links {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    li {
+        &:not(:last-child)::after {
+            content: '-';
+            padding: 0 10px;
+        }
+    }
+}

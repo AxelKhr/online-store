@@ -1,5 +1,5 @@
 import { Product } from "../interface/product";
-import Params from "../utils/params";
+import { Params, getParamsFromURL } from "../utils/params";
 
 export interface ModelProductState {
     product: Product | undefined;
@@ -20,7 +20,8 @@ export class ModelProduct {
         this._products = products;
     }
 
-    setParams(params: Params) {
+    updateModel() {
+        const params = getParamsFromURL(window.location.href);
         this._product = this._products.find((item) => item.id === parseInt(params.get('id')));
         document.dispatchEvent(this._updateProductEvent);
     }

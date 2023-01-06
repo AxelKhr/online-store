@@ -7,14 +7,16 @@ import * as tableTwoCols from "../elements/tableTwoCols";
 import * as ModalWindow from "../elements/modalWindow";
 import { Cart } from "../cartView/cart/cart";
 import { ModelProductState } from "../../model/modelProduct";
+import { createPathList, addToPathList } from "../pathList";
 
 export class ProductView extends AbstractView {
 
-    private cart: Cart;
+    private _cart: Cart;
+    requestQuickBuy!: (item: Product) => void;
 
     constructor(cart: Cart) {
         super();
-        this.cart = cart;
+        this._cart = cart;
     }
 
     async getView(): Promise<HTMLElement> {
@@ -49,7 +51,14 @@ export class ProductView extends AbstractView {
             }
 
             const path = document.querySelector('.product-page__path') as HTMLElement;
-            path.textContent = `Store >> ${data.product.category} >> ${data.product.brand} >> ${data.product.title}`.toUpperCase();
+            path.append(createPathList('path__list'));
+            addToPathList('path__list', 'Store', '#/');
+            addToPathList('path__list', `${data.product.category}`,
+                `#/?category=${data.product.category}`);
+            addToPathList('path__list', `${data.product.brand}`,
+                `#/?brand=${data.product.brand}`);
+            addToPathList('path__list', `${data.product.title}`,
+                `#/?search-type=title&search=${data.product.title}`);
 
             const view = document.querySelector('.product-page__view') as HTMLElement;
             const sliderContainer = document.createElement('div');
@@ -95,9 +104,23 @@ export class ProductView extends AbstractView {
             const control = document.querySelector('.product-page__control') as HTMLElement;
             const buttonAdd = createButtonGeneral('control__button-add');
             buttonAdd.textContent = 'ADD';
-            buttonAdd.addEventListener('click', () => this.cart.addToCart(data.product!));
+            buttonAdd.addEventListener('click', () => {
+                if (data.product) {
+                    if (this.checkCart(data.product)) {
+                        this._cart.removeFromCart(data.product);
+                    } else {
+                        this._cart.addToCart(data.product);
+                    }
+                    this.setAddButtonStatus(this.checkCart(data.product));
+                }
+            });
             const buttonBuy = createButtonGeneral('control__button-buy');
             buttonBuy.textContent = 'BUY';
+            buttonBuy.addEventListener('click', () => {
+                if ((this.requestQuickBuy) && (data.product)) {
+                    this.requestQuickBuy(data.product);
+                }
+            });
             control.append(
                 createElemP(data.product.title, ['control__title']),
                 createElemP(data.product.brand, ['control__brand']),
@@ -106,6 +129,7 @@ export class ProductView extends AbstractView {
                 createElemP(`Stock: ${data.product.stock}`, ['control__stock']),
                 createElemP(`Price: ${data.product.price}`, ['control__price']),
                 buttonAdd, buttonBuy);
+            this.setAddButtonStatus(this.checkCart(data.product));
 
             const detailing = document.querySelector('.product-page__detailing') as HTMLElement;
             const table = tableTwoCols.createTable();
@@ -119,4 +143,14 @@ export class ProductView extends AbstractView {
             );
         }
     }
+
+    private checkCart(item: Product) {
+        return (this._cart.cartData.findIndex((elem) => elem.product.id === item.id) >= 0);
+    }
+
+    private setAddButtonStatus(isInCart: boolean) {
+        const button = document.querySelector('.control__button-add') as HTMLElement;
+        button.textContent = isInCart ? 'REMOVE' : 'ADD';
+    }
+
 }

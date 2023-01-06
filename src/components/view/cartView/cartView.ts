@@ -2,11 +2,11 @@ import "./style.scss";
 import { AbstractView } from "../abstractView";
 import * as CartItem from "./cartItem";
 import { Product } from "../../interface/product";
-import { createOrderBlock, getApplyPromo, getPromo } from "./orderBlock";
+import { createOrderBlock, getApplyPromo, getPromo, payOrder } from "./orderBlock";
 import { getModal } from "./modal";
 import { Cart, CartData } from "./cart/cart";
 import { PromoCode } from "../../enum/promo";
-import Params from "../../utils/params";
+import { Params, getParamsFromURL } from "../../utils/params";
 import * as ModelCart from "../../model/modelCart";
 import { PaginationHelper } from "../../utils/pagination";
 import { ErrorView } from "../error/error";
@@ -24,7 +24,7 @@ export class CartView extends AbstractView {
     private readonly epmPromo: Promo;
     private promos: Promo[];
     private _params: Params;
-    requestUpdateParams!: (params: Params) => void;
+    requestUpdateParams!: () => void;
 
     private _limit!: number;
     private _page!: number;
@@ -73,21 +73,21 @@ export class CartView extends AbstractView {
         const limit = document.createElement('input');
         limit.classList.add('page-limit');
         limit.type = 'number';
-        if(this._limit !== undefined) limit.value = this._limit.toString();
+        if (this._limit !== undefined) limit.value = this._limit.toString();
         limit.addEventListener('change', () => {
             this._params.replace('limit', limit.value);
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
             this.drawCards(cart, parent);
         });
-            
+
         const page = document.createElement('span');
         const totalPage = document.createElement('span');
         const helper = new PaginationHelper(this._cart.cartData, this._limit);
         totalPage.innerText = `/${helper.pageCount().toString()}`;
 
         page.classList.add('page-current');
-        if(this._page !== undefined) { 
-            page.innerText = this._page!.toString(); 
+        if (this._page !== undefined) {
+            page.innerText = this._page!.toString();
         }
 
         const leftPageBtn = document.createElement('button');
@@ -95,16 +95,16 @@ export class CartView extends AbstractView {
         leftPageBtn.classList.add('control-btn');
         leftPageBtn.innerText = '<';
         leftPageBtn.addEventListener('click', () => {
-        if(this._page !== 1) {
-            this._page--;
-            page.innerText = this._page.toString();
-            this._params.replace('page', page.innerText);
-            this.requestUpdateParams(this._params);
-            this.drawCards(cart, parent);
+            if (this._page !== 1) {
+                this._page--;
+                page.innerText = this._page.toString();
+                this._params.replace('page', page.innerText);
+                this.requestUpdateParams();
+                this.drawCards(cart, parent);
             }
         });
 
-        if(this._page > helper.pageCount()) {
+        if (this._page > helper.pageCount()) {
             --this._page;
             page.innerText = this._page.toString();
             this._params.replace('page', page.innerText);
@@ -113,11 +113,11 @@ export class CartView extends AbstractView {
         rightPageBtn.classList.add('control-btn');
         rightPageBtn.innerText = '>';
         rightPageBtn.addEventListener('click', () => {
-            if(this._page !== helper.pageCount()) {
+            if (this._page !== helper.pageCount()) {
                 this._page++;
                 page.innerText = this._page.toString();
                 this._params.replace('page', page.innerText);
-                this.requestUpdateParams(this._params);
+                this.requestUpdateParams();
                 this.drawCards(cart, parent);
             }
         });
@@ -129,13 +129,13 @@ export class CartView extends AbstractView {
         cart.innerHTML = "";
         const fragment = document.createDocumentFragment();
         const startIndex = (this._page * this._limit) - this._limit;
-        for(let i = startIndex; (i < this._page * this._limit && i < this._cart.cartData.length); i++) {
+        for (let i = startIndex; (i < this._page * this._limit && i < this._cart.cartData.length); i++) {
             const card = cardTemp.cloneNode(true) as HTMLElement;
             card.classList.add('products__card');
             CartItem.setData(card, this._cart.cartData[i], i + 1);
             fragment.append(card);
             card.addEventListener('click', (e: Event) => this.clickItem(e, this._cart.cartData[i]));
-        } 
+        }
         cart.appendChild(fragment);
     }
 
@@ -212,7 +212,7 @@ export class CartView extends AbstractView {
         } else {
             this.drawControl(cart, pageControl);
             this._params.replace('page', this._page.toString());
-            this.requestUpdateParams(this._params);
+            this.requestUpdateParams();
             this.drawCards(cart, parentBox);
             this.drawOrder();
         }
@@ -280,6 +280,8 @@ export class CartView extends AbstractView {
 
     // for paging
     update(data: ModelCart.ModelCartState) {
+        this._params = getParamsFromURL(window.location.href);
+
         const parent = document.querySelector('.cart-page') as HTMLElement;
         const cart = document.querySelector('.cart__list') as HTMLElement;
         const pageControl = document.querySelector('.cart__control') as HTMLElement;
@@ -291,12 +293,14 @@ export class CartView extends AbstractView {
         page.innerText = data.page.toString();
         this._page = +page.innerText;
         const helper = new PaginationHelper(this._cart.cartData, this._limit);
-        if(this._page > helper.pageCount()) {
+        if (this._page > helper.pageCount()) {
             this._page = helper.pageCount();
             this._params.replace('page', this._page.toString());
         }
         pageControl.innerHTML = '';
         this.drawControl(cart, pageControl);
         this.drawCards(cart, parent);
+
+        data.isModalEnable && payOrder();
     }
 }

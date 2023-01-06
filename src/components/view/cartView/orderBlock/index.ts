@@ -23,7 +23,7 @@ export function createOrderBlock(data: CartData[]): HTMLElement {
   const productsTitle = document.createElement('p');
   productsTitle.classList.add('order__product');
   productsTitle.innerText = `Products: `;
-  
+
   const productsCount = document.createElement('span');
   productsCount.classList.add('order__count');
   productsCount.innerText = `${data.reduce((count, acc) => count + acc.count, 0)}`;
@@ -49,7 +49,7 @@ export function createOrderBlock(data: CartData[]): HTMLElement {
 
   const promoContent = document.createElement('div');
   promoContent.classList.add('order__promo-content');
-  
+
   const input = document.createElement('input');
   input.classList.add('order__promo');
   input.type = 'text';
@@ -68,12 +68,12 @@ export function createOrderBlock(data: CartData[]): HTMLElement {
   return block;
 }
 
-function payOrder() {
-    const modal = document.querySelector('.modal');
-    const modalShadow = document.querySelector('.modal__shadow');
-    modal?.classList.remove('hidden');
-    modalShadow?.classList.remove('hidden');
-    new ModalView().getView();
+export function payOrder() {
+  const modal = document.querySelector('.modal');
+  const modalShadow = document.querySelector('.modal__shadow');
+  modal?.classList.remove('hidden');
+  modalShadow?.classList.remove('hidden');
+  new ModalView().getView();
 }
 
 export function getPromo(parent: HTMLElement, promo: Promo) {
