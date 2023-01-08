@@ -1,11 +1,12 @@
 import { Product } from "../../../interface/product";
+import { getTotalSum, getProductCount, mapCartData } from "./utils";
 
 export interface CartData {
     product: Product;
     count: number;
 }
 
-interface CartStorage {
+export interface CartStorage {
     id: number;
     count: number;
 }
@@ -43,9 +44,9 @@ export class Cart {
         this.totalSum = document.querySelector('#total') as HTMLElement;
         if(this.cartStorage.length !== 0) {
             this.cartProducts = this.storeProducts.filter(product => this.cartStorage.some(storage => storage.id === product.id));
-            this.cartData = this.mapCartData();
-            this.cartIcon.innerText = `${this.getProductCount(this.cartData)}`;
-            this.totalSum.innerText! = `${this.getTotalSum(this.cartData)}`;
+            this.cartData = mapCartData(this.cartStorage, this.cartProducts);
+            this.cartIcon.innerText = `${getProductCount(this.cartData)}`;
+            this.totalSum.innerText! = `${getTotalSum(this.cartData)}`;
         } else {
             this.cartData = [];
         }
@@ -60,8 +61,8 @@ export class Cart {
             this.cartData.push(({product: item, count: 1}));
             const storage: CartStorage[] = this.cartData.map(({product, count}) => ({id: product.id, count: count}));
             localStorage.setItem('cart-storage', JSON.stringify(Array.from(storage)));
-            this.cartIcon.innerText! = `${this.getProductCount(this.cartData)}`;
-            this.totalSum.innerText! = `${this.getTotalSum(this.cartData)}`;
+            this.cartIcon.innerText! = `${getProductCount(this.cartData)}`;
+            this.totalSum.innerText! = `${getTotalSum(this.cartData)}`;
         }
     }
 
@@ -70,8 +71,8 @@ export class Cart {
             this.cartData = this.cartData.filter(el => el.product.id !== item.id);
             const storage: CartStorage[] = this.cartData.map(({product, count}) => ({id: product.id, count: count}));
             localStorage.setItem('cart-storage', JSON.stringify(Array.from(storage))); 
-            this.cartIcon.innerText! = `${this.getProductCount(this.cartData)}`;
-            this.totalSum.innerText! = `${this.getTotalSum(this.cartData)}`;
+            this.cartIcon.innerText! = `${getProductCount(this.cartData)}`;
+            this.totalSum.innerText! = `${getTotalSum(this.cartData)}`;
         }
     }
 
@@ -89,21 +90,6 @@ export class Cart {
         let sum = Number(this.totalSum.innerText) - data.product.price;
         this.totalSum.innerText! = `${sum}`;
         return sum;
-    }
-
-    private getTotalSum(data: CartData[]) {
-        return data.reduce((sum, acc) => sum + acc.product.price * acc.count, 0);
-    }
-
-    private getProductCount(data: CartData[]) {
-        return data.reduce((sum, acc) => sum + acc.count, 0);
-    }
-
-    private mapCartData(): CartData[] {
-        return this.cartStorage.reduce((arr, acc) => {
-            arr.push({product: this.cartProducts.find(el => el.id === acc.id)!, count: acc.count});
-            return arr;
-        }, new Array<CartData>());
     }
 
     private saveData(data: CartData) {
