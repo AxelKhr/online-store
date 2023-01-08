@@ -37,7 +37,11 @@ export class AppController extends AppLoader {
         this._router.addRoute('', this.loadMainView);
 
         document.addEventListener('changemodelmain', (event) => {
-            this._mainView.draw(this._dataModel.state.main);
+            this._mainView.update(this._dataModel.state.main);
+        });
+
+        document.addEventListener('changemodelmaintable', (event) => {
+            this._mainView.updateTable(this._dataModel.state.main);
         });
 
         document.addEventListener('changemodelproduct', (event) => {

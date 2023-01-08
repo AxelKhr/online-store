@@ -1,0 +1,26 @@
+.check-box {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+
+    width: 1.2em;
+    height: 1.2em;
+    border: 1px solid $colorTextNormal;
+    border-radius: 3px;
+
+    display: grid;
+    place-content: center;
+
+    &::before {
+        content: "";
+        width: 0.65em;
+        height: 0.65em;
+        box-shadow: inset 1em 1em red;
+        transform: scale(0);
+        transition: 0.5s all ease-in-out;
+    }
+
+    &:checked::before {
+        transform: scale(1);
+    }  
+}

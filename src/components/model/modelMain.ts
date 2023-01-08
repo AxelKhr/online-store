@@ -33,12 +33,14 @@ export interface ModelMainState {
 export class ModelMain {
     private _products: Product[];
     private _updateEvent: Event;
+    private _updateTableEvent: Event;
     private _productsList: Product[];
     private _params: MainParams;
 
     constructor() {
         this._products = [];
         this._updateEvent = new Event('changemodelmain');
+        this._updateTableEvent = new Event('changemodelmaintable');
         this._productsList = [];
         this._params = new MainParams();
     }
@@ -72,6 +74,7 @@ export class ModelMain {
             this._params.stock.srcMin = Math.min(...this._products.map((item) => item.stock))
             this._params.stock.srcMax = Math.max(...this._products.map((item) => item.stock))
         }
+        document.dispatchEvent(this._updateEvent)
     }
 
     async updateModel() {
@@ -100,7 +103,7 @@ export class ModelMain {
         });
 
         updateUrlFromMainParams(this._params)
-        document.dispatchEvent(this._updateEvent);
+        document.dispatchEvent(this._updateTableEvent);
     }
 
     get state(): ModelMainState {

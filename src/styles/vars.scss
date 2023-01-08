@@ -1,8 +1,12 @@
 $colorBackgroundMainContent: hsl(0, 0%, 95%);
 $colorBackgroundMainBlocks: hsl(0, 0%, 100%);
 
-$colorTextNormal: hsl(0, 0%, 0%);
+$colorTextNormal: hsl(0, 0%, 20%);
+//$colorTextNormal: red;
+$colorTextNormalActive: hsl(0, 0%, 10%);
+//$colorTextNormalActive: green;
 $colorTextNormalLight: hsl(0, 0%, 40%);
+//$colorTextNormalLight: red;
 
 $colorButtonEnable: hsl(26, 100%, 50%);
 $colorButtonHover: hsl(26, 100%, 65%);

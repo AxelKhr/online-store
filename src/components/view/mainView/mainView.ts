@@ -92,43 +92,13 @@ export class MainView extends AbstractView {
         return (this._cart.cartData.findIndex((elem) => elem.product.id === item.id) >= 0);
     }
 
-    draw(data: ModelMainState): void {
+    updateTable(data: ModelMainState): void {
         this._params = getParamsFromURL(window.location.href);
+        this.drawProducts(data.productsList);
+    }
 
-        const fragment = document.createDocumentFragment();
-        const cardTemp = ProductCard.createTemplate();
-        data.productsList.forEach(item => {
-            const card = cardTemp.cloneNode(true) as HTMLElement;
-            card.classList.add('products__card');
-            ProductCard.setData(card, item, this.checkCart(item));
-            fragment.append(card);
-            card.addEventListener('click', (e: Event) => {
-                const target = e.target! as HTMLElement;
-                if (target.closest('button')) {
-                    e.preventDefault();
-                    if (this.checkCart(item)) {
-                        this._cart.removeFromCart(item);
-                    } else {
-                        this._cart.addToCart(item);
-                    }
-                    ProductCard.setButtonStatus(target, this.checkCart(item));
-                }
-            });
-        });
-
-        const parent = document.querySelector('.table__list') as HTMLElement;
-        parent.innerHTML = '';
-        parent.appendChild(fragment);
-
-        const productCount = document.querySelector('.control__count') as HTMLDivElement;
-        productCount.textContent = `Found: ${data.productsList.length}`;
-
-        const boxNotFound = document.querySelector('.products__not-found') as HTMLDivElement;
-        if (data.productsList.length > 0) {
-            boxNotFound.classList.add('block--hidden');
-        } else {
-            boxNotFound.classList.remove('block--hidden');
-        }
+    update(data: ModelMainState): void {
+        this._params = getParamsFromURL(window.location.href);
 
         const getFilterList = (data: ListParams) => {
             const filterList: FilterListItem[] = [];
@@ -167,6 +137,46 @@ export class MainView extends AbstractView {
         this.drawSorting(data.params.sorting.list, data.params.sorting.current);
         this.drawViewButtons(data.params.view);
         this.setTableView();
+
+        this.drawProducts(data.productsList);
+    }
+
+    drawProducts(data: Product[]) {
+        const productCount = document.querySelector('.control__count') as HTMLDivElement;
+        productCount.textContent = `Found: ${data.length}`;
+
+        const boxNotFound = document.querySelector('.products__not-found') as HTMLDivElement;
+        if (data.length > 0) {
+            boxNotFound.classList.add('block--hidden');
+        } else {
+            boxNotFound.classList.remove('block--hidden');
+        }
+
+        if (data.length > 0) {
+            const fragment = document.createDocumentFragment();
+            const cardTemp = ProductCard.createTemplate();
+            data.forEach(item => {
+                const card = cardTemp.cloneNode(true) as HTMLElement;
+                card.classList.add('products__card');
+                ProductCard.setData(card, item, this.checkCart(item));
+                fragment.append(card);
+                card.addEventListener('click', (e: Event) => {
+                    const target = e.target! as HTMLElement;
+                    if (target.closest('button')) {
+                        e.preventDefault();
+                        if (this.checkCart(item)) {
+                            this._cart.removeFromCart(item);
+                        } else {
+                            this._cart.addToCart(item);
+                        }
+                        ProductCard.setButtonStatus(target, this.checkCart(item));
+                    }
+                });
+            });
+            const parent = document.querySelector('.table__list') as HTMLElement;
+            parent.innerHTML = '';
+            parent.appendChild(fragment);
+        }
     }
 
     drawFilterList(data: FilterListItem[], selClass: string, paramName: string) {

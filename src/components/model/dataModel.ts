@@ -1,5 +1,4 @@
 import { Product } from "../interface/product";
-import { Params } from "../utils/params";
 import { ModelMain, ModelMainState } from "./modelMain";
 import { ModelProduct, ModelProductState } from "./modelProduct";
 import { ModelCart, ModelCartState } from "./modelCart";

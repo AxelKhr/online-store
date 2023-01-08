@@ -32,6 +32,9 @@
             }
 
             &__title {
+                color: $colorTextNormalActive;
+                font-size: 1.2rem;
+                font-weight: 700;
                 min-height: 2em;
                 padding: 5px 10px;
             }

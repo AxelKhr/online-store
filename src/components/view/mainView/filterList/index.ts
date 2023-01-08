@@ -18,6 +18,7 @@ export function createFilterList(data: FilterListItem[]): HTMLDivElement {
     const label = document.createElement('label');
     (item.count > 0) || label.classList.add('disable');
     const checkBox = document.createElement('input');
+    checkBox.classList.add('item__check-box', 'check-box');
     checkBox.dataset.name = item.name;
     checkBox.type = 'checkbox';
     checkBox.checked = item.checked;
