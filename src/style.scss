@@ -1,6 +1,7 @@
 @import "./styles/init.scss";
 @import "./styles/body.scss";
-@import "./styles/header.scss";
-@import "./styles/main.scss";
-@import "./styles/footer.scss";
+@import "./styles/layout/header.scss";
+@import "./styles/layout/main.scss";
+@import "./styles/layout/footer.scss";
+@import "./styles/components/checkbox.scss";
 

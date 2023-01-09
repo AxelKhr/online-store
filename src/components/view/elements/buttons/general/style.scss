@@ -1,26 +1,49 @@
 .button-general {
-  display: inline-block;
-  border: 0;
-  padding: 5px 10px;
-  color: #fff;
-  background-color: $colorButtonEnable;
-  transition: all 0.2s ease-out;
-  text-decoration: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+    display: inline-block;
+    font-size: 1.1em;
+    border: $widthBorderButton solid $colorButtonBorder;
+    padding: 6px 15px;
+    color: $colorButtonText;
+    background-color: $colorButtonEnable;
+    transition: all 0.2s ease-out;
+    text-decoration: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border-radius: $radiusBorderButton;
 
-  &:hover,
-  &:focus {
-    background: $colorButtonHover;
-  }
+    &:hover,
+    &:focus {
+        background: $colorButtonHover;
+        cursor: pointer;
+    }
 
-  &:focus {
-    outline: 1px dashed #fff;
-    outline-offset: -1px;
-  }
+    &:focus {
+        outline: 1px dashed $colorButtonText;
+        outline-offset: -1px;
+    }
 
-  &:active {
-    background: $colorButtonActive;
-  }
+    &:active {
+        background: $colorButtonActive;
+    }
 
+    &.btn-color--2 {
+        color: $colorButton2Text;
+        border-color: $colorButton2Border;
+        background-color: $colorButton2Enable;
+
+        &:hover,
+        &:focus {
+            background: $colorButton2Hover;
+            cursor: pointer;
+        }
+    
+        &:focus {
+            outline: 1px dashed $colorButton2Text;
+            outline-offset: -1px;
+        }
+    
+        &:active {
+            background: $colorButton2Active;
+        }
+    }
 }

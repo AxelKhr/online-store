@@ -25,4 +25,8 @@ export class SortList {
         })
         this.content.append(this.selector);
     }
+
+    setData(current: string) {
+        this.selector.value = current;
+    }
 }

@@ -1,212 +1,211 @@
 .modal {
-  position: fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%);
-  overflow: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-items: center;
-  z-index: 99;
-  padding:30px 0;
-  display: block;
-
-  &__title {
-    font-size: 1.4rem;
-  }
-
-  &__wrap {
-    flex-shrink: 0;
-    flex-grow: 0;
-    margin: 0 auto;
+    position: fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-flow: column nowrap;
-    align-items: center;
     justify-content: center;
-  }
-
-  &__window {
-    padding: 10px;
-    padding-bottom: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    row-gap: 20px;
-    margin: 50px 0;
-    flex-shrink: 0;
-    flex-grow: 0;
-    background: #f2f2f2;
-    border-radius: 10px;
-    height: 850px;
-    width: 700px;
-    max-width: 100%;
-    overflow: visible;
-    transition: transform 0.2s ease 0s, opacity 0.2s ease 0s;
-    transform: scale(0.9);
-  }
-
-  &__input::placeholder {
-    color: gray;
-    font-weight: 300;
-    font-size: 1.15rem;
-  }
-
-  &__input {
-    display: block;
-    margin: 0 auto;
-    width: 75%;
-    outline: none;
-    height: calc(2.25rem + 4px);
-    padding: 0.375rem 0.75rem;
-    font-family: inherit;
-    font-size: 1.25rem;
-    font-weight: 500;
-    font-style: bold;
-    line-height: 1.4;
-    color: #000000;
-    background-color: #f2f2f2;
-    background-clip: padding-box;
-    border: 1px solid #bdbdbd;
-    border-radius: 1.5rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-
-  &__input:focus:valid,
-  &__input:valid {
-    border-color: green;
-    border-width: 2px;
-  }
-
-  &__input:invalid,
-  &__input:focus:invalid {
-    border-color: #900000;
-    border-width: 1px;
-  }
-
-  &__card-block {
-    padding-top: 20px;
-    margin-bottom: 20px;
-    margin: 0 auto;
-    width: 65%;
-    height: auto;
-    background-color: gainsboro;
-    border-radius: 15px;
-    box-shadow: -4px 4px 8px 0px rgba(0, 0, 0, 0.2);
-  }
-
-  &__personal {
-    display: flex;
-    gap: 30px;
-    flex-direction: column;
-    justify-content: space-around;
-  }
-
-  &__card-number {
-    width: 90%;
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: 35px;
-  }
-
-  .pay-logo {
-    display: flex;
     align-items: center;
-    justify-content: center;
-    margin: 50px 0 30px 0;
-    width: 100%;
-    height: 50px;
-  }
-
-  .visa,
-  .master,
-  .american {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    height: 100%;
-    width: 100%;
-  }
-
-  .visa {
-    background-image: url('./assets/visa.png');
-  }
-
-  .master {
-    background-image: url('./assets/master.png');
-  }
-
-  .american {
-    background-image: url('./assets/american.png');
-  }
-
-  &__bottom-block {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  &__date,
-  &__code {
-    width: 25%;
-    margin: 0 25px 40px 25px;
-  }
-
-  &__btn {
-    border: none;
-    background-color: orange;
-    height: 40px;
-    border-radius: 10px;
-    padding: 0;
-    width: 75%;
-    margin: 0 auto;
-  }
-
-  &__btn:hover {
-    box-shadow: 0px 0px 15px 0px rgba(71, 71, 71, 0.3);
-    color: #fff;
-    cursor: pointer;
-  }
-
-  .success {
-    background-image: url('./assets/check.png');
-    height: 300px;
-    width: 300px;
-    align-self: center;
-    background-size: cover;
-    background-position: center;
-  }
-
-  .success-title {
-    font-size: 2.5rem;
-    color: green;
-  }
-
-  .success-redirect {
-    font-size: 1.4rem;
-    font-weight: 500;
-  }
-
-  &__shadow{
-    position: fixed;
-    border:none;
+    z-index: 99;
+    padding:30px 0;
     display: block;
-    width: 100%;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    overflow: hidden;
-    z-index: 10;
-    transition: opacity 0.15s ease;
-    background-color: rgba($color: #000000, $alpha: 0.8);
-    backdrop-filter: blur(2px);
-}
 
+    &__title {
+        font-size: 1.4rem;
+    }
+
+    &__wrap {
+        flex-shrink: 0;
+        flex-grow: 0;
+        margin: 0 auto;
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__window {
+        padding: 10px;
+        padding-bottom: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        row-gap: 20px;
+        margin: 50px 0;
+        flex-shrink: 0;
+        flex-grow: 0;
+        background: #f2f2f2;
+        border-radius: 10px;
+        height: 850px;
+        width: 700px;
+        max-width: 100%;
+        overflow: visible;
+        transition: transform 0.2s ease 0s, opacity 0.2s ease 0s;
+        transform: scale(0.9);
+    }
+
+    &__input::placeholder {
+        color: gray;
+        font-weight: 300;
+        font-size: 1.15rem;
+    }
+
+    &__input {
+        display: block;
+        margin: 0 auto;
+        width: 75%;
+        outline: none;
+        height: calc(2.25rem + 4px);
+        padding: 0.375rem 0.75rem;
+        font-family: inherit;
+        font-size: 1.25rem;
+        font-weight: 500;
+        font-style: bold;
+        line-height: 1.4;
+        color: #000000;
+        background-color: #f2f2f2;
+        background-clip: padding-box;
+        border: 1px solid #bdbdbd;
+        border-radius: 1.5rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    &__input:focus:valid,
+    &__input:valid {
+        border-color: green;
+        border-width: 2px;
+    }
+
+    &__input:invalid,
+    &__input:focus:invalid {
+        border-color: #900000;
+        border-width: 1px;
+    }
+
+    &__card-block {
+        padding-top: 20px;
+        margin-bottom: 20px;
+        margin: 0 auto;
+        width: 65%;
+        height: auto;
+        background-color: gainsboro;
+        border-radius: 15px;
+        box-shadow: -4px 4px 8px 0px rgba(0, 0, 0, 0.2);
+    }
+
+    &__personal {
+        display: flex;
+        gap: 30px;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    &__card-number {
+        width: 90%;
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 35px;
+    }
+
+    .pay-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 50px 0 30px 0;
+        width: 100%;
+        height: 50px;
+    }
+
+    .visa,
+    .master,
+    .american {
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 100%;
+        width: 100%;
+    }
+
+    .visa {
+        background-image: url('./assets/visa.png');
+    }
+
+    .master {
+        background-image: url('./assets/master.png');
+    }
+
+    .american {
+        background-image: url('./assets/american.png');
+    }
+
+    &__bottom-block {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__date,
+    &__code {
+        width: 25%;
+        margin: 0 25px 40px 25px;
+    }
+
+    &__btn {
+        border: none;
+        background-color: orange;
+        height: 40px;
+        border-radius: 10px;
+        padding: 0;
+        width: 75%;
+        margin: 0 auto;
+    }
+
+    &__btn:hover {
+        box-shadow: 0px 0px 15px 0px rgba(71, 71, 71, 0.3);
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .success {
+        background-image: url('./assets/check.png');
+        height: 300px;
+        width: 300px;
+        align-self: center;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .success-title {
+        font-size: 2.5rem;
+        color: green;
+    }
+
+    .success-redirect {
+        font-size: 1.4rem;
+        font-weight: 500;
+    }
+
+    &__shadow{
+        position: fixed;
+        border:none;
+        display: block;
+        width: 100%;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        overflow: hidden;
+        z-index: 10;
+        transition: opacity 0.15s ease;
+        background-color: rgba($color: #000000, $alpha: 0.8);
+        backdrop-filter: blur(2px);
+    }
 }
 
 .hidden {
-  display: none;
+    display: none;
 }

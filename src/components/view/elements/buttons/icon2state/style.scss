@@ -1,0 +1,63 @@
+.button-icon {
+    position: relative;
+    z-index: 10;
+    display: inline-block;
+    text-decoration: none;
+    padding: 5px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 60px;
+    height: 60px;
+    border: $widthBorderButton solid transparent;
+    border-radius: $radiusBorderButton;
+    background: none;
+    transition: all 0.3s ease-out;
+    overflow: hidden;
+
+    div {
+        position: absolute;
+        width: 100%;
+        top: 100%;
+        left: 0;
+        top: 0;
+        padding: 5px;
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+        transition: all 0.3s ease-out;
+    }
+
+    &:hover {
+        border-color: $colorButtonBorder;
+        box-shadow: 0px 3px 8px 1px #aaa;
+        -webkit-box-shadow: 0px 3px 8px 1px #aaa;
+        cursor: pointer;
+    }
+
+    &:active {
+        background: hsl(26, 0%, 95%);
+        box-shadow: none;
+        -webkit-box-shadow: none; 
+    }
+
+    &[data-checked=false] {
+        .button__icon-add {
+            filter: alpha(opacity=50);
+            opacity: 1;
+        }
+        .button__icon-remove {
+            opacity: 0;
+        }
+    }
+
+    &[data-checked=true] {
+        .button__icon-add {
+            opacity: 0;
+        }
+        .button__icon-remove {
+            opacity: 1;
+        }
+    }
+}

@@ -1,137 +1,179 @@
 .product-page {
-  min-height: calc(100vh - 200px);
+    min-height: calc(100vh - 200px);
 
-  &__path {
-    margin-bottom: 20px;
-  }
+    &__path {
+        margin-bottom: 20px;
 
-  &__box {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-  }
-
-  &__view {
-    flex: 1 1 auto;
-    padding: 20px;
-    background: $colorBackgroundMainBlocks;
-    margin-right: 20px;
-
-    .view {
-      &__slider-container {
-        position: relative;
-      }
-
-      &__slider-wrapper {
-        position: relative;
-        max-width: 500px;
-        margin: 0 auto;
-
-        &::before {
-          display: block;
-          content: '';
-          width: 100%;
-          padding-top: 100%;
+        a {
+            transition: 0.3s all ease-in-out;
+            &:hover {
+                border-bottom: 2px solid $colorButtonEnable;
+            }
         }
-      }
-
-      &__slider {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-      }
     }
 
-    .slider__buttons {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 5px;
+    &__box {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
 
-      > button {
-        opacity: 0.2;
-      }
-
-      &:hover > button {
-        opacity: 1;
-      }
-    }
-  }
-
-  &__control {
-    min-width: 300px;
-    padding: 20px;
-    background: $colorBackgroundMainBlocks;
-
-    .control__title {
-      font-size: 24px;
-      font-weight: 700;
+        @media (max-device-width: $deviceWidthSmall) {
+            flex-direction: column;
+        }
     }
 
-    .control__brand {
-      font-size: 16px;
+    &__view {
+        flex: 1 1 auto;
+        padding: 20px;
+        background: $colorBackgroundMainBlocks;
+        margin-right: 20px;
+        border: $widthBlockBorder solid $colorBlockBorder;
+        border-radius: $radiusBlockBorder;
+
+        @media (max-device-width: $deviceWidthSmall) {
+            order: 2;
+            width: 100%;
+        }
+        
+        .view {
+            &__slider-container {
+                position: relative;
+            }
+
+        &__slider-wrapper {
+                position: relative;
+                max-width: 500px;
+                margin: 0 auto;
+
+                &::before {
+                display: block;
+                content: '';
+                width: 100%;
+                padding-top: 100%;
+            }
+        }
+
+        &__slider {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .slider__buttons {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5px;
+
+            > button {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: $colorButtonText;
+                border: $widthBorderButton solid $colorButtonBorder;
+                border-radius: 50%;
+                background-color: $colorButtonEnable;
+                opacity: 0.2;
+                transition: 0.3s all ease-in-out;
+            }
+
+            &:hover > button {
+                opacity: 1;
+                background-color: $colorButtonHover;
+            }
+
+            &:active > button {
+                background-color: $colorButtonActive;
+            }
+        }
     }
 
-    .control__rating {
-      font-size: 18px;
+    &__control {
+        min-width: 300px;
+        padding: 20px;
+        background: $colorBackgroundMainBlocks;
+        border: $widthBlockBorder solid $colorBlockBorder;
+        border-radius: $radiusBlockBorder;
+
+        @media (max-device-width: $deviceWidthSmall) {
+            order: 1;
+            min-width: auto;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .control__title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .control__brand {
+            font-size: 16px;
+        }
+
+        .control__rating {
+            font-size: 18px;
+        }
+
+        .control__discount {
+            font-size: 18px;
+        }
+
+        .control__stock {
+            font-size: 18px;
+        }
+
+        .control {
+            &__button-add,
+            &__button-buy {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
     }
 
-    .control__discount {
-      font-size: 18px;
-    }
+    &__detailing {
+        padding: 20px;
+        background: $colorBackgroundMainBlocks;
+        border: $widthBlockBorder solid $colorBlockBorder;
+        border-radius: $radiusBlockBorder;
 
-    .control__stock {
-      font-size: 18px;
+        .detailing {
+            &__title {
+                    margin-bottom: 15px;
+                    font-size: 1.5rem;
+                }
+            &__table {
+                    width: 100%;
+                }
+            }
     }
-
-    .control {
-      &__button-add,
-      &__button-buy {
-        display: block;
-        width: 100%;
-        margin: 10px 0;
-      }
-    }
-  }
-
-  &__detailing {
-    padding: 20px;
-    background: $colorBackgroundMainBlocks;
-
-    .detailing {
-      &__title {
-        margin-bottom: 15px;
-        font-size: 1.5rem;
-      }
-      &__table {
-        width: 100%;
-      }
-    }
-  }
 }
 
 .view__image {
+    div {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-  div {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    img {
-      display: block;
-      margin: 0 auto;
-      max-width: 100%;
-      max-height: 100%;
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            max-height: 100%;
+        }
     }
-  }
 }

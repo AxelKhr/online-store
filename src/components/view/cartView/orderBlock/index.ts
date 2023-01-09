@@ -2,6 +2,7 @@ import { CartData } from "../cart/cart";
 import { Promo } from "../cartView";
 import { ModalView } from "../modalView";
 import "./style.scss";
+import createButtonGeneral from "../../elements/buttons/general";
 
 export function createOrderBlock(data: CartData[]): HTMLElement {
   const block = document.createElement('div');
@@ -55,8 +56,7 @@ export function createOrderBlock(data: CartData[]): HTMLElement {
   input.type = 'text';
   input.placeholder = 'test promo: "RS", "EPM"';
 
-  const btn = document.createElement('button');
-  btn.classList.add('order__btn');
+  const btn = createButtonGeneral('order__btn');
   btn.innerText = 'PAY';
   btn.addEventListener('click', payOrder);
 
@@ -81,8 +81,7 @@ export function getPromo(parent: HTMLElement, promo: Promo) {
   promoTitle.classList.add('order__promo-title');
   promoTitle.innerText = `${promo.name}`;
 
-  const promoBtn = document.createElement('button');
-  promoBtn.classList.add('order__promo-btn', 'hidden');
+  const promoBtn = createButtonGeneral('order__promo-btn', 'btn-color--2', 'hidden');
   promoBtn.innerText = 'ADD';
 
   parent.append(promoTitle, promoBtn);
@@ -97,8 +96,7 @@ export function getApplyPromo(parent: HTMLElement, promo: Promo) {
   promoTitle.classList.add('order__promo-title');
   promoTitle.innerText = `${promo.name}`;
 
-  const promoBtn = document.createElement('button');
-  promoBtn.classList.add('order__apply-promo-btn');
+  const promoBtn = createButtonGeneral('order__apply-promo-btn', 'btn-color--2');
   promoBtn.innerText = 'DROP';
   promoBtn.id = `btn-${promo.id.toLowerCase()}`;
 
