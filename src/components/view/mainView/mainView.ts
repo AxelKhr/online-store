@@ -44,6 +44,12 @@ export class MainView extends AbstractView {
         let content = document.createElement('div') as HTMLElement;
         content.dataset.name = 'viewMain';
         content.classList.add('content__table', 'table');
+
+        const filterButton = document.createElement('button');
+        filterButton.classList.add('table__filter-button', 'button--hidden');
+        filterButton.textContent = 'F';
+        content.append(filterButton);
+
         const aside = document.createElement('aside');
         aside.classList.add('table__filter');
         const filtersControl = document.createElement('div');
