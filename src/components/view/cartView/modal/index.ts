@@ -1,13 +1,23 @@
 import "./style.scss";
 
+let windowStylePosition = '';
+
 export function getModal(): HTMLElement {
     const modal = document.createElement('div') as HTMLElement;
     modal.classList.add('modal__wrap');
 
     const modalShadow = document.querySelector('.modal__shadow');
-    modalShadow?.addEventListener('click', closeModal);
-    modal.innerHTML =`
+    modalShadow?.addEventListener('click', (e) => {
+        console.log(e.target);
+        if (e.target) {
+            if ((e.target as HTMLDivElement).classList.contains('modal__wrap')) {
+                closeModal();
+            }
+        }
+    });
+    modal.innerHTML = `
     <form class="modal__window">
+        <button class="modal__close"></button>
         <div class="modal__personal">
             <p class="modal__title">Personal details</p>
             <input title="Name Surname" class="modal__input" type="text" pattern="^\\w{3,}\\s+\\w{3,}$" placeholder="Name Surname" required>
@@ -29,9 +39,21 @@ export function getModal(): HTMLElement {
     return modal;
 }
 
-function closeModal() {
+export function showModal() {
+    windowStylePosition = document.body.style.position;
+    const top = -window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `${top}px`;
+}
+
+export function closeModal() {
     const modal = document.querySelector('.modal');
     modal?.classList.add('hidden');
-    const modalShadow = document.querySelector('.modal__shadow');
-    modalShadow?.classList.add('hidden');
+    const modalShadow = document.querySelector('.modal__shadow') as HTMLElement;
+    modalShadow.classList.add('hidden');
+
+    document.body.style.position = windowStylePosition;
+    const top = document.body.style.top;
+    document.body.style.top = '';
+    window.scrollTo(0, -parseInt(top));
 }

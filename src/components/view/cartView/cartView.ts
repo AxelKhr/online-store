@@ -66,7 +66,8 @@ export class CartView extends AbstractView {
             this.drawCards(cart, parent);
             this.drawOrder();
 
-            const modal = document.querySelector('.modal') as HTMLElement;
+            const modal = document.querySelector('.modal__shadow') as HTMLElement;
+            modal.innerHTML = '';
             modal.append(getModal());
         }
     }

@@ -1,4 +1,3 @@
-import { Product, ProductResponse } from "../../interface/product";
 import { AbstractView } from "../abstractView";
 
 export class ErrorView extends AbstractView {
@@ -8,9 +7,9 @@ export class ErrorView extends AbstractView {
         content.classList.add('error-page');
         content.innerHTML = `
             <div class="error-message">
-                <span class="error-text error-title">404</span>
-                <span class="error-text">Page not found</span>
-                <span class="error-text">The page you're looking for doesn't exist or an other error occured.</span>
+                <p class="error-text error-title">404</p>
+                <p class="error-text">Page not found</p>
+                <p class="error-text">The page you're looking for doesn't exist or an other error occured.</p>
             </div>
             <a href="#" class="error-btn">Back to main page</a>`;
         return content;

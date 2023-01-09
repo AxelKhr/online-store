@@ -1,5 +1,14 @@
 .table {
+    position: relative;
     display: flex;
+
+    &__filter-button {
+        position: absolute;
+
+        &.button--hidden {
+            display: none;
+        }
+    }
 
     &__filter {
         width: 100%;

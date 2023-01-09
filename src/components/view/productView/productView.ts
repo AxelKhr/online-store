@@ -34,8 +34,12 @@ export class ProductView extends AbstractView {
         box.append(view, control);
         const detailing = document.createElement('div');
         detailing.classList.add('product-page__detailing');
-        const modalWindow = ModalWindow.create('product-page__modal-image');
         content.append(path, box, detailing);
+        const modalForRemove = document.querySelectorAll('.product-page__modal-image');
+        modalForRemove.forEach((item) => {
+            item.remove();
+        })
+        const modalWindow = ModalWindow.create('product-page__modal-image');
         document.body.append(modalWindow);
         return content;
     }
@@ -52,6 +56,7 @@ export class ProductView extends AbstractView {
             }
 
             const path = document.querySelector('.product-page__path') as HTMLElement;
+            path.innerHTML = '';
             path.append(createPathList('path__list'));
             addToPathList('path__list', 'Store', '#/');
             addToPathList('path__list', `${data.product.category}`,
@@ -62,6 +67,7 @@ export class ProductView extends AbstractView {
                 `#/?search-type=title&search=${data.product.title}`);
 
             const view = document.querySelector('.product-page__view') as HTMLElement;
+            view.innerHTML = '';
             const sliderContainer = document.createElement('div');
             sliderContainer.classList.add('view__slider-container');
             view.append(sliderContainer);
@@ -103,6 +109,7 @@ export class ProductView extends AbstractView {
             sliderContainer.append(sliderWrapper, buttonsBlock);
 
             const control = document.querySelector('.product-page__control') as HTMLElement;
+            control.innerHTML = '';
             const buttonAdd = createButtonGeneral('control__button-add');
             buttonAdd.textContent = 'ADD';
             buttonAdd.addEventListener('click', () => {
@@ -133,6 +140,7 @@ export class ProductView extends AbstractView {
             this.setAddButtonStatus(this.checkCart(data.product));
 
             const detailing = document.querySelector('.product-page__detailing') as HTMLElement;
+            detailing.innerHTML = '';
             const table = tableTwoCols.createTable();
             table.classList.add('detailing__table');
             tableTwoCols.addRow(table, 'Category', `${data.product.category}`)
@@ -142,6 +150,13 @@ export class ProductView extends AbstractView {
                 createElemP('Detailing', ['detailing__title']),
                 table
             );
+        } else {
+            const page = document.querySelector('.product-page') as HTMLElement;
+            page.innerHTML = '';
+            const message = document.createElement('p');
+            message.classList.add('product-page__message');
+            message.textContent = 'Product not found';
+            page.append(message);
         }
     }
 
