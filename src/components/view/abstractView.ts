@@ -1,6 +1,3 @@
-import { Product, ProductResponse } from "../interface/product";
-import { ModelStates } from "../model/dataModel";
-
 export abstract class AbstractView {
     constructor() {
         document.title = 'Online store';
