@@ -15,8 +15,11 @@ export abstract class AbstractView {
     async setView(title: string) {
         const view = await this.getView();
         const content = document.getElementById("content") as HTMLElement;
-        content!.innerHTML = '';
-        content.appendChild(view);
-        document.title = title;
+        if (content.dataset.viewName !== view.dataset.name) {
+            content.dataset.viewName = view.dataset.name;
+            content!.innerHTML = '';
+            content.appendChild(view);
+            document.title = title;
+        }
     }
 }

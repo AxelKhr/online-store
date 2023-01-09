@@ -3,7 +3,8 @@
     padding-top: 130%;
     height: min-content;
     min-width: 150px;
-
+    min-height: 150px;
+    
     & * {
         margin: 0;
         }
@@ -17,17 +18,23 @@
                 height: 100%;
             }
 
-            &__detailing {
+            &__detailing-wrapper {
                 position: absolute;
                 left: auto;
                 right: 0;
                 top: 0;
                 width: 70%;
-                background: #fff;
+                background: $colorBackgroundMainBlocks;
+                padding: 10px 10px 10px 20px;
+            }
+
+            &__detailing {
+                width: 100%;
+                height: 100%;
+                background: $colorBackgroundMainBlocks;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                padding: 10px;
             }
         }
     }
@@ -38,16 +45,16 @@
         top: 0;
         width: 100%;
         height: 100%;
-        border: 2px solid #ddd;
-        border-radius: 10px;
+        background-color: $colorBackgroundMainBlocks;
+        border: $widthBlockBorder solid $colorBlockBorder;
+        border-radius: $radiusBlockBorder;
         overflow: hidden;
         padding: 5px;
-        background: #fff;
         transition: box-shadow 0.3s;
 
         &:hover {
-        box-shadow: 0px 5px 5px 0px #aaa;
-        -webkit-box-shadow: 0px 5px 5px 0px #aaa; 
+            box-shadow: 0px 3px 8px 1px #aaa;
+            -webkit-box-shadow: 0px 3px 8px 1px #aaa; 
         }
 
         .product-card {
@@ -69,30 +76,40 @@
                 text-align: center;
                 padding: 5px;
             }
-        
-            &__detailing {
+
+            &__detailing-wrapper {
                 position: absolute;
                 left: 0;
                 bottom: 0;
                 width: 100%;
-                background: #fff;
+                background: $colorBackgroundMainBlocks;
+                padding: 5px 10px 10px;
+            }
+        
+            &__detailing {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                padding: 10px;
             }
 
             &__title {
-                font-size: 22px;
+                font-size: 1.2em;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         
             &__brand {
-                font-size: 14px;
+                font-size: 0.9em;
             }
         
             &__rating {
-                font-size: 14px;
-                margin-bottom: 10px;
+                font-size: 0.9em;
+            }
+
+            &__stock {
+                font-size: 0.9em;
             }
         
             &__buy {
@@ -105,8 +122,9 @@
                 margin: 0;
                 display: flex;
                 justify-content: left;
-                align-items: center;
+                align-items: flex-end;
                 font-size: 28px;
+                font-weight: 700;
             }
         }
     }

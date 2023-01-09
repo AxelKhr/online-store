@@ -21,6 +21,7 @@ export class ProductView extends AbstractView {
 
     async getView(): Promise<HTMLElement> {
         const content = document.createElement('section') as HTMLElement;
+        content.dataset.name = 'viewProduct';
         content.classList.add('content__product-page', 'product-page');
         const path = document.createElement('div');
         path.classList.add('product-page__path');

@@ -18,9 +18,14 @@ export class ViewControl {
                 this.onChange('grid');
             }
         });
-        const imageGrid = document.createElement('div');
-        imageGrid.textContent = 'G';
-        buttonGrid.append(radioGrid, imageGrid);
+        const boxGrid = document.createElement('div');
+        const imageGrid = document.createElement('img');
+        imageGrid.src = './assets/img/view_grid.svg';
+        imageGrid.alt = 'Grid';
+        imageGrid.width = 20;
+        imageGrid.height = 20;
+        boxGrid.append(imageGrid);
+        buttonGrid.append(radioGrid, boxGrid);
         const buttonLines = document.createElement('div');
         buttonLines.classList.add('view-button')
         const radioLines = document.createElement('input');
@@ -32,9 +37,14 @@ export class ViewControl {
                 this.onChange('lines');
             }
         });
-        const imageLines = document.createElement('div');
-        imageLines.textContent = 'L';
-        buttonLines.append(radioLines, imageLines);
+        const boxLines = document.createElement('div');
+        const imageLines = document.createElement('img');
+        imageLines.src = './assets/img/view_lines.svg';
+        imageLines.alt = 'Lines';
+        imageLines.width = 20;
+        imageLines.height = 20;
+        boxLines.append(imageLines);
+        buttonLines.append(radioLines, boxLines);
         this.content.append(buttonGrid, buttonLines);
         (this.content as HTMLFormElement).viewControl.value = value;
     }

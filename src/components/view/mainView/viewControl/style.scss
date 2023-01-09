@@ -15,30 +15,44 @@ $sortingBorderWidth: 1px;
 
         input {
             appearance: none;
-            display: block;
             position: absolute;
+            z-index: 1;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             appearance: none;
-            display: block;
-
+            display: grid;
+            place-content: center;
+        
             &:checked ~ div {
-                background-color: lightgreen;
+                border-color: $colorButtonEnable;
+
+                img {
+                    opacity: 0.8;
+                }
             }
 
             &:hover ~ div {
-                border-color: $colorInputEditBorderFocus;
+                background-color: $colorInputEditBackgroundFocus;
+                border-color: $colorButtonEnable;
             }
         }
 
         div {
             width: 100%;
             height: 100%;
-            background-color: $colorInputEditBackground;
-            border: $sortingBorderWidth solid $colorInputEditBorder;
-            border-radius: $sortingBorderRadius;
+            background-color: $colorButton2Enable;
+            border: $widthBorderButton solid $colorButton2Border;
+            border-radius: $radiusBorderButton;
+            padding: 5px;
+
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                opacity: 0.5;
+            }
 
         }
     }
