@@ -1,24 +1,34 @@
-$colorBackgroundMainContent: hsl(0, 0%, 95%);
+$deviceWidthBig: 1600px;
+$deviceWidthMedium: 1024px;
+$deviceWidthSmall: 768px;
+
+$colorBackgroundMainContent: hsl(0, 0%, 98%);
 $colorBackgroundMainBlocks: hsl(0, 0%, 100%);
 
 $colorTextNormal: hsl(0, 0%, 20%);
-//$colorTextNormal: red;
 $colorTextNormalActive: hsl(0, 0%, 10%);
-//$colorTextNormalActive: green;
 $colorTextNormalLight: hsl(0, 0%, 40%);
-//$colorTextNormalLight: red;
 
 $colorButtonEnable: hsl(26, 100%, 50%);
 $colorButtonHover: hsl(26, 100%, 65%);
 $colorButtonActive: hsl(26, 50%, 50%);
 $colorButtonText: hsl(0, 0%, 100%);
+$colorButtonBorder: $colorButtonEnable;
+$radiusBorderButton: 5px;
+$widthBorderButton: 1px;
+
+$colorButton2Enable: hsl(26, 0%, 90%);
+$colorButton2Hover: hsl(26, 100%, 75%);
+$colorButton2Active: hsl(26, 50%, 60%);
+$colorButton2Text: hsl(0, 0%, 0%);
+$colorButton2Border: hsl(26, 0%, 70%);
 
 $colorBlockBorder: hsl(0, 0%, 70%);
 $widthBlockBorder: 1px;
 $radiusBlockBorder: 5px;
 
 $colorBackgroundList: hsl(0, 0%, 100%);
-$colorBackgroundListHover: hsl(26, 100%, 65%);
+$colorBackgroundListHover: hsl(26, 100%, 70%);
 $colorBackgroundListDisable: hsl(0, 0%, 95%);
 
 $colorTableText: hsl(0, 0%, 40%);

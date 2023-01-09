@@ -9,14 +9,16 @@
         label {
             display: flex;
             width: 100%;
+            min-width: 200px;
             padding: 10px 0;
             line-height: 100%;
             color: $colorTextNormal;
-            background: $colorBackgroundList;
+            background-color: $colorBackgroundList;
+            transition: 0.5s background-color ease-in-out;
 
             &.disable {
                 color: $colorTextNormalLight;
-                background: $colorBackgroundListDisable;
+                background-color: $colorBackgroundListDisable;
             }
 
             div {
@@ -38,6 +40,7 @@
 
         input {
             margin: 0 10px;
+            min-width: 20px;
         }
     } 
 }

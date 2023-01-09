@@ -1,10 +1,11 @@
 .table {
-    display: grid;
-    grid-template-columns: 30% 1fr;
-    column-gap: 20px;
+    display: flex;
 
     &__filter {
         width: 100%;
+        min-width: 250px;
+        max-width: 30%;
+        margin-right: 20px;
 
         .filter {
             &__control {
@@ -83,6 +84,8 @@
             }
 
             &__count {
+                color: $colorTextNormalActive;
+                font-size: 1.2em;
                 width: 150px;
             }
         }
@@ -94,6 +97,14 @@
         grid-auto-rows: auto;
         gap: 10px;
         width: 100%;
+
+        @media (max-device-width: $deviceWidthMedium) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (max-device-width: $deviceWidthSmall) {
+            grid-template-columns: repeat(1, 1fr);
+        }
 
         &.table-view--lines {
             grid-template-columns: repeat(1, 1fr);

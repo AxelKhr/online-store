@@ -1,4 +1,5 @@
 import "./style.scss";
+import createButtonGeneral from "../../elements/buttons/general";
 
 export type InputSearchData = {
     type: string;
@@ -19,9 +20,8 @@ export class InputSearch {
         this.inputEdit.type = 'text';
         this.inputEdit.placeholder = 'Search';
         this.inputEdit.autocomplete = 'off';
-        const button = document.createElement('input');
-        button.type = 'button';
-        button.value = 'Search';
+        const button = createButtonGeneral('search__button');
+        button.textContent = 'Search';
         this.select = document.createElement('select');
         const option1 = document.createElement('option');
         option1.textContent = 'Title';

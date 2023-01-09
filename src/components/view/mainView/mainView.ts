@@ -2,7 +2,7 @@ import "./style.scss";
 import { AbstractView } from "../abstractView";
 import { Product } from "../../interface/product";
 import * as ProductCard from "./productCard";
-import { createFilterList, FilterListItem } from "./filterList";
+import { FilterListItem, createFilterList, updateFilterList } from "./filterList";
 import { FilterDualSlider, FilterSliderData } from "./filterSlider";
 import { InputSearch, InputSearchData } from "./inputSearch";
 import { Cart } from "../cartView/cart/cart";
@@ -28,28 +28,33 @@ const createFilterBlock = (title: string, selClass: string) => {
 export class MainView extends AbstractView {
     private _cart: Cart;
     private _params: Params;
+    private _sliders: Map<string, FilterDualSlider>;
+    private _search!: InputSearch;
+    private _sort!: SortList;
     requestUpdateParams!: () => void;
 
     constructor(cart: Cart) {
         super();
         this._cart = cart;
         this._params = new Params();
+        this._sliders = new Map();
     }
 
     async getView(): Promise<HTMLElement> {
         let content = document.createElement('div') as HTMLElement;
+        content.dataset.name = 'viewMain';
         content.classList.add('content__table', 'table');
         const aside = document.createElement('aside');
         aside.classList.add('table__filter');
         const filtersControl = document.createElement('div');
         filtersControl.classList.add('filter__control');
-        const buttonFilterReset = createButtonGeneral('control__button-reset');
+        const buttonFilterReset = createButtonGeneral('control__button-reset', 'btn-color--2');
         buttonFilterReset.textContent = 'Reset';
         buttonFilterReset.addEventListener('click', () => {
             this.resetFilters();
             this.requestUpdateParams();
         });
-        const buttonFilterCopy = createButtonGeneral('control__button-copy');
+        const buttonFilterCopy = createButtonGeneral('control__button-copy', 'btn-color--2');
         buttonFilterCopy.textContent = 'Copy';
         buttonFilterCopy.addEventListener('click', () => {
             buttonFilterCopy.classList.add('button-copy--active');
@@ -94,51 +99,63 @@ export class MainView extends AbstractView {
 
     updateTable(data: ModelMainState): void {
         this._params = getParamsFromURL(window.location.href);
-        this.drawProducts(data.productsList);
-    }
 
-    update(data: ModelMainState): void {
-        this._params = getParamsFromURL(window.location.href);
-
-        const getFilterList = (data: ListParams) => {
-            const filterList: FilterListItem[] = [];
-            data.forEach((item) => {
-                filterList.push({
-                    name: item.name,
-                    count: item.count,
-                    total: item.total,
-                    checked: item.checked
-                });
-            });
-            return filterList;
-        }
-
-        this.drawFilterList(getFilterList(data.params.category), 'category', 'category');
-        this.drawFilterList(getFilterList(data.params.brand), 'brand', 'brand');
-        this.drawFilterSlider({
+        updateFilterList('category', getFilterList(data.params.category));
+        updateFilterList('brand', getFilterList(data.params.brand));
+        this._sliders.get('price')?.setData({
             step: data.params.price.step,
             rangeMin: data.params.price.rangeMin,
             rangeMax: data.params.price.rangeMax,
             currMin: data.params.price.currMin,
             currMax: data.params.price.currMax
-        }, 'price', 'price');
-        this.drawFilterSlider({
+        });
+        this._sliders.get('stock')?.setData({
             step: data.params.stock.step,
             rangeMin: data.params.stock.rangeMin,
             rangeMax: data.params.stock.rangeMax,
             currMin: data.params.stock.currMin,
             currMax: data.params.stock.currMax
-        }, 'stock', 'stock');
-
-        this.drawSearch({
+        });
+        this._search.setData({
             type: data.params.search.type,
             value: data.params.search.value,
         });
-        this.drawSorting(data.params.sorting.list, data.params.sorting.current);
-        this.drawViewButtons(data.params.view);
-        this.setTableView();
-
+        this._sort.setData(data.params.sorting.current);
         this.drawProducts(data.productsList);
+        this.setTableView();
+    }
+
+    update(data: ModelMainState): void {
+        this._params = getParamsFromURL(window.location.href);
+
+        this.drawFilterList(getFilterList(data.params.category), 'category', 'category');
+        this.drawFilterList(getFilterList(data.params.brand), 'brand', 'brand');
+        this._sliders.clear();
+        this._sliders.set('price',
+            this.drawFilterSlider({
+                step: data.params.price.step,
+                rangeMin: data.params.price.rangeMin,
+                rangeMax: data.params.price.rangeMax,
+                currMin: data.params.price.currMin,
+                currMax: data.params.price.currMax
+            }, 'price', 'price'));
+        this._sliders.set('stock',
+            this.drawFilterSlider({
+                step: data.params.stock.step,
+                rangeMin: data.params.stock.rangeMin,
+                rangeMax: data.params.stock.rangeMax,
+                currMin: data.params.stock.currMin,
+                currMax: data.params.stock.currMax
+            }, 'stock', 'stock'));
+
+        this._search = this.drawSearch({
+            type: data.params.search.type,
+            value: data.params.search.value,
+        });
+        this._sort = this.drawSorting(data.params.sorting.list, data.params.sorting.current);
+        this.drawViewButtons(data.params.view);
+        this.drawProducts(data.productsList);
+        this.setTableView();
     }
 
     drawProducts(data: Product[]) {
@@ -152,31 +169,29 @@ export class MainView extends AbstractView {
             boxNotFound.classList.remove('block--hidden');
         }
 
-        if (data.length > 0) {
-            const fragment = document.createDocumentFragment();
-            const cardTemp = ProductCard.createTemplate();
-            data.forEach(item => {
-                const card = cardTemp.cloneNode(true) as HTMLElement;
-                card.classList.add('products__card');
-                ProductCard.setData(card, item, this.checkCart(item));
-                fragment.append(card);
-                card.addEventListener('click', (e: Event) => {
-                    const target = e.target! as HTMLElement;
-                    if (target.closest('button')) {
-                        e.preventDefault();
-                        if (this.checkCart(item)) {
-                            this._cart.removeFromCart(item);
-                        } else {
-                            this._cart.addToCart(item);
-                        }
-                        ProductCard.setButtonStatus(target, this.checkCart(item));
+        const fragment = document.createDocumentFragment();
+        const cardTemp = ProductCard.createTemplate();
+        data.forEach(item => {
+            const card = cardTemp.cloneNode(true) as HTMLElement;
+            card.classList.add('products__card');
+            ProductCard.setData(card, item, this.checkCart(item));
+            fragment.append(card);
+            card.addEventListener('click', (e: Event) => {
+                const target = (e.target! as HTMLElement).closest('.button-icon') as HTMLElement;
+                if (target) {
+                    e.preventDefault();
+                    if (this.checkCart(item)) {
+                        this._cart.removeFromCart(item);
+                    } else {
+                        this._cart.addToCart(item);
                     }
-                });
+                    ProductCard.setButtonStatus(target, this.checkCart(item));
+                }
             });
-            const parent = document.querySelector('.table__list') as HTMLElement;
-            parent.innerHTML = '';
-            parent.appendChild(fragment);
-        }
+        });
+        const parent = document.querySelector('.table__list') as HTMLElement;
+        parent.innerHTML = '';
+        parent.appendChild(fragment);
     }
 
     drawFilterList(data: FilterListItem[], selClass: string, paramName: string) {
@@ -213,6 +228,7 @@ export class MainView extends AbstractView {
             this._params.replace(`${paramName}-max`, max.toString());
             this.requestUpdateParams();
         }
+        return slider;
     }
 
     drawSearch(data: InputSearchData) {
@@ -230,6 +246,7 @@ export class MainView extends AbstractView {
             }
             this.requestUpdateParams();
         };
+        return search;
     }
 
     drawSorting(data: SortListData, current: string) {
@@ -241,6 +258,7 @@ export class MainView extends AbstractView {
             this._params.replace('sort', value);
             this.requestUpdateParams();
         }
+        return sorting;
     }
 
     drawViewButtons(value: string) {
@@ -282,4 +300,17 @@ export class MainView extends AbstractView {
         this._params.remove('search-type');
         this._params.remove('search');
     }
+}
+
+const getFilterList = (data: ListParams) => {
+    const filterList: FilterListItem[] = [];
+    data.forEach((item) => {
+        filterList.push({
+            name: item.name,
+            count: item.count,
+            total: item.total,
+            checked: item.checked
+        });
+    });
+    return filterList;
 }

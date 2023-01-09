@@ -41,6 +41,7 @@ export class CartView extends AbstractView {
 
     async getView(): Promise<HTMLElement> {
         let content = document.createElement('section') as HTMLElement;
+        content.dataset.name = 'viewCart';
         content.classList.add('cart-page');
         content.innerHTML = this.getEmptyCart();
         return content;
@@ -50,9 +51,11 @@ export class CartView extends AbstractView {
         const parent = document.querySelector('.cart-page') as HTMLElement;
         if (this._cart.cartData.length !== 0) {
             parent.innerHTML =
-                `<div class="cart__control"></div>
-                <section class="cart__products">
-                    <div class="cart__list"></div>
+                `<section class="cart__products">
+                    <div class="cart__box">
+                        <div class="cart__control"></div>
+                        <div class="cart__list"></div>
+                    </div>
                     <div class="cart__order"></div>
                     <div class="modal hidden"></div>
                 </section>`;

@@ -36,6 +36,7 @@ export class ModelMain {
     private _updateTableEvent: Event;
     private _productsList: Product[];
     private _params: MainParams;
+    private _canFullUpdate: boolean;
 
     constructor() {
         this._products = [];
@@ -43,6 +44,7 @@ export class ModelMain {
         this._updateTableEvent = new Event('changemodelmaintable');
         this._productsList = [];
         this._params = new MainParams();
+        this._canFullUpdate = false;
     }
 
     setProducts(products: Product[]) {
@@ -74,10 +76,13 @@ export class ModelMain {
             this._params.stock.srcMin = Math.min(...this._products.map((item) => item.stock))
             this._params.stock.srcMax = Math.max(...this._products.map((item) => item.stock))
         }
-        document.dispatchEvent(this._updateEvent)
+        this._canFullUpdate = true;
     }
 
-    async updateModel() {
+    async updateModel(canUpdateAll?: boolean) {
+        if (canUpdateAll) {
+            this._canFullUpdate = canUpdateAll;
+        }
         this._productsList = [];
         this._params = updateMainParamsFromUrl(this._params);
 
@@ -103,7 +108,12 @@ export class ModelMain {
         });
 
         updateUrlFromMainParams(this._params)
-        document.dispatchEvent(this._updateTableEvent);
+        if (this._canFullUpdate) {
+            this._canFullUpdate = false;
+            document.dispatchEvent(this._updateEvent);
+        } else {
+            document.dispatchEvent(this._updateTableEvent);
+        }
     }
 
     get state(): ModelMainState {

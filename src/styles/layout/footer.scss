@@ -1,12 +1,26 @@
 .footer__content {
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  gap: 50px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 30px;
 
-  .footer__git,
-  .footer__rs {
-    width: 125px;
-  }
+    @media (max-device-width: $deviceWidthSmall) {
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .footer__git,
+    .footer__rs {
+        width: 125px;
+        opacity: 0.7;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        @media (max-device-width: $deviceWidthSmall) {
+            width: 100px;
+        }
+    }
 }
