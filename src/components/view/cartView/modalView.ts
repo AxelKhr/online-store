@@ -38,8 +38,8 @@ export class ModalView {
             e.preventDefault();
         } else if ((e.key === 'Backspace' || e.key === 'Delete') || parent.value.length < 19) {
             parent?.addEventListener('input', (e) => {
-                let input = (<HTMLTextAreaElement>e.target);
-                let str = input.value.split('').map(el => el.replace(' ', '')).join('');
+                const input = (<HTMLTextAreaElement>e.target);
+                const str = input.value.split('').map(el => el.replace(' ', '')).join('');
                 switch (+str.slice(0, 1)) {
                     case Card.AMERICAN:
                         payLogo.innerHTML = '<div class="american"></div>';
@@ -73,8 +73,8 @@ export class ModalView {
             e.preventDefault();
         } else if (e.key === 'Backspace' || parent.value.length < 5) {
             parent?.addEventListener('input', (e) => {
-                let input = (<HTMLTextAreaElement>e.target);
-                let str = input.value.split('').map(el => el.replace('/', '')).join('');
+                const input = (<HTMLTextAreaElement>e.target);
+                const str = input.value.split('').map(el => el.replace('/', '')).join('');
                 input.value = str.split(/(\d{2})/).map(el => el.trim()).filter(item => item !== '').join('/');
             });
         }

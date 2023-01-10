@@ -40,7 +40,7 @@ export class CartView extends AbstractView {
     }
 
     async getView(): Promise<HTMLElement> {
-        let content = document.createElement('section') as HTMLElement;
+        const content = document.createElement('section') as HTMLElement;
         content.dataset.name = 'viewCart';
         content.classList.add('cart-page');
         content.innerHTML = this.getEmptyCart();

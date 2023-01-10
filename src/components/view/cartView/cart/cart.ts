@@ -79,7 +79,7 @@ export class Cart {
     plusNumber(data: CartData): number {
         this.saveData(data);
         this.cartIcon.innerText = `${Number(this.cartIcon.innerText) + 1}`;
-        let sum = Number(this.totalSum.innerText) + data.product.price;
+        const sum = Number(this.totalSum.innerText) + data.product.price;
         this.totalSum.innerText! = `${sum}`;
         return sum;
     }
@@ -87,7 +87,7 @@ export class Cart {
     minusNumber(data: CartData): number {
         this.saveData(data);
         this.cartIcon.innerText = `${Number(this.cartIcon.innerText) - 1}`;
-        let sum = Number(this.totalSum.innerText) - data.product.price;
+        const sum = Number(this.totalSum.innerText) - data.product.price;
         this.totalSum.innerText! = `${sum}`;
         return sum;
     }

@@ -41,7 +41,7 @@ export class MainView extends AbstractView {
     }
 
     async getView(): Promise<HTMLElement> {
-        let content = document.createElement('div') as HTMLElement;
+        const content = document.createElement('div') as HTMLElement;
         content.dataset.name = 'viewMain';
         content.classList.add('content__table', 'table');
 
