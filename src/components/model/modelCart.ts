@@ -1,4 +1,4 @@
-import { Params, getParamsFromURL, setParamsToURL } from "../utils/params";
+import { getParamsFromURL, setParamsToURL } from "../utils/params";
 
 export const CART_VIEW_LIMIT_DEFAULT = 3;
 export const CART_VIEW_PAGE_DEFAULT = 1;
@@ -50,7 +50,7 @@ export class ModelCart {
     }
 
     setModalWindowState(isEnable: boolean) {
-        this._isModalEnable = true;
+        this._isModalEnable = isEnable;
     }
 }
 

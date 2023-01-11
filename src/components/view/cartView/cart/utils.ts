@@ -11,7 +11,10 @@ export function getProductCount(data: CartData[]) {
 
 export function mapCartData(storage: CartStorage[], products: Product[]): CartData[] {
     return storage.reduce((arr, acc) => {
-        arr.push({product: products.find(el => el.id === acc.id)!, count: acc.count});
+        const product = products.find(el => el.id === acc.id);
+        if (product) {
+            arr.push({ product: product, count: acc.count });
+        }
         return arr;
     }, new Array<CartData>());
 }

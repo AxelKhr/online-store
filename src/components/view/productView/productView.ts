@@ -87,7 +87,7 @@ export class ProductView extends AbstractView {
                 box.append(imageWrapper);
                 slider.addItem(box);
             });
-            sliderContainer.addEventListener('click', (event) => {
+            sliderContainer.addEventListener('click', () => {
                 ModalWindow.show('product-page__modal-image', slider.getCurrentItem() as HTMLDivElement);
             });
             sliderWrapper.append(slider.content);

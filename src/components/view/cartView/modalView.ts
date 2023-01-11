@@ -20,7 +20,6 @@ export class ModalView {
         const dateMonth = document.querySelector('.modal__date') as HTMLInputElement;
         dateMonth.addEventListener('keydown', (e) => this.dateValid(e.target as HTMLInputElement, e));
 
-        const btn = document.querySelector('.modal__btn') as HTMLElement;
         modal.addEventListener('submit', (e) => {
             e.preventDefault();
             localStorage.removeItem('cart-storage');

@@ -25,10 +25,6 @@ export class SortingParams {
         return this._current;
     }
 
-    get enable() {
-        return this._enable;
-    }
-
     set current(value) {
         if ((value.length !== 0) || [...this._list.keys()].includes(value)) {
             this._current = value;
@@ -37,6 +33,10 @@ export class SortingParams {
             this._enable = false;
             this._current = 'price-asc';
         }
+    }
+
+    get enable() {
+        return this._enable;
     }
 
     add(paramName: string, paramTitle: string) {

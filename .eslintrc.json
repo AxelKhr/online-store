@@ -25,6 +25,10 @@
         "no-debugger": "off",
         "no-console": 0,
         "class-methods-use-this": "off",
-        "@typescript-eslint/no-explicit-any": "error"
+        "@typescript-eslint/no-explicit-any": "error",
+        "eol-last": [
+            "error",
+            "always"
+        ]
     }
 }

@@ -1,5 +1,4 @@
 import { AppController } from "../controller/controller";
-import { Product } from "../interface/product";
 
 class Store {
 

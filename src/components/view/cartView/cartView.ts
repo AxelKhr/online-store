@@ -9,7 +9,6 @@ import { PromoCode } from "../../enum/promo";
 import { Params, getParamsFromURL } from "../../utils/params";
 import * as ModelCart from "../../model/modelCart";
 import { PaginationHelper } from "../../utils/pagination";
-import { ErrorView } from "../error/error";
 
 export interface Promo {
     id: string;
@@ -32,7 +31,8 @@ export class CartView extends AbstractView {
     constructor(cart: Cart) {
         super();
         this._cart = cart;
-        const data = JSON.parse(localStorage.getItem('promo')!);
+        const dataLoaded = localStorage.getItem('promo');
+        const data = (dataLoaded) ? JSON.parse(dataLoaded) : null;
         this.promos = (data !== null) ? Array.from(data) : [];
         this.rsPromo = { id: PromoCode.RS, name: 'Rolling Scopes School - 10%', discount: 10 };
         this.epmPromo = { id: PromoCode.EPM, name: 'EPAM Systems - 10%', discount: 10 };
@@ -63,7 +63,7 @@ export class CartView extends AbstractView {
             const pageControl = document.querySelector('.cart__control') as HTMLElement;
 
             this.drawControl(cart, pageControl);
-            this.drawCards(cart, parent);
+            this.drawCards(cart);
             this.drawOrder();
 
             const modal = document.querySelector('.modal__shadow') as HTMLElement;
@@ -81,7 +81,7 @@ export class CartView extends AbstractView {
         limit.addEventListener('change', () => {
             this._params.replace('limit', limit.value);
             this.requestUpdateParams();
-            this.drawCards(cart, parent);
+            this.drawCards(cart);
         });
 
         const page = document.createElement('span');
@@ -91,7 +91,7 @@ export class CartView extends AbstractView {
 
         page.classList.add('page-current');
         if (this._page !== undefined) {
-            page.innerText = this._page!.toString();
+            page.innerText = this._page.toString();
         }
 
         const leftPageBtn = document.createElement('button');
@@ -104,7 +104,7 @@ export class CartView extends AbstractView {
                 page.innerText = this._page.toString();
                 this._params.replace('page', page.innerText);
                 this.requestUpdateParams();
-                this.drawCards(cart, parent);
+                this.drawCards(cart);
             }
         });
 
@@ -122,13 +122,13 @@ export class CartView extends AbstractView {
                 page.innerText = this._page.toString();
                 this._params.replace('page', page.innerText);
                 this.requestUpdateParams();
-                this.drawCards(cart, parent);
+                this.drawCards(cart);
             }
         });
         parent.append(limit, leftPageBtn, page, totalPage, rightPageBtn);
     }
 
-    private drawCards(cart: HTMLElement, parent: HTMLElement) {
+    private drawCards(cart: HTMLElement) {
         const cardTemp = CartItem.createTemplate();
         cart.innerHTML = "";
         const fragment = document.createDocumentFragment();
@@ -164,7 +164,7 @@ export class CartView extends AbstractView {
     private clickItem(e: Event, data: CartData) {
         const titleNum = document.getElementById(`count-${data.product.id}`) as HTMLElement;
         const orderPrice = document.querySelector('.order__cost') as HTMLElement;
-        const target = e.target! as HTMLElement;
+        const target = e.target as HTMLElement;
         if (target.closest('.product-cart__button')) {
             this.removeFromCart(e, data.product);
         } else {
@@ -217,7 +217,7 @@ export class CartView extends AbstractView {
             this.drawControl(cart, pageControl);
             this._params.replace('page', this._page.toString());
             this.requestUpdateParams();
-            this.drawCards(cart, parentBox);
+            this.drawCards(cart);
             this.drawOrder();
         }
     }
@@ -286,7 +286,6 @@ export class CartView extends AbstractView {
     update(data: ModelCart.ModelCartState) {
         this._params = getParamsFromURL(window.location.href);
 
-        const parent = document.querySelector('.cart-page') as HTMLElement;
         const cart = document.querySelector('.cart__list') as HTMLElement;
         const pageControl = document.querySelector('.cart__control') as HTMLElement;
 
@@ -303,7 +302,7 @@ export class CartView extends AbstractView {
         }
         pageControl.innerHTML = '';
         this.drawControl(cart, pageControl);
-        this.drawCards(cart, parent);
+        this.drawCards(cart);
 
         data.isModalEnable && payOrder();
     }
