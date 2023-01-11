@@ -39,7 +39,6 @@ export function createFilterList(data: FilterListItem[]): HTMLDivElement {
 }
 
 export function updateFilterList(parentSelClass: string, data: FilterListItem[]): void {
-    const listOfNames = data.map((item) => item.name);
     data.forEach((item) => {
         const parentSelector = `.${parentSelClass} li[data-name="${item.name}"]`;
         const checkBox = document.querySelector<HTMLInputElement>(parentSelector + ' .item__check-box');

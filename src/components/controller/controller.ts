@@ -8,9 +8,9 @@ import { ErrorView } from "../view/error/error";
 import { MainView } from "../view/mainView/mainView";
 import { ProductView } from "../view/productView/productView";
 import { CartView } from "../view/cartView/cartView";
-import { ModelMain, ModelMainState } from "../model/modelMain";
-import { ModelProduct, ModelProductState } from "../model/modelProduct";
-import { ModelCart, ModelCartState } from "../model/modelCart";
+import { ModelMain } from "../model/modelMain";
+import { ModelProduct } from "../model/modelProduct";
+import { ModelCart } from "../model/modelCart";
 
 export class AppController extends AppLoader {
     private _router: Router;
@@ -42,19 +42,19 @@ export class AppController extends AppLoader {
         this._router.addRoute('cart', this.loadCartView);
         this._router.addRoute('', this.loadMainView);
 
-        document.addEventListener('changemodelmain', (event) => {
+        document.addEventListener('changemodelmain', () => {
             this._mainView.update(this._mainModel.state);
         });
 
-        document.addEventListener('changemodelmaintable', (event) => {
+        document.addEventListener('changemodelmaintable', () => {
             this._mainView.updateTable(this._mainModel.state);
         });
 
-        document.addEventListener('changemodelproduct', (event) => {
+        document.addEventListener('changemodelproduct', () => {
             this._productView.draw(this._productModel.state);
         });
 
-        document.addEventListener('changemodelcart', (event) => {
+        document.addEventListener('changemodelcart', () => {
             this._cartView.update(this._cartModel.state);
         });
     }
@@ -84,7 +84,7 @@ export class AppController extends AppLoader {
 
     // methods to load views
 
-    private loadMainView = async (params: string) => {
+    private loadMainView = async () => {
         await this._mainView.setView('Online store');
         this._mainModel.updateModel(true);
     }
@@ -99,7 +99,7 @@ export class AppController extends AppLoader {
         }
     }
 
-    private loadCartView = async (params: string) => {
+    private loadCartView = async () => {
         await this._cartView.setView('Cart');
         this._cartView.draw();
         this._cartModel.updateModel();
@@ -120,6 +120,6 @@ export class AppController extends AppLoader {
     private routeToQuickBuy = async (item: Product) => {
         this._cart.addToCart(item);
         this._cartModel.setModalWindowState(true);
-        window.location.href = window.location.origin + '#/cart';
+        window.location.href = window.location.href.split('#')[0] + '#/cart';
     }
 }

@@ -1,6 +1,6 @@
 import "./style.scss";
 import { Product } from "../../../interface/product";
-import { createButtonIcon2State, setStateButtonIcon2 } from "../../elements/buttons/icon2state";
+import { createButtonIcon2State } from "../../elements/buttons/icon2state";
 
 function createTemplate(): HTMLElement {
     const card = document.createElement('a');

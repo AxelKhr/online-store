@@ -14,7 +14,7 @@ export abstract class AbstractView {
         const content = document.getElementById("content") as HTMLElement;
         if (content.dataset.viewName !== view.dataset.name) {
             content.dataset.viewName = view.dataset.name;
-            content!.innerHTML = '';
+            content.innerHTML = '';
             content.appendChild(view);
             document.title = title;
         }

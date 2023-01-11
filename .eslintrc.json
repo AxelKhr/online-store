@@ -1,10 +1,15 @@
 {
     "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint", "prettier", "import"],
+    "plugins": [
+        "@typescript-eslint",
+        "prettier",
+        "import"
+    ],
     "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
-        "prettier/@typescript-eslint",
-        "plugin:prettier/recommended"
+        "prettier"
     ],
     "parserOptions": {
         "sourceType": "module",
@@ -20,6 +25,10 @@
         "no-debugger": "off",
         "no-console": 0,
         "class-methods-use-this": "off",
-        "@typescript-eslint/no-explict-any": "warn"
+        "@typescript-eslint/no-explicit-any": "error",
+        "eol-last": [
+            "error",
+            "always"
+        ]
     }
 }

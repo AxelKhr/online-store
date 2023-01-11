@@ -96,7 +96,7 @@ export class Params {
 
 export function setParamsToURL(params: Params, canReplace?: boolean) {
     const paramsStr = (new URLSearchParams(params.getPairs())).toString();
-    let path = window.location.href.split('?')[0] + ((paramsStr.length) ? '?' + paramsStr : '');
+    const path = window.location.href.split('?')[0] + ((paramsStr.length) ? '?' + paramsStr : '');
     if (path !== window.location.href) {
         if (canReplace) {
             window.history.replaceState({}, '', path);

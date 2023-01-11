@@ -1,5 +1,5 @@
 import { Product } from "../interface/product";
-import { Params, getParamsFromURL } from "../utils/params";
+import { getParamsFromURL } from "../utils/params";
 
 export interface ModelProductState {
     product: Product | undefined;

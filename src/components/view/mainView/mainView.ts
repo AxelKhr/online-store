@@ -41,7 +41,7 @@ export class MainView extends AbstractView {
     }
 
     async getView(): Promise<HTMLElement> {
-        let content = document.createElement('div') as HTMLElement;
+        const content = document.createElement('div') as HTMLElement;
         content.dataset.name = 'viewMain';
         content.classList.add('content__table', 'table');
 
@@ -183,7 +183,7 @@ export class MainView extends AbstractView {
             ProductCard.setData(card, item, this.checkCart(item));
             fragment.append(card);
             card.addEventListener('click', (e: Event) => {
-                const target = (e.target! as HTMLElement).closest('.button-icon') as HTMLElement;
+                const target = (e.target as HTMLElement).closest('.button-icon') as HTMLElement;
                 if (target) {
                     e.preventDefault();
                     if (this.checkCart(item)) {
