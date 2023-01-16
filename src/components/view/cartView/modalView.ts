@@ -27,7 +27,7 @@ export class ModalView {
             modal.innerHTML = `<div class='success'></div>
                 <p class='success-title'>Success!</p>
                 <p class='success-redirect'>You'll be redirected to the main page</p>`;
-            setTimeout(() => window.location.href = '/', 2000);
+            setTimeout(() => window.location.href = window.location.href.split('#')[0], 2000);
         });
     }
 
